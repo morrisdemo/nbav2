@@ -440,8 +440,6 @@ body {
 <div class="tabs">
   <button class="tab-button active" data-tab="overview">Contact Insights</button>
   <button class="tab-button" data-tab="programs">Products & Services</button>
-  <button class="tab" onclick="openTab(event, 'insights')">Engagement Insights</button>
-
 </div>
 
 <div id="overview" class="tab-content active">
@@ -581,12 +579,6 @@ body {
 
   </div>
 </div>
-</div>
-
-<div id="insights" class="tab-content" style="display:none;">
-  <canvas id="interactionChart" height="200"></canvas>
-  <canvas id="programChart" height="200"></canvas>
-  <canvas id="happinessChart" height="200"></canvas>
 </div>
 
 <div id="programs" class="tab-content">
@@ -989,7 +981,6 @@ function loadScenario(bp) {
 
 loadScenario(bp);
 </script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 
 </body>
