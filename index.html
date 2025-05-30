@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAP Service Mashup - Overview Page</title>
+  <link rel="stylesheet" href="https://ui5.sap.com/resources/sap/fiori/themes/sap_horizon/library.css" />
+  <link rel="stylesheet" href="offersstyles.css">
+  <style>
+    :root {
+      --sapTile_Background: #ffffff;
+      --sapContent_Shadow0: 0 0 0.125rem rgba(0, 0, 0, 0.08);
+      --sapNeutralTextColor: #788FA6;
+      --sapTitleColor: #32363a;
+      --sapPositiveTextColor: #256F3A;
+      --sapNegativeTextColor: #AA0808;
+      --sapNeutralBG: #f7f7f7;
+    }
+
+  .page-grid {
+  max-height: none;
+  overflow-y: visible;
+}
+
+html, body {
+  height: auto;
+  min-height: 100%;
+  overflow-y: auto;
+}
+
+.tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.tab-button {
+  font-size: 0.875rem;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  color: var(--sapTextColor, #32363a);
+}
+
+.tab-button.active {
+  border-bottom: 2px solid var(--sapHighlightColor, #0a6ed1);
+  color: var(--sapLinkColor, #0a6ed1);
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+
+body {
+      font-family: "72", Arial, sans-serif;
+      background-color: var(--sapNeutralBG);
+      margin: 0;
+      padding: 1rem;
+    }
+
+    .page-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    @media (min-width: 768px) {
+      .page-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .card, .analytical-card {
+      background-color: var(--sapTile_Background);
+      border-radius: 0.5rem;
+      box-shadow: var(--sapContent_Shadow0);
+      padding: 1rem;
+      border: 1px solid #e0e0e0;
+    }
+
+    .card h3, .analytical-title {
+      font-size: 1rem;
+      color: var(--sapTitleColor);
+      margin-bottom: 0.5rem;
+    }
+
+    .analytical-card {
+      background-color: var(--sapTile_Background);
+      border-radius: 0.5rem;
+      box-shadow: var(--sapContent_Shadow0);
+      border: 1px solid #e0e0e0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .analytical-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.875rem;
+      color: var(--sapNeutralTextColor);
+      margin-bottom: 0.5rem;
+    }
+
+    .tag {
+      background-color: #e5f3ff;
+      color: #0070f2;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.25rem;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin: 0.25rem 0.25rem 0 0;
+      cursor: pointer;
+    }
+
+    .tag.active {
+      background-color: #0070f2;
+      color: white;
+    }
+
+    .chart-container {
+      width: 100%;
+      height: 220px;
+    }
+
+    canvas {
+      width: 100% !important;
+      height: auto !important;
+    }
+
+    ul {
+      padding-left: 1rem;
+    }
+    ul li {
+      font-size: 0.875rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .status-active {
+      color: var(--sapPositiveTextColor);
+    }
+    .status-broken {
+      color: var(--sapNegativeTextColor);
+    }
+    .status-inactive {
+      color: var(--sapNeutralTextColor);
+    }
+
+    .message-strip {
+  border-left: 4px solid;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  background-color: #f3f4f5;
+  box-shadow: var(--sapContent_Shadow0);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Semantic Colors */
+.message-success {
+  border-color: var(--sapPositiveElementColor, #107e3e);
+  background-color: #edf7ed;
+  color: var(--sapPositiveTextColor, #107e3e);
+}
+.message-error {
+  border-color: var(--sapNegativeElementColor, #bb0000);
+  background-color: #fdeaea;
+  color: var(--sapNegativeTextColor, #bb0000);
+}
+.message-neutral {
+  border-color: var(--sapNeutralElementColor, #6a6d70);
+  background-color: #f5f5f5;
+  color: var(--sapTextColor, #32363a);
+}
+
+.message-button {
+  background-color: var(--sapButton_Emphasized_Background, #0a6ed1);
+  color: var(--sapButton_Emphasized_TextColor, #ffffff);
+  border: none;
+  border-radius: 0.25rem;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.75rem;
+  font-family: "72", Arial, sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.message-button:hover {
+  background-color: var(--sapButton_Emphasized_Hover_Background, #0854a0);
+}
+
+.message-button:focus {
+  outline: 2px solid var(--sapContent_FocusColor, #0a6ed1);
+  outline-offset: 2px;
+}
+
+.message-button.success {
+  color: var(--sapPositiveElementColor, #107e3e);
+}
+.message-button.error {
+  color: var(--sapNegativeElementColor, #bb0000);
+}
+.message-button.neutral {
+  color: var(--sapNeutralTextColor, #6a6d70);
+}
+.message-button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.object-display {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.object-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.object-details {
+  max-width: 70%;
+}
+
+.object-title {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--sapTitleColor);
+  margin-bottom: 0.25rem;
+}
+
+.object-description {
+  font-size: 0.875rem;
+  color: var(--sapTextColor, #32363a);
+  margin-bottom: 0.25rem;
+}
+
+.object-status {
+  font-size: 0.75rem;
+  font-weight: bold;
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.25rem;
+}
+
+
+.enroll-button {
+  background-color: var(--sapButton_Emphasized_Background, #0a6ed1);
+  color: var(--sapButton_Emphasized_TextColor, #ffffff);
+  border: none;
+  border-radius: 0.25rem;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.enroll-button:hover {
+  background-color: var(--sapButton_Emphasized_Hover_Background, #0854a0);
+}
+
+.status-positive {
+  color: var(--sapPositiveTextColor, #107e3e);
+  background-color: #edf7ed;
+}
+
+.status-warning {
+  color: var(--sapCriticalTextColor, #e9730c);
+  background-color: #fff4e5;
+}
+
+.status-negative {
+  color: var(--sapNegativeTextColor, #bb0000);
+  background-color: #fdeaea;
+}
+
+.status-information {
+  color: var(--sapInformativeTextColor, #0a6ed1);
+  background-color: #e5f3ff;
+}
+
+.program-image {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.25rem;
+  margin-bottom: 0.5rem;
+  object-fit: cover;
+}
+
+.has-tooltip {
+  position: relative;
+  cursor: help;
+}
+
+.tooltip-box {
+  visibility: hidden;
+  opacity: 0;
+  background-color: #1c1c1c; /* Higher contrast background */
+  color: #ffffff; /* Bright white text */
+  font-size: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.25rem;
+  position: absolute;
+  bottom: 120%;
+  left: 0;
+  max-width: 70%; /* Limit width */
+  white-space: normal;
+  z-index: 99;
+  transition: opacity 0.2s ease;
+  box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.25);
+}
+
+.has-tooltip:hover .tooltip-box {
+  visibility: visible;
+  opacity: 1;
+}
+
+.offer-content ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+.offer-content ul li {
+  margin-bottom: 0.4rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.offer-content {
+  text-align: initial;
+}
+
+  .chatbot-toggle {
+    position: fixed;
+    bottom: 1.25rem;
+    right: 1.25rem;
+    background-color: #0a6ed1;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 3.5rem;
+    height: 3.5rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 9998;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  }
+
+  .chatbot-window {
+    position: fixed;
+    bottom: 5rem;
+    right: 1rem;
+    width: 320px;
+    max-height: 500px;
+    background-color: var(--sapTile_Background, #fff);
+    box-shadow: var(--sapContent_Shadow0, 0 0 0.5rem rgba(0,0,0,0.2));
+    border-radius: 0.5rem;
+    display: none;
+    flex-direction: column;
+    z-index: 9999;
+    overflow: hidden;
+    border: 1px solid #ddd;
+  }
+
+  .chatbot-header {
+    background-color: #0a6ed1;
+    color: white;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
+  .chatbot-messages {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    font-size: 0.85rem;
+  }
+
+  .chatbot-input {
+    display: flex;
+    border-top: 1px solid #e0e0e0;
+  }
+
+  .chatbot-input input {
+    flex: 1;
+    padding: 0.6rem 0.75rem;
+    border: none;
+    font-size: 0.85rem;
+    outline: none;
+  }
+
+  .chatbot-input button {
+    background-color: transparent;
+    border: none;
+    padding: 0 1rem;
+    color: #0a6ed1;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  .chat-message {
+    margin-bottom: 0.75rem;
+  }
+
+  .chat-message.user {
+    text-align: right;
+    color: var(--sapTextColor, #0a6ed1);
+  }
+
+  .chat-message.bot {
+    text-align: left;
+    color: var(--sapNeutralTextColor, #32363a);
+  }
+
+  </style>
+</head>
+<body>
+
+<div class="tabs">
+  <button class="tab-button active" data-tab="overview">Contact Insights</button>
+  <button class="tab-button" data-tab="programs">Products & Services</button>
+</div>
+
+<div id="overview" class="tab-content active">
+  <div class="page-grid">
+
+  <div class="card">
+    <h3>Contact Prediction</h3>
+    <div class="message-strip message-success">
+        <span>Outstanding Balance - Payment Assistance</span>
+        <!--<button class="message-button" onclick="window.open('https://example.com/budget', '_blank')">Go</button>-->
+      </div>
+      
+      <div class="message-strip message-error">
+        <span>Request Payment Arrangement</span>
+        <!--<button class="message-button" onclick="window.open('https://example.com/payment', '_blank')">Go</button>-->
+      </div>
+      
+      <div class="message-strip message-neutral">
+        <span>Process Payment</span>
+        <!--<button class="message-button" onclick="window.open('https://example.com/ebill', '_blank')">Go</button>-->
+      </div>
+  </div>
+  <div class="card">
+    <h3>Next Best Actions</h3>
+    <div class="message-strip message-success has-tooltip">
+        <span>1. Recommend & Take Payment</span>
+        <div class="tooltip-box"><b>SAY: </b> Due to your past due balance and active collection activity, we can take a payment over the phone or over the web to get your account caught up. Can your make your payment?</div>
+        <button class="message-button" onclick="window.open('https://ssamyaccount.cxlive.ai/Portal/PayBill', '_blank')">Go</button>
+      </div>
+      
+      <div class="message-strip message-neutral has-tooltip">
+        <span>2. Recommend AutoPay</span>
+        <div class="tooltip-box"><b>SAY: </b>We recommend enrolling in AutoPay to have your utility bill paid automatically each month — securely, on time, and without the hassle of remembering due dates. It’s a simple way to stay current, avoid late fees, and enjoy peace of mind.</div>
+        <button class="message-button" onclick="window.open('https://ssamyaccount.cxlive.ai/Portal/AutoPay', '_blank')">Go</button>
+      </div>
+      
+      <div class="message-strip message-error has-tooltip">
+        <span>3. Payment Arrangement - Not Eligible (1 Active)</span>
+        <div class="tooltip-box"><b>SAY: </b>Payment Extension may be offered, no Payment Arrangement is not allowed at this time, due to 1 arrangement currently active.<br><br>Recommend making payment in full as soon as possible. Inquire if qualifies for Low Income Assistance.</div>
+        <button class="message-button disabled">Go</button>
+      </div>
+      
+  </div>
+
+<div class="card">
+  <h3>Recommended Programs</h3>
+  <div class="object-display">
+
+    <div class="object-item">
+      <div class="object-details">
+        <div class="object-title">Budget Billing</div>
+        <div class="object-description">Pay a fixed monthly amount to avoid seasonal fluctuations.</div>
+        <div class="object-status status-positive">Popular</div>
+      </div>
+      <a href="https://ssamyaccount.cxlive.ai/Portal/BudgetBilling" class="offer-button">Enroll</a>
+      <!--<button class="enroll-button" onclick="window.open('https://ssamyaccount.cxlive.ai/Portal/BudgetBilling')">Enroll</button>-->
+    </div>
+
+    <div class="object-item">
+      <div class="object-details">
+        <div class="object-title">AutoPay</div>
+        <div class="object-description">Avoid missed payments with automatic withdrawals.</div>
+        <div class="object-status status-information">Convenient</div>
+      </div>
+      <button class="enroll-button" onclick="window.open('https://ssamyaccount.cxlive.ai/Portal/AutoPay')">Enroll</button>
+    </div>
+
+    <div class="object-item">
+      <div class="object-details">
+        <div class="object-title">LIHEAP Assistance</div>
+        <div class="object-description">Apply for income-based energy bill relief.</div>
+        <div class="object-status status-warning">Low Income Eligible</div>
+      </div>
+      <button class="enroll-button" onclick="window.open('https://ssamyaccount.cxlive.ai/Portal/program-management')">Enroll</button>
+    </div>
+
+    <div class="object-item">
+      <div class="object-details">
+        <div class="object-title">eBill Enrollment</div>
+        <div class="object-description">Go paperless and manage your bill online.</div>
+        <div class="object-status status-positive">Eco-Friendly</div>
+      </div>
+      <button class="message-button disabled" onclick="window.open('https://ssamyaccount.cxlive.ai/Portal/NotificationPreferences')">Enrolled</button>
+    </div>
+
+  </div>
+</div>
+  
+  
+  <div class="analytical-card">
+    <div class="analytical-header">
+      <div class="analytical-title">Consumption Insights</div>
+      <div>Year to Date (kWh)</div>
+    </div>
+    <div class="chart-container">
+      <canvas id="consumptionChart"></canvas>
+    </div>
+    <!--<div>
+      <span class="tag active" data-series="2025">2025</span>
+      <span class="tag active" data-series="2024">Compare to Previous Year</span>
+      <span class="tag" data-series="rate">Compare to Same Rate Class</span>
+      <span class="tag" data-series="zip">Compare to Zip Code</span>
+    </div>-->
+  </div>
+
+  <div class="card">
+  <h3>Recent Collection Activity</h3>
+  <div class="object-display">
+
+    <div class="object-item">
+      <div class="object-details">
+        <div class="object-title">Final Notice Issued</div>
+        <div class="object-description">10 Day Turn Off Notice issued - pending disconnection.</div>
+        <div><strong>Status:</strong> <span class="object-status status-negative">Active</span></div>
+        <div><strong>Date:</strong> 03/01/2025</div>
+      </div>
+    </div>
+
+    <div class="object-item">
+      <div class="object-details">
+        <div class="object-title">Early Reminder Call - TF Notice Warning</div>
+        <div class="object-description">Autodialer Warning TF Notice to be issued</div>
+        <div><strong>Status:</strong> <span class="object-status status-information">Unpaid</span></div>
+        <div><strong>Date:</strong> 02/28/2025</div>
+      </div>
+    </div>
+
+    <div class="object-item">
+      <div class="object-details">
+        <div class="object-title">Day 3 - Digital LPC Reminder</div>
+        <div class="object-description">Reminder sent via customer preferred Email channel. LPC of $5.00 applied.</div>
+        <div><strong>Status:</strong> <span class="object-status status-information">Unpaid</span></div>
+        <div><strong>Date:</strong> 02/15/2025</div>
+      </div>
+    </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<div id="programs" class="tab-content">
+  <!-- Introductory Section -->
+    <section class="intro" aria-label="Introduction to utility offers">
+        <div class="container">
+            <h1>Recommended Products & Services</h1>
+            <p>Explore tailored plans and services to manage your utilities efficiently, save energy, and stay informed. Choose the offer that best fits your needs.</p>
+        </div>
+    </section>
+
+    <!-- Offers Section -->
+    <div class="program-card">
+<section class="offers" aria-label="Utility offer cards">
+    <div class="container">
+                    <div class="offer-card" data-id="offer-4">
+                    <div class="offer-content">
+				  <h2>Home Efficiency Program</h2>
+				  <p>Optimize your home’s energy usage with our expert tips and tools.</p>
+				  <p><b>Say:</b> We'd love to tell you about how we can make your life easier and safer! When your fridge, stove, air conditioner, furnace or any other key appliances break down, life gets disrupted. It's up to you to find a reliable repair service and pay unexpected one-off repair costs.</p>
+				  
+				  <ul style="text-align: left; padding-left: 1.25rem; margin-top: 0.5rem;">
+				    <li>Your covered appliance breaks down, you call us anytime, 24/7.</li>
+				    <li>No additional fees for parts or labor</li>
+				    <li>Priority Scheduling for heating and cooling emergencies</li>
+				  </ul>
+				
+				  <div class="offer-meta">
+				    <span class="stars" aria-label="4 out of 5 stars">★★★★☆</span>
+				  </div>
+				  <br><a href="https://utilitiesspa.nacx-utilities-chelm.usdemo.hybris.com/spartacusstorefront/utilitiesspa/en/USD/c/accessories" class="offer-button">Learn More</a></br>
+				</div>
+            </div>
+            <div class="offer-card" data-id="offer-0">
+               <!-- <div class="offer-image">
+                    <img src="https://plus.unsplash.com/premium_photo-1738854512331-3ed5ec9cf56a?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Green Energy Plan">
+                </div>-->
+                <div class="offer-content">
+                    <h2>AllConnect</h2>
+                    <p>Because the customer has an email address on file and is not currently enrolled in eBill, please offer.</p>
+                    <p><b>Say:</b> "My records indicate that we haven't enrolled you in our eBill program. An eBill is the facts and most convinient way to receive your utility bill. Helps reduce our carbon footprints and makes it easy for you to view and pay. Would you like me to enroll you using your email address of saputilitiesdemo@gmail.com?</p>
+                    <div class="offer-meta">
+                        <span class="stars" aria-label="4 out of 5 stars">★★★★☆</span>
+                        <span class="recommended">Recommended</span>
+                    </div>
+                    <br><a href="https://www.allconnect.com/local/mi/east-lansing?zip_code=48823&referrer=1035874" class="offer-button">Learn More</a></br>
+                </div>
+            </div>
+            <div class="offer-card" data-id="offer-1">
+                <!--<div class="offer-image">
+                    <img src="https://plus.unsplash.com/premium_photo-1738854512331-3ed5ec9cf56a?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Green Energy Plan">
+                </div>-->
+                <div class="offer-content">
+                    <h2>eBill Signup</h2>
+                    <p>Because the customer has an email address on file and is not currently enrolled in eBill, please offer.</p>
+                    <p><b>Say:</b> "My records indicate that we haven't enrolled you in our eBill program. An eBill is the facts and most convinient way to receive your utility bill. Helps reduce our carbon footprints and makes it easy for you to view and pay. Would you like me to enroll you using your email address of saputilitiesdemo@gmail.com?</p>
+                    <div class="offer-meta">
+                        <span class="stars" aria-label="4 out of 5 stars">★★★★☆</span>
+                        <span class="recommended">Recommended</span>
+                    </div>
+                    <br><a href="/offers/green-energy" class="offer-button">Learn More</a></br>
+                </div>
+            </div>
+            <div class="offer-card" data-id="offer-2">
+                <!--<div class="offer-image">
+                    <img src="https://plus.unsplash.com/premium_photo-1738854512331-3ed5ec9cf56a?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Smart Billing">
+                </div>-->
+                <div class="offer-content">
+                    <h2>Budget Billing</h2>
+                    <p>Streamline payments with secure, online billing and flexible payment plans.</p>
+                    <div class="offer-meta">
+                        <span class="stars" aria-label="3 out of 5 stars">★★★☆☆</span>
+                    </div>
+                    <br><a href="/offers/billing" class="offer-button">Learn More</a></br>
+                </div>
+            </div>
+            <div class="offer-card" data-id="offer-3">
+                <div class="offer-content">
+                    <h2>Communication Preferences</h2>
+                    <p>Stay updated with real-time notifications about power outages in your area.</p>
+                    <div class="offer-meta">
+                        <span class="stars" aria-label="4 out of 5 stars">★★★★☆</span>
+                        <span class="recommended">Recommended</span>
+                    </div>
+                   <br><a href="https://ssamyaccount.cxlive.ai/Portal/NotificationPreferences" class="offer-button">Learn More</a></br>
+                </div>
+            </div>
+            <div class="offer-card" data-id="offer-5">
+                <div class="offer-image">
+                    <img src="https://plus.unsplash.com/premium_photo-1738854512331-3ed5ec9cf56a?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Account Management">
+                </div>
+                <div class="offer-content">
+                    <h2>Account Management</h2>
+                    <p>Manage your utility account easily with our online portal.</p>
+                    <div class="offer-meta">
+                        <span class="stars" aria-label="3 out of 5 stars">★★★☆☆</span>
+                    </div>
+                    <a href="https://ssamyaccount.cxlive.ai/Portal" class="offer-button">Learn More</a>
+                </div>
+            </div>
+            
+            <!--💬 Chatbot Icon-->
+			<button class="chatbot-toggle" id="chatbotToggle">💬</button>
+
+			<!--🪟 Chatbot Window-->
+			<div class="chatbot-window" id="chatbotWindow">
+			  <div class="chatbot-header">Joule Assistant</div>
+			  <div class="chatbot-messages" id="chatMessages">
+			    <div class="chat-message bot">Hi there! I'm Joule. How can I help you today?</div>
+			  </div>
+			  <div class="chatbot-input">
+			    <input type="text" id="chatInput" placeholder="Type your message..." />
+			    <button id="chatSend">➤</button>
+			  </div>
+			</div>
+            
+        </div>
+    </section>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ctx = document.getElementById('consumptionChart').getContext('2d');
+  const chartData = {
+    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    datasets: [
+      {
+        label: '2025 Consumption',
+        data: [410, 390, 420, 480, 510],
+        backgroundColor: "#3278be",
+        hidden: false
+      },
+      {
+        label: '2024 Consumption',
+        data: [430, 410, 440, 490, 500, 520, 580, 560, 460, 440, 420, 390],
+        backgroundColor: "#75980b",
+        hidden: false
+      },
+      {
+        label: 'Same Rate Class Avg',
+        data: [420, 400, 415, 470, 495, 510, 580, 570, 460, 445, 430, 410],
+        backgroundColor: "#8b47d7",
+        hidden: true
+      },
+      {
+        label: 'Zip Code Avg',
+        data: [415, 405, 410, 460, 490, 500, 575, 565, 455, 440, 425, 405],
+        backgroundColor: "#df1278",
+        hidden: true
+      }
+    ]
+  };
+
+  const consumptionChart = new Chart(ctx, {
+    type: 'bar',
+    data: chartData,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom' }
+      },
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+
+  document.querySelectorAll(".tag").forEach(tag => {
+    tag.addEventListener("click", () => {
+      tag.classList.toggle("active");
+      const seriesMap = { "2025": 0, "2024": 1, "rate": 2, "zip": 3 };
+      const index = seriesMap[tag.dataset.series];
+      if (index !== undefined) {
+        chartData.datasets[index].hidden = !tag.classList.contains("active");
+        consumptionChart.update();
+      }
+    });
+  });
+</script>
+
+<script>
+  document.querySelectorAll('.tab-button').forEach(button => {
+    button.addEventListener('click', () => {
+      document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+      
+      button.classList.add('active');
+      document.getElementById(button.dataset.tab).classList.add('active');
+    });
+  });
+</script>
+
+<script>
+  const toggle = document.getElementById('chatbotToggle');
+  const windowEl = document.getElementById('chatbotWindow');
+  const input = document.getElementById('chatInput');
+  const messages = document.getElementById('chatMessages');
+
+  toggle.addEventListener('click', () => {
+    windowEl.style.display = windowEl.style.display === 'flex' ? 'none' : 'flex';
+  });
+
+  document.getElementById('chatSend').addEventListener('click', sendMessage);
+  input.addEventListener('keypress', e => {
+    if (e.key === 'Enter') sendMessage();
+  });
+
+  function sendMessage() {
+    const text = input.value.trim();
+    if (!text) return;
+
+    appendMessage('user', text);
+    input.value = '';
+    
+    // Mock response – replace this with real OpenAI/SAP CAI call
+    setTimeout(() => {
+      appendMessage('bot', generateMockReply(text));
+    }, 500);
+  }
+
+  function appendMessage(sender, text) {
+    const div = document.createElement('div');
+    div.className = `chat-message ${sender}`;
+    div.textContent = text;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function generateMockReply(userText) {
+    if (userText.toLowerCase().includes("budget"))
+      return "Budget Billing spreads your usage evenly across the year. Want to enroll?";
+    if (userText.toLowerCase().includes("autopay"))
+      return "AutoPay securely handles your bill each month. I can help you enroll.";
+    return "I'm here to help with billing, usage, programs, and more!";
+  }
+</script>
+<script>
+function getUrlParam(name) {
+  const url = new URL(window.location.href);
+  return url.searchParams.get(name);
+}
+
+function updateSection(id, html) {
+  const section = document.querySelector(id);
+  if (section) section.innerHTML = html;
+}
+
+const bp = getUrlParam("bp");
+
+const scenarios = {
+  "US00016976": {
+    contactPredictions: `
+      <div class="message-strip message-success"><span>Payment Due - Consider Arrangement</span></div>
+      <div class="message-strip message-error"><span>Energy Usage Alert</span></div>
+      <div class="message-strip message-neutral"><span>Update Contact Info</span></div>
+    `,
+    nextBestActions: `
+      <div class="message-strip message-success has-tooltip">
+        <span>1. Recommend Payment Arrangement</span>
+        <div class="tooltip-box"><b>SAY: </b>You may qualify for a flexible plan to manage your past due balance. Would you like to explore that?</div>
+        <button class="message-button" onclick="window.open('https://ssamyaccount.cxlive.ai/Portal/PaymentPlan', '_blank')">Go</button>
+      </div>
+      <div class="message-strip message-neutral has-tooltip">
+        <span>2. Recommend eBill</span>
+        <div class="tooltip-box"><b>SAY: </b>We can enroll you in eBill so you’ll get your bill emailed and manage it online.</div>
+        <button class="message-button" onclick="window.open('https://ssamyaccount.cxlive.ai/Portal/NotificationPreferences', '_blank')">Go</button>
+      </div>
+      <div class="message-strip message-error has-tooltip">
+        <span>3. No AutoPay Eligibility</span>
+        <div class="tooltip-box"><b>SAY: </b>Customer does not meet eligibility for AutoPay enrollment at this time.</div>
+        <button class="message-button disabled">Go</button>
+      </div>
+    `,
+    recommendedPrograms: `
+      <div class="object-display">
+        <div class="object-item">
+          <div class="object-details">
+            <div class="object-title">Winter Protection Plan</div>
+            <div class="object-description">Protects against shutoffs from Nov–Mar if eligible.</div>
+            <div class="object-status status-warning">Seasonal</div>
+          </div>
+          <button class="enroll-button">Enroll</button>
+        </div>
+        <div class="object-item">
+          <div class="object-details">
+            <div class="object-title">Energy Savings Kit</div>
+            <div class="object-description">Free LEDs and water-saving devices mailed to home.</div>
+            <div class="object-status status-positive">Free</div>
+          </div>
+          <button class="enroll-button">Claim</button>
+        </div>
+      </div>
+    `
+  },
+  "US00022413": {
+    contactPredictions: `
+      <div class="message-strip message-success"><span>Payment Due - Consider Arrangement</span></div>
+      <div class="message-strip message-error"><span>Energy Usage Alert</span></div>
+      <div class="message-strip message-neutral"><span>Update Contact Info</span></div>
+    `,
+    nextBestActions: `
+      <div class="message-strip message-success has-tooltip">
+        <span>1. Recommend Payment Arrangement</span>
+        <div class="tooltip-box"><b>SAY: </b>You may qualify for a flexible plan to manage your past due balance. Would you like to explore that?</div>
+        <button class="message-button" onclick="window.open('https://ssamyaccount.cxlive.ai/Portal/PaymentPlan', '_blank')">Go</button>
+      </div>
+      <div class="message-strip message-neutral has-tooltip">
+        <span>2. Recommend eBill</span>
+        <div class="tooltip-box"><b>SAY: </b>We can enroll you in eBill so you’ll get your bill emailed and manage it online.</div>
+        <button class="message-button" onclick="window.open('https://ssamyaccount.cxlive.ai/Portal/NotificationPreferences', '_blank')">Go</button>
+      </div>
+      <div class="message-strip message-error has-tooltip">
+        <span>3. No AutoPay Eligibility</span>
+        <div class="tooltip-box"><b>SAY: </b>Customer does not meet eligibility for AutoPay enrollment at this time.</div>
+        <button class="message-button disabled">Go</button>
+      </div>
+    `,
+    recommendedPrograms: `
+      <div class="object-display">
+        <div class="object-item">
+          <div class="object-details">
+            <div class="object-title">Winter Protection Plan</div>
+            <div class="object-description">Protects against shutoffs from Nov–Mar if eligible.</div>
+            <div class="object-status status-warning">Seasonal</div>
+          </div>
+          <button class="enroll-button">Enroll</button>
+        </div>
+        <div class="object-item">
+          <div class="object-details">
+            <div class="object-title">Energy Savings Kit</div>
+            <div class="object-description">Free LEDs and water-saving devices mailed to home.</div>
+            <div class="object-status status-positive">Free</div>
+          </div>
+          <button class="enroll-button">Claim</button>
+        </div>
+      </div>
+    `
+  },
+  "US00016648": {
+    contactPredictions: `
+      <div class="message-strip message-success"><span>Medical Certificate - Self-Service FAQ Query</span></div>
+      <div class="message-strip message-error"><span>Energy Usage Alert</span></div>
+      <div class="message-strip message-neutral"><span>Update Contact Info</span></div>
+    `,
+    nextBestActions: `
+      <div class="message-strip message-success has-tooltip">
+        <span>1. Recommend Payment Arrangement</span>
+        <div class="tooltip-box"><b>SAY: </b>You may qualify for a flexible plan to manage your past due balance. Would you like to explore that?</div>
+        <button class="message-button" onclick="window.open('https://ssamyaccount.cxlive.ai/Portal/PaymentPlan', '_blank')">Go</button>
+      </div>
+      <div class="message-strip message-neutral has-tooltip">
+        <span>2. Recommend eBill</span>
+        <div class="tooltip-box"><b>SAY: </b>We can enroll you in eBill so you’ll get your bill emailed and manage it online.</div>
+        <button class="message-button" onclick="window.open('https://ssamyaccount.cxlive.ai/Portal/NotificationPreferences', '_blank')">Go</button>
+      </div>
+      <div class="message-strip message-error has-tooltip">
+        <span>3. No AutoPay Eligibility</span>
+        <div class="tooltip-box"><b>SAY: </b>Customer does not meet eligibility for AutoPay enrollment at this time.</div>
+        <button class="message-button disabled">Go</button>
+      </div>
+    `,
+    recommendedPrograms: `
+      <div class="object-display">
+        <div class="object-item">
+          <div class="object-details">
+            <div class="object-title">Winter Protection Plan</div>
+            <div class="object-description">Protects against shutoffs from Nov–Mar if eligible.</div>
+            <div class="object-status status-warning">Seasonal</div>
+          </div>
+          <button class="enroll-button">Enroll</button>
+        </div>
+        <div class="object-item">
+          <div class="object-details">
+            <div class="object-title">Energy Savings Kit</div>
+            <div class="object-description">Free LEDs and water-saving devices mailed to home.</div>
+            <div class="object-status status-positive">Free</div>
+          </div>
+          <button class="enroll-button">Claim</button>
+        </div>
+      </div>
+    `
+  }
+};
+
+function loadScenario(bp) {
+  const content = scenarios[bp];
+  if (content) {
+    updateSection(".card:nth-of-type(1) .message-strip", "");
+    updateSection(".card:nth-of-type(1)", `<h3>Contact Prediction</h3>` + content.contactPredictions);
+
+    updateSection(".card:nth-of-type(2) .message-strip", "");
+    updateSection(".card:nth-of-type(2)", `<h3>Next Best Actions</h3>` + content.nextBestActions);
+
+    updateSection(".card:nth-of-type(3) .object-display", "");
+    updateSection(".card:nth-of-type(3)", `<h3>Recommended Programs</h3>` + content.recommendedPrograms);
+  }
+}
+
+loadScenario(bp);
+</script>
+
+
+</body>
+</html>
