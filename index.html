@@ -433,6 +433,29 @@ body {
     color: var(--sapNeutralTextColor, #32363a);
   }
 
+	      .recommendation {
+      margin-top: 1rem;
+      font-size: 1rem;
+      color: #333;
+    }
+    .feedback {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .feedback button {
+      background-color: #ffffff;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .feedback button:hover {
+      background-color: #e0f0ff;
+      border-color: #0a6ed1;
+    }
+
   </style>
 </head>
 <body>
@@ -875,22 +898,30 @@ const scenarios = {
       </div>
     `
   },
-  "US00022413": {
+  "US00016958": {
     contactPredictions: `
-      <div class="message-strip message-success"><span>Payment Due - Consider Arrangement</span></div>
+      <div class="message-strip message-success"><span>Recent Usage Spikes - Likely Winter heating</span></div>
       <div class="message-strip message-error"><span>Energy Usage Alert</span></div>
       <div class="message-strip message-neutral"><span>Update Contact Info</span></div>
     `,
     nextBestActions: `
       <div class="message-strip message-success has-tooltip">
-        <span>1. Recommend Payment Arrangement</span>
-        <div class="tooltip-box"><b>SAY: </b>You may qualify for a flexible plan to manage your past due balance. Would you like to explore that?</div>
-        <button class="message-button" onclick="window.open('https://ssamyaccount.cxlive.ai/Portal/PaymentPlan', '_blank')">Go</button>
+        <span>1. Recommend Budget Billing</span>
+        <div class="tooltip-box"><b>SAY: </b>Since you've got much lower bills during the summer and high bills during the winter, we can even that out and give you an Equal Monthly Payment all year round.</div>
+       <div class="feedback">
+      <button aria-label="Helpful"><span>👍</span></button>
+      <button aria-label="Not Helpful"><span>👎</span></button>
+    </div>
+        <!--<button class="message-button" onclick="window.open('https://ssamyaccount.cxlive.ai/Portal/PaymentPlan', '_blank')">Go</button>-->
       </div>
       <div class="message-strip message-neutral has-tooltip">
-        <span>2. Recommend eBill</span>
+        <span>2. Recommend Automatic Payments</span>
         <div class="tooltip-box"><b>SAY: </b>We can enroll you in eBill so you’ll get your bill emailed and manage it online.</div>
-        <button class="message-button" onclick="window.open('https://ssamyaccount.cxlive.ai/Portal/NotificationPreferences', '_blank')">Go</button>
+      <div class="feedback">
+      <button aria-label="Helpful"><span>👍</span></button>
+      <button aria-label="Not Helpful"><span>👎</span></button>
+    </div>
+        <!--<button class="message-button" onclick="window.open('https://ssamyaccount.cxlive.ai/Portal/NotificationPreferences', '_blank')">Go</button>-->
       </div>
       <div class="message-strip message-error has-tooltip">
         <span>3. No AutoPay Eligibility</span>
@@ -902,19 +933,19 @@ const scenarios = {
       <div class="object-display">
         <div class="object-item">
           <div class="object-details">
-            <div class="object-title">Winter Protection Plan</div>
+            <div class="object-title">Budget Billing Plan</div>
             <div class="object-description">Protects against shutoffs from Nov–Mar if eligible.</div>
-            <div class="object-status status-warning">Seasonal</div>
+            <div class="object-status status-positive">Recommended</div>
           </div>
-          <button class="enroll-button">Enroll</button>
+          <!--<button class="enroll-button">Enroll</button>-->
         </div>
         <div class="object-item">
           <div class="object-details">
-            <div class="object-title">Energy Savings Kit</div>
+            <div class="object-title">AutoPay</div>
             <div class="object-description">Free LEDs and water-saving devices mailed to home.</div>
-            <div class="object-status status-positive">Free</div>
+            <div class="object-status status-positive">Great Compliment to Budget</div>
           </div>
-          <button class="enroll-button">Claim</button>
+          <!--<button class="enroll-button">Claim</button>-->
         </div>
       </div>
     `
