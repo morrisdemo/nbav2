@@ -921,25 +921,19 @@ const scenarios = {
   },
   "US00016648": {
     contactPredictions: `
-      <div class="message-strip message-success"><span>Medical Certificate - Self-Service FAQ Query</span></div>
+      <div class="message-strip message-success has-tooltip"><span>Medical Certificate - Self-Service FAQ Query</span></div>
       <div class="message-strip message-error"><span>Energy Usage Alert</span></div>
       <div class="message-strip message-neutral"><span>Update Contact Info</span></div>
     `,
     nextBestActions: `
       <div class="message-strip message-success has-tooltip">
-        <span>1. Recommend Payment Arrangement</span>
-        <div class="tooltip-box"><b>SAY: </b>You may qualify for a flexible plan to manage your past due balance. Would you like to explore that?</div>
-        <button class="message-button" onclick="window.open('https://ssamyaccount.cxlive.ai/Portal/PaymentPlan', '_blank')">Go</button>
+        <span>1. Recommend Medical Certificate Submission</span>
+        <div class="tooltip-box"><b>SAY: </b>We noticed you recently were looking for How to enroll in Medical Protection on your account. Is that correct? I can generate a Case to get the process started if you like.</div>
       </div>
       <div class="message-strip message-neutral has-tooltip">
-        <span>2. Recommend eBill</span>
-        <div class="tooltip-box"><b>SAY: </b>We can enroll you in eBill so you’ll get your bill emailed and manage it online.</div>
-        <button class="message-button" onclick="window.open('https://ssamyaccount.cxlive.ai/Portal/NotificationPreferences', '_blank')">Go</button>
-      </div>
-      <div class="message-strip message-error has-tooltip">
-        <span>3. No AutoPay Eligibility</span>
-        <div class="tooltip-box"><b>SAY: </b>Customer does not meet eligibility for AutoPay enrollment at this time.</div>
-        <button class="message-button disabled">Go</button>
+        <span>2. Home Protection Plan</span>
+        <div class="tooltip-box"><b>SAY: </b>Given the sensitive condition in your home, it may give you peace of mind by enrolling in our Home Protection Plans that gives you priority scheduling for home repairs with no out of pocket costs. Would you like me to send some information?</div>
+        <!--<button class="message-button" onclick="window.open('https://ssamyaccount.cxlive.ai/Portal/NotificationPreferences', '_blank')">Go</button>-->
       </div>
     `,
     recommendedPrograms: `
