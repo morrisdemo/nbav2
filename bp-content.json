@@ -1,0 +1,118 @@
+{
+  "US00016976": {
+    "contactPrediction": [
+      "Outstanding Balance - Payment Assistance",
+      "Request Payment Arrangement",
+      "Process Payment"
+    ],
+    "nextBestActions": [
+      {
+        "label": "1. Recommend & Take Payment",
+        "tooltip": "Due to your past due balance and active collection activity, we can take a payment over the phone or over the web to get your account caught up. Can you make your payment?",
+        "status": "success",
+        "link": "https://ssamyaccount.cxlive.ai/Portal/PayBill"
+      },
+      {
+        "label": "2. Recommend AutoPay",
+        "tooltip": "We recommend enrolling in AutoPay to have your utility bill paid automatically each month — securely, on time, and without the hassle of remembering due dates. It’s a simple way to stay current, avoid late fees, and enjoy peace of mind.",
+        "status": "neutral",
+        "link": "https://ssamyaccount.cxlive.ai/Portal/AutoPay"
+      },
+      {
+        "label": "3. Payment Arrangement - Not Eligible (1 Active)",
+        "tooltip": "Payment Extension may be offered, no Payment Arrangement is not allowed at this time, due to 1 arrangement currently active. Recommend making payment in full as soon as possible. Inquire if qualifies for Low Income Assistance.",
+        "status": "error",
+        "link": null
+      }
+    ],
+    "recommendedPrograms": [
+      {
+        "title": "Budget Billing",
+        "desc": "Pay a fixed monthly amount to avoid seasonal fluctuations.",
+        "status": "Popular",
+        "statusClass": "status-positive",
+        "link": "https://ssamyaccount.cxlive.ai/Portal/BudgetBilling"
+      },
+      {
+        "title": "AutoPay",
+        "desc": "Avoid missed payments with automatic withdrawals.",
+        "status": "Convenient",
+        "statusClass": "status-information",
+        "link": "https://ssamyaccount.cxlive.ai/Portal/AutoPay"
+      },
+      {
+        "title": "LIHEAP Assistance",
+        "desc": "Apply for income-based energy bill relief.",
+        "status": "Low Income Eligible",
+        "statusClass": "status-warning",
+        "link": "https://ssamyaccount.cxlive.ai/Portal/program-management"
+      },
+      {
+        "title": "eBill Enrollment",
+        "desc": "Go paperless and manage your bill online.",
+        "status": "Eco-Friendly",
+        "statusClass": "status-positive",
+        "link": "https://ssamyaccount.cxlive.ai/Portal/NotificationPreferences",
+        "disabled": true
+      }
+    ]
+  },
+  "US00022413": {
+    "contactPrediction": [
+      "High Usage Alert",
+      "Recommend Energy Tips"
+    ],
+    "nextBestActions": [
+      {
+        "label": "Enroll in Budget Billing",
+        "tooltip": "Spread out your payments evenly throughout the year for easier budgeting.",
+        "status": "success",
+        "link": "https://ssamyaccount.cxlive.ai/Portal/BudgetBilling"
+      },
+      {
+        "label": "Suggest Efficiency Audit",
+        "tooltip": "We can send someone to help identify how you might save more energy in your home.",
+        "status": "neutral",
+        "link": null
+      }
+    ],
+    "recommendedPrograms": [
+      {
+        "title": "Home Energy Audit",
+        "desc": "Schedule a visit to evaluate your home’s energy efficiency.",
+        "status": "Helpful",
+        "statusClass": "status-information",
+        "link": "https://ssamyaccount.cxlive.ai/Portal/EnergyAudit"
+      }
+    ]
+  },
+  "US00016648": {
+    "contactPrediction": [
+      "High Usage Alert",
+      "Recommend Energy Tips"
+    ],
+    "nextBestActions": [
+      {
+        "label": "Enroll in Budget Billing",
+        "tooltip": "Spread out your payments evenly throughout the year for easier budgeting.",
+        "status": "success",
+        "link": "https://ssamyaccount.cxlive.ai/Portal/BudgetBilling"
+      },
+      {
+        "label": "Suggest Efficiency Audit",
+        "tooltip": "We can send someone to help identify how you might save more energy in your home.",
+        "status": "neutral",
+        "link": null
+      }
+    ],
+    "recommendedPrograms": [
+      {
+        "title": "Home Energy Audit",
+        "desc": "Schedule a visit to evaluate your home’s energy efficiency.",
+        "status": "Helpful",
+        "statusClass": "status-information",
+        "link": "https://ssamyaccount.cxlive.ai/Portal/EnergyAudit"
+      }
+    ]
+  }
+}
