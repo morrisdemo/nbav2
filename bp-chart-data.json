@@ -1,0 +1,19 @@
+{
+  "US00015000": {
+    "interactionCategories": {
+      "Payment Arrangement": 4,
+      "Meter Read Reported": 3,
+      "Profile Update": 2
+    },
+    "programParticipation": {
+      "Budget Billing": true,
+      "eBill": false,
+      "Low Income": true
+    },
+    "greenScore": 76,
+    "channelHappiness": {
+      "Agent": 88,
+      "Digital": 92
+    }
+  }
+}
