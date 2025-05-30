@@ -904,33 +904,24 @@ const scenarios = {
   },
   "US00016958": {
     contactPredictions: `
-      <div class="message-strip message-success"><span>Recent Usage Spikes - Likely Winter heating</span></div>
-      <div class="message-strip message-error"><span>Energy Usage Alert</span></div>
+      <div class="message-strip message-success"><span>Recent Usage Spikes - likely due to Winter heating</span></div>
       <div class="message-strip message-neutral"><span>Update Contact Info</span></div>
     `,
     nextBestActions: `
       <div class="message-strip message-success has-tooltip">
         <span>1. Recommend Budget Billing</span>
         <div class="tooltip-box"><b>SAY: </b>Since you've got much lower bills during the summer and high bills during the winter, we can even that out and give you an Equal Monthly Payment all year round.</div>
-       <div class="feedback">
-      <button aria-label="Helpful"><span>👍</span></button>
-      <button aria-label="Not Helpful"><span>👎</span></button>
-    </div>
         <!--<button class="message-button" onclick="window.open('https://ssamyaccount.cxlive.ai/Portal/PaymentPlan', '_blank')">Go</button>-->
       </div>
       <div class="message-strip message-neutral has-tooltip">
         <span>2. Recommend Automatic Payments</span>
         <div class="tooltip-box"><b>SAY: </b>We can enroll you in eBill so you’ll get your bill emailed and manage it online.</div>
-      <div class="feedback">
-      <button aria-label="Helpful"><span>👍</span></button>
-      <button aria-label="Not Helpful"><span>👎</span></button>
-    </div>
         <!--<button class="message-button" onclick="window.open('https://ssamyaccount.cxlive.ai/Portal/NotificationPreferences', '_blank')">Go</button>-->
       </div>
-      <div class="message-strip message-error has-tooltip">
-        <span>3. No AutoPay Eligibility</span>
-        <div class="tooltip-box"><b>SAY: </b>Customer does not meet eligibility for AutoPay enrollment at this time.</div>
-        <button class="message-button disabled">Go</button>
+      <div class="message-strip message-success has-tooltip">
+        <span>3. Recommend Home Protection Plan</span>
+        <div class="tooltip-box"><b>SAY: </b>Given your need to budget your monthly expenses, another way to eliminate unexpected surprises is with our Home Protection Plans. it may give you peace of mind by enrolling in our Home Protection Plans that gives you priority scheduling for home repairs with no out of pocket costs. If you like I can share more information with the benefits.</div>
+        <!--<button class="message-button disabled">Go</button>-->
       </div>
     `,
     recommendedPrograms: `
@@ -952,6 +943,15 @@ const scenarios = {
           <!--<button class="enroll-button">Claim</button>-->
         </div>
       </div>
+	<div class="object-display">
+        <div class="object-item">
+          <div class="object-details">
+            <div class="object-title">Home Protection Plan</div>
+            <div class="object-description">Provides peace of mind with priority scheduling and no out of pocket costs.</div>
+            <div class="object-status status-positive">Great Way to Budget</div>
+          </div>
+          <!--<button class="enroll-button">Enroll</button>-->
+        </div>
     `
   },
   "US00016648": {
