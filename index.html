@@ -954,10 +954,10 @@ const scenarios = {
         </div>
     `
   },
-  "US00016648": {
+  "US00016995": {
     contactPredictions: `
       <div class="message-strip message-success has-tooltip"><span>Medical Certificate - Self-Service FAQ Query</span></div>
-      <div class="message-strip message-error"><span>Energy Usage Alert</span></div>
+      <div class="message-strip message-success"><span>Disconnection Notice Issued - May 24, 2025</span></div>
       <div class="message-strip message-neutral"><span>Update Contact Info</span></div>
     `,
     nextBestActions: `
@@ -965,21 +965,25 @@ const scenarios = {
         <span>1. Recommend Medical Certificate Submission</span>
         <div class="tooltip-box"><b>SAY: </b>We noticed you recently were looking for How to enroll in Medical Protection on your account. Is that correct? I can generate a Case to get the process started if you like.</div>
       </div>
+        <div class="message-strip message-success has-tooltip">
+        <span>2. Payment Arrangement - Eligible</span>
+        <div class="tooltip-box"><b>SAY: </b>Based on your past due balance, Payment Arrangements are available if you're unable to pay the full amount.</div>
+      </div>
       <div class="message-strip message-neutral has-tooltip">
-        <span>2. Home Protection Plan</span>
+        <span>3. Home Protection Plan</span>
         <div class="tooltip-box"><b>SAY: </b>Given the sensitive condition in your home, it may give you peace of mind by enrolling in our Home Protection Plans that gives you priority scheduling for home repairs with no out of pocket costs. Would you like me to send some information?</div>
-        <br><a href="https://utilitiesspa.nacx-utilities-chelm.usdemo.hybris.com/spartacusstorefront/utilitiesspa/en/USD/c/warranty" class="offer-button">Learn More</a></br>
+        <br><a href="https://utilitiesspa.nacx-utilities-chelm.usdemo.hybris.com/spartacusstorefront/utilitiesspa/en/USD/c/warranty" class="enroll-button">Learn More</a></br>
       </div>
     `,
     recommendedPrograms: `
       <div class="object-display">
         <div class="object-item">
           <div class="object-details">
-            <div class="object-title">Winter Protection Plan</div>
+            <div class="object-title">Home Protection Plan</div>
             <div class="object-description">Protects against shutoffs from Nov–Mar if eligible.</div>
-            <div class="object-status status-warning">Seasonal</div>
+            <div class="object-status status-positive">Priority Scheduling</div>
           </div>
-          <button class="enroll-button">Enroll</button>
+          <a href="https://utilitiesspa.nacx-utilities-chelm.usdemo.hybris.com/spartacusstorefront/utilitiesspa/en/USD/c/warranty" class="enroll-button">Learn More</a>
         </div>
         <div class="object-item">
           <div class="object-details">
