@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Communication Preferences</title>
+
+  <!-- OpenUI5 (SAPUI5 OSS) -->
+  <script
+    id="sap-ui-bootstrap"
+    src="https://sdk.openui5.org/resources/sap-ui-core.js"
+    data-sap-ui-theme="sap_horizon"
+    data-sap-ui-libs="sap.m,sap.ui.layout"
+    data-sap-ui-async="true"
+    data-sap-ui-compatVersion="edge"
+    data-sap-ui-preload="async"
+  ></script>
+
+  <style>
+    html, body, #content { height: 100%; margin: 0; }
+    .pageWrap { max-width: 1100px; margin: 0 auto; }
+    .muted { opacity: 0.75; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    .tinyTopPad { padding-top: 0.25rem; }
+  </style>
+</head>
+
+<body class="sapUiBody sapUiSizeCompact">
+  <div id="content"></div>
+
+  <script>
+    sap.ui.getCore().attachInit(function () {
+
+      // ----------------------------
+      // Model (edit these if you want)
+      // ----------------------------
+      const CHANNELS = [
+        { key: "EMAIL", label: "Email" },
+        { key: "SMS", label: "SMS" },
+        { key: "PUSH", label: "In-App Push" },
+        { key: "VOICE", label: "Voice Call" },
+        { key: "MAIL", label: "Mail" }
+      ];
+
+      const PROCESSES = [
+        { id: "BILLING_PAYMENTS", title: "Billing & Payments", desc: "Statements, bills, payment reminders, confirmations." },
+        { id: "USAGE_ALERTS", title: "Usage Alerts", desc: "High usage, threshold alerts, leak alerts (if applicable)." },
+        { id: "OUTAGES", title: "Outages", desc: "Service interruptions, restoration updates, emergency notices." },
+        { id: "PROGRAM_RECS", title: "Program Recommendations", desc: "Rebates, assistance programs, time-of-use suggestions." },
+        { id: "PROFILE_UPDATES", title: "Profile Updates", desc: "Account changes, security notices, preference confirmations." }
+      ];
+
+      const STORAGE_KEY = "scv2_comm_prefs_v1";
+
+      function newBlankPrefs() {
+        return PROCESSES.map(p => ({
+          processId: p.id,
+          processTitle: p.title,
+          channels: CHANNELS.reduce((acc, c) => (acc[c.key] = false, acc), {}),
+          // Optional: finer controls per process
+          notes: ""
+        }));
+      }
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return null;
+          return JSON.parse(raw);
+        } catch (e) {
+          return null;
+        }
+      }
+
+      function saveState(state) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state, null, 2));
+      }
+
+      function formatNow() {
+        const d = new Date();
+        return d.toLocaleString();
+      }
+
+      // Default state
+      const defaultState = {
+        customer: {
+          preferredName: "",
+          email: "",
+          phone: "",
+        },
+        global: {
+          allowMarketing: false,
+          quietHours: { enabled: false, start: "21:00", end: "08:00" }
+        },
+        preferences: newBlankPrefs(),
+        meta: {
+          lastSavedAt: "",
+          version: "1.0"
+        }
+      };
+
+      const persisted = loadState();
+      const state = persisted ? persisted : defaultState;
+
+      const oModel = new sap.ui.model.json.JSONModel(state);
+      oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
+
+      // ----------------------------
+      // Helpers
+      // ----------------------------
+      function isValidEmail(v) {
+        if (!v) return true; // allow blank
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v).trim());
+      }
+      function isValidPhone(v) {
+        if (!v) return true; // allow blank
+        // lenient: digits, spaces, (), +, -, .
+        return /^[0-9()+\-.\s]{7,}$/.test(String(v).trim());
+      }
+
+      function ensureAtLeastOneContactIfAnyEnabled() {
+        const data = oModel.getData();
+        const anyEnabled = data.preferences.some(row =>
+          Object.values(row.channels || {}).some(Boolean)
+        );
+        if (!anyEnabled) return true; // no comms enabled, fine
+
+        // if any enabled, require at least one contact method
+        const hasEmail = !!(data.customer.email || "").trim();
+        const hasPhone = !!(data.customer.phone || "").trim();
+        return hasEmail || hasPhone;
+      }
+
+      function buildExportJson() {
+        // This is the shape you’d typically POST to a middleware/API
+        const data = oModel.getData();
+        return {
+          customer: data.customer,
+          global: data.global,
+          preferences: data.preferences.map(p => ({
+            processId: p.processId,
+            channels: p.channels,
+            notes: p.notes || ""
+          })),
+          meta: {
+            lastSavedAt: data.meta.lastSavedAt || "",
+            version: data.meta.version || "1.0"
+          }
+        };
+      }
+
+      // ----------------------------
+      // UI: Header + Customer Contact Card
+      // ----------------------------
+      const oTitle = new sap.m.Title({ text: "Communication Preferences", level: "H2" });
+
+      const oSub = new sap.m.Text({
+        text: "Choose how you want to receive updates by process and channel. Your changes are saved locally in this demo."
+      }).addStyleClass("muted tinyTopPad");
+
+      const oPreferredName = new sap.m.Input({
+        value: "{/customer/preferredName}",
+        placeholder: "Optional (e.g., Alex)",
+        width: "100%"
+      });
+
+      const oEmail = new sap.m.Input({
+        value: "{/customer/email}",
+        type: sap.m.InputType.Email,
+        placeholder: "name@email.com",
+        width: "100%",
+        liveChange: function (e) {
+          const v = e.getParameter("value");
+          e.getSource().setValueState(isValidEmail(v) ? "None" : "Error");
+          e.getSource().setValueStateText(isValidEmail(v) ? "" : "Enter a valid email address.");
+        }
+      });
+
+      const oPhone = new sap.m.Input({
+        value: "{/customer/phone}",
+        type: sap.m.InputType.Tel,
+        placeholder: "+1 (555) 123-4567",
+        width: "100%",
+        liveChange: function (e) {
+          const v = e.getParameter("value");
+          e.getSource().setValueState(isValidPhone(v) ? "None" : "Error");
+          e.getSource().setValueStateText(isValidPhone(v) ? "" : "Enter a valid phone number.");
+        }
+      });
+
+      const oAllowMarketing = new sap.m.Switch({
+        state: "{/global/allowMarketing}"
+      });
+
+      const oQuietHoursSwitch = new sap.m.Switch({
+        state: "{/global/quietHours/enabled}"
+      });
+
+      const oQuietStart = new sap.m.TimePicker({
+        value: "{/global/quietHours/start}",
+        displayFormat: "HH:mm",
+        valueFormat: "HH:mm",
+        width: "100%"
+      });
+
+      const oQuietEnd = new sap.m.TimePicker({
+        value: "{/global/quietHours/end}",
+        displayFormat: "HH:mm",
+        valueFormat: "HH:mm",
+        width: "100%"
+      });
+
+      const oContactForm = new sap.ui.layout.form.SimpleForm({
+        editable: true,
+        layout: "ResponsiveGridLayout",
+        labelSpanXL: 4, labelSpanL: 4, labelSpanM: 4, labelSpanS: 12,
+        emptySpanXL: 0, emptySpanL: 0, emptySpanM: 0, emptySpanS: 0,
+        columnsXL: 2, columnsL: 2, columnsM: 2,
+        content: [
+          new sap.m.Label({ text: "Preferred Name" }),
+          oPreferredName,
+
+          new sap.m.Label({ text: "Email" }),
+          oEmail,
+
+          new sap.m.Label({ text: "Phone" }),
+          oPhone,
+
+          new sap.m.Label({ text: "Allow Program/Offer Recommendations" }),
+          oAllowMarketing,
+
+          new sap.m.Label({ text: "Quiet Hours" }),
+          oQuietHoursSwitch,
+
+          new sap.m.Label({ text: "Quiet Hours Start" }),
+          oQuietStart,
+
+          new sap.m.Label({ text: "Quiet Hours End" }),
+          oQuietEnd
+        ]
+      });
+
+      const oContactCard = new sap.m.Panel({
+        headerText: "Contact & Global Settings",
+        expandable: false,
+        content: [oContactForm]
+      });
+
+      // ----------------------------
+      // UI: Preferences Table (matrix)
+      // ----------------------------
+      const oTable = new sap.m.Table({
+        inset: false,
+        growing: true,
+        growingScrollToLoad: true,
+        sticky: ["ColumnHeaders"],
+        headerToolbar: new sap.m.Toolbar({
+          content: [
+            new sap.m.Title({ text: "Preferences by Process & Channel", level: "H3" }),
+            new sap.m.ToolbarSpacer(),
+            new sap.m.Button({
+              text: "Enable All",
+              type: "Transparent",
+              press: function () {
+                const data = oModel.getData();
+                data.preferences.forEach(r => Object.keys(r.channels).forEach(k => r.channels[k] = true));
+                oModel.refresh(true);
+              }
+            }),
+            new sap.m.Button({
+              text: "Disable All",
+              type: "Transparent",
+              press: function () {
+                const data = oModel.getData();
+                data.preferences.forEach(r => Object.keys(r.channels).forEach(k => r.channels[k] = false));
+                oModel.refresh(true);
+              }
+            })
+          ]
+        })
+      });
+
+      // Columns
+      oTable.addColumn(new sap.m.Column({ width: "18rem", header: new sap.m.Text({ text: "Process" }) }));
+      CHANNELS.forEach(c => {
+        oTable.addColumn(new sap.m.Column({
+          hAlign: "Center",
+          header: new sap.m.Text({ text: c.label })
+        }));
+      });
+      oTable.addColumn(new sap.m.Column({ width: "16rem", header: new sap.m.Text({ text: "Notes" }) }));
+
+      function channelSwitchTemplate(channelKey) {
+        return new sap.m.Switch({
+          state: `{channels/${channelKey}}`,
+          customTextOn: "On",
+          customTextOff: "Off"
+        });
+      }
+
+      const oItemTemplate = new sap.m.ColumnListItem({
+        vAlign: "Middle",
+        cells: [
+          new sap.m.VBox({
+            items: [
+              new sap.m.Text({ text: "{processTitle}" }),
+              new sap.m.Text({
+                text: {
+                  path: "processId",
+                  formatter: function (pid) {
+                    const p = PROCESSES.find(x => x.id === pid);
+                    return p ? p.desc : "";
+                  }
+                }
+              }).addStyleClass("muted")
+            ]
+          }),
+          ...CHANNELS.map(c => new sap.m.HBox({
+            justifyContent: "Center",
+            items: [channelSwitchTemplate(c.key)]
+          })),
+          new sap.m.Input({
+            value: "{notes}",
+            placeholder: "Optional…",
+            width: "100%"
+          })
+        ]
+      });
+
+      oTable.bindItems({
+        path: "/preferences",
+        template: oItemTemplate,
+        templateShareable: false
+      });
+
+      // ----------------------------
+      // Footer actions: Save, Reset, Export
+      // ----------------------------
+      const oLastSaved = new sap.m.Text({
+        text: {
+          path: "/meta/lastSavedAt",
+          formatter: function (v) {
+            return v ? `Last saved: ${v}` : "Not saved yet";
+          }
+        }
+      }).addStyleClass("muted");
+
+      const oExportArea = new sap.m.TextArea({
+        rows: 10,
+        width: "100%",
+        growing: true,
+        growingMaxLines: 16,
+        value: "",
+        editable: false
+      }).addStyleClass("mono");
+
+      const oExportDialog = new sap.m.Dialog({
+        title: "Export Preferences (JSON)",
+        contentWidth: "720px",
+        content: [
+          new sap.m.Text({ text: "Copy/paste this JSON to send to an API, workflow, or middleware." }).addStyleClass("muted"),
+          oExportArea
+        ],
+        beginButton: new sap.m.Button({
+          text: "Close",
+          press: function () { oExportDialog.close(); }
+        })
+      });
+
+      function validateBeforeSave() {
+        const data = oModel.getData();
+
+        const emailOk = isValidEmail(data.customer.email);
+        const phoneOk = isValidPhone(data.customer.phone);
+        const contactOk = ensureAtLeastOneContactIfAnyEnabled();
+
+        oEmail.setValueState(emailOk ? "None" : "Error");
+        oPhone.setValueState(phoneOk ? "None" : "Error");
+
+        if (!contactOk) {
+          sap.m.MessageToast.show("Add an email or phone number if any preferences are enabled.");
+          return false;
+        }
+        if (!emailOk || !phoneOk) {
+          sap.m.MessageToast.show("Fix invalid email/phone fields before saving.");
+          return false;
+        }
+        return true;
+      }
+
+      const oSaveBtn = new sap.m.Button({
+        text: "Save",
+        type: "Emphasized",
+        icon: "sap-icon://save",
+        press: function () {
+          if (!validateBeforeSave()) return;
+
+          const data = oModel.getData();
+          data.meta.lastSavedAt = formatNow();
+          oModel.refresh(true);
+
+          saveState(data);
+          sap.m.MessageToast.show("Saved");
+        }
+      });
+
+      const oResetBtn = new sap.m.Button({
+        text: "Reset",
+        icon: "sap-icon://reset",
+        type: "Transparent",
+        press: function () {
+          sap.m.MessageBox.confirm("Reset all fields to defaults?", {
+            onClose: function (action) {
+              if (action !== sap.m.MessageBox.Action.OK) return;
+              oModel.setData(JSON.parse(JSON.stringify(defaultState)));
+              localStorage.removeItem(STORAGE_KEY);
+              sap.m.MessageToast.show("Reset complete");
+            }
+          });
+        }
+      });
+
+      const oExportBtn = new sap.m.Button({
+        text: "Export JSON",
+        icon: "sap-icon://download",
+        type: "Transparent",
+        press: function () {
+          const payload = buildExportJson();
+          oExportArea.setValue(JSON.stringify(payload, null, 2));
+          oExportDialog.open();
+        }
+      });
+
+      const oLoadBtn = new sap.m.Button({
+        text: "Load Saved",
+        icon: "sap-icon://refresh",
+        type: "Transparent",
+        press: function () {
+          const loaded = loadState();
+          if (!loaded) {
+            sap.m.MessageToast.show("No saved preferences found.");
+            return;
+          }
+          oModel.setData(loaded);
+          sap.m.MessageToast.show("Loaded");
+        }
+      });
+
+      const oActionBar = new sap.m.Toolbar({
+        content: [
+          oSaveBtn,
+          oResetBtn,
+          new sap.m.ToolbarSpacer(),
+          oLastSaved,
+          new sap.m.ToolbarSpacer(),
+          oLoadBtn,
+          oExportBtn
+        ]
+      });
+
+      // ----------------------------
+      // Layout: Page
+      // ----------------------------
+      const oPage = new sap.m.Page({
+        title: "Preferences",
+        content: [
+          new sap.m.VBox({
+            width: "100%",
+            items: [
+              new sap.m.VBox({ items: [oTitle, oSub] }).addStyleClass("sapUiSmallMarginBottom"),
+              oContactCard,
+              new sap.m.Toolbar({ content: [ new sap.m.Title({ text: "" }) ] }).addStyleClass("sapUiTinyMarginTop"),
+              oTable
+            ]
+          }).addStyleClass("pageWrap sapUiSmallMargin")
+        ],
+        footer: oActionBar
+      });
+
+      const oApp = new sap.m.App({ pages: [oPage] });
+      oApp.setModel(oModel);
+      oApp.placeAt("content");
+    });
+  </script>
+</body>
+</html>
