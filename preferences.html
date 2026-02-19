@@ -370,30 +370,50 @@
       });
 
       const oCancelBtn = new sap.m.Button({
-        text: "Cancel",
-        icon: "sap-icon://decline",
-        type: "Transparent",
-        press: function () {
-          sap.m.MessageBox.confirm("Discard unsaved changes?", {
-            onClose: function (action) {
-              if (action !== sap.m.MessageBox.Action.OK) return;
+  text: "Cancel",
+  icon: "sap-icon://decline",
+  type: "Transparent",
+  press: function () {
+    sap.m.MessageBox.confirm("Discard unsaved changes?", {
+      onClose: function (action) {
+        if (action !== sap.m.MessageBox.Action.OK) return;
 
-              const loaded = loadState();
-              const revert = loaded ? loaded : defaultState;
+        const loaded = loadState();
+        const revert = loaded ? loaded : defaultState;
 
-              // normalize on cancel too
-              revert.customer = revert.customer || {};
-              revert.customer.emailsOnFile = normalizeValueList(revert.customer.emailsOnFile ?? defaultState.customer.emailsOnFile);
-              revert.customer.phonesOnFile = normalizeValueList(revert.customer.phonesOnFile ?? defaultState.customer.phonesOnFile);
-              if (!revert.customer.email) revert.customer.email = (revert.customer.emailsOnFile[0]?.value) || "";
-              if (!revert.customer.phone) revert.customer.phone = (revert.customer.phonesOnFile[0]?.value) || "";
+        // Deep clone to prevent reference mutation
+        const cleanCopy = JSON.parse(JSON.stringify(revert));
 
-              oModel.setData(JSON.parse(JSON.stringify(revert)));
-              sap.m.MessageToast.show("Changes discarded");
-            }
-          });
+        // Normalize lists (safety)
+        cleanCopy.customer = cleanCopy.customer || {};
+        cleanCopy.customer.emailsOnFile =
+          normalizeValueList(cleanCopy.customer.emailsOnFile ?? defaultState.customer.emailsOnFile);
+        cleanCopy.customer.phonesOnFile =
+          normalizeValueList(cleanCopy.customer.phonesOnFile ?? defaultState.customer.phonesOnFile);
+
+        if (!cleanCopy.customer.email) {
+          cleanCopy.customer.email = cleanCopy.customer.emailsOnFile[0]?.value || "";
         }
-      });
+        if (!cleanCopy.customer.phone) {
+          cleanCopy.customer.phone = cleanCopy.customer.phonesOnFile[0]?.value || "";
+        }
+
+        // Reset model
+        oModel.setData(cleanCopy, true);
+        oModel.refresh(true);
+
+        // Clear validation states
+        oEmailSelect.setValueState("None");
+        oPhoneSelect.setValueState("None");
+
+        sap.ui.getCore().applyChanges();
+
+        sap.m.MessageToast.show("Changes cleared");
+      }
+    });
+  }
+});
+
 
       const oActionBar = new sap.m.Toolbar({
         content: [
