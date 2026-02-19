@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Communication Preferences</title>
 
-  <!-- OpenUI5 (SAPUI5 OSS) -->
   <script
     id="sap-ui-bootstrap"
     src="https://sdk.openui5.org/resources/sap-ui-core.js"
@@ -18,7 +17,7 @@
 
   <style>
     html, body, #content { height: 100%; margin: 0; }
-    .pageWrap { max-width: 1100px; margin: 0 auto; }
+    .pageWrap { max-width: 1200px; margin: 0 auto; }
     .muted { opacity: 0.75; }
     .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
     .tinyTopPad { padding-top: 0.25rem; }
@@ -31,9 +30,6 @@
   <script>
     sap.ui.getCore().attachInit(function () {
 
-      // ----------------------------
-      // Model (edit these if you want)
-      // ----------------------------
       const CHANNELS = [
         { key: "EMAIL", label: "Email" },
         { key: "SMS", label: "SMS" },
@@ -50,14 +46,20 @@
         { id: "PROFILE_UPDATES", title: "Profile Updates", desc: "Account changes, security notices, preference confirmations." }
       ];
 
-      const STORAGE_KEY = "scv2_comm_prefs_v1";
+      const STORAGE_KEY = "scv2_comm_prefs_v2";
 
       function newBlankPrefs() {
         return PROCESSES.map(p => ({
           processId: p.id,
           processTitle: p.title,
           channels: CHANNELS.reduce((acc, c) => (acc[c.key] = false, acc), {}),
-          // Optional: finer controls per process
+          // NEW: per-process contact targets (so switches know *which* email/phone you enabled)
+          contactTargets: {
+            emailMode: "DEFAULT",     // DEFAULT | SPECIFIC
+            emailValue: "",           // if SPECIFIC, hold the chosen email
+            phoneMode: "DEFAULT",     // DEFAULT | SPECIFIC
+            phoneValue: ""            // if SPECIFIC, hold the chosen phone
+          },
           notes: ""
         }));
       }
@@ -77,44 +79,16 @@
       }
 
       function formatNow() {
-        const d = new Date();
-        return d.toLocaleString();
+        return new Date().toLocaleString();
       }
 
-      // Default state
-      const defaultState = {
-        customer: {
-          preferredName: "",
-          email: "",
-          phone: "",
-        },
-        global: {
-          allowMarketing: false,
-          quietHours: { enabled: false, start: "21:00", end: "08:00" }
-        },
-        preferences: newBlankPrefs(),
-        meta: {
-          lastSavedAt: "",
-          version: "1.0"
-        }
-      };
-
-      const persisted = loadState();
-      const state = persisted ? persisted : defaultState;
-
-      const oModel = new sap.ui.model.json.JSONModel(state);
-      oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
-
-      // ----------------------------
-      // Helpers
-      // ----------------------------
       function isValidEmail(v) {
-        if (!v) return true; // allow blank
+        if (!v) return true;
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v).trim());
       }
+
       function isValidPhone(v) {
-        if (!v) return true; // allow blank
-        // lenient: digits, spaces, (), +, -, .
+        if (!v) return true;
         return /^[0-9()+\-.\s]{7,}$/.test(String(v).trim());
       }
 
@@ -123,40 +97,162 @@
         const anyEnabled = data.preferences.some(row =>
           Object.values(row.channels || {}).some(Boolean)
         );
-        if (!anyEnabled) return true; // no comms enabled, fine
+        if (!anyEnabled) return true;
 
-        // if any enabled, require at least one contact method
-        const hasEmail = !!(data.customer.email || "").trim();
-        const hasPhone = !!(data.customer.phone || "").trim();
-        return hasEmail || hasPhone;
+        const hasDefaultEmail = !!(data.customer.defaultEmail || "").trim();
+        const hasDefaultPhone = !!(data.customer.defaultPhone || "").trim();
+
+        // If any comms are enabled, require at least one default contact OR at least one on-file entry
+        const hasAnyEmail = hasDefaultEmail || (data.customer.emailsOnFile || []).length > 0;
+        const hasAnyPhone = hasDefaultPhone || (data.customer.phonesOnFile || []).length > 0;
+
+        return hasAnyEmail || hasAnyPhone;
       }
 
       function buildExportJson() {
-        // This is the shape you’d typically POST to a middleware/API
         const data = oModel.getData();
         return {
-          customer: data.customer,
+          customer: {
+            preferredName: data.customer.preferredName,
+            defaultEmail: data.customer.defaultEmail,
+            defaultPhone: data.customer.defaultPhone,
+            emailsOnFile: data.customer.emailsOnFile,
+            phonesOnFile: data.customer.phonesOnFile
+          },
           global: data.global,
           preferences: data.preferences.map(p => ({
             processId: p.processId,
             channels: p.channels,
+            contactTargets: p.contactTargets,
             notes: p.notes || ""
           })),
-          meta: {
-            lastSavedAt: data.meta.lastSavedAt || "",
-            version: data.meta.version || "1.0"
-          }
+          meta: data.meta
         };
       }
 
       // ----------------------------
-      // UI: Header + Customer Contact Card
+      // Default state (DEMO emails/phones "on file")
+      // ----------------------------
+      const defaultState = {
+        customer: {
+          preferredName: "",
+          // NEW: default email/phone (the “primary”)
+          defaultEmail: "alex.primary@email.com",
+          defaultPhone: "+1 (916) 555-0123",
+
+          // NEW: other emails/phones on file
+          emailsOnFile: [
+            "alex.primary@email.com",
+            "alex.work@email.com",
+            "alex.family@email.com"
+          ],
+          phonesOnFile: [
+            "+1 (916) 555-0123",
+            "+1 (916) 555-0456"
+          ]
+        },
+        global: {
+          allowMarketing: false,
+          quietHours: { enabled: false, start: "21:00", end: "08:00" }
+        },
+        preferences: newBlankPrefs(),
+        meta: {
+          lastSavedAt: "",
+          version: "2.0"
+        }
+      };
+
+      // Load persisted if exists
+      const persisted = loadState();
+      const state = persisted ? persisted : defaultState;
+
+      // If older saved data exists (v1), lightly upgrade it
+      if (state && state.preferences) {
+        state.preferences.forEach(p => {
+          if (!p.contactTargets) {
+            p.contactTargets = { emailMode: "DEFAULT", emailValue: "", phoneMode: "DEFAULT", phoneValue: "" };
+          }
+        });
+      }
+
+      const oModel = new sap.ui.model.json.JSONModel(state);
+      oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
+
+      // ----------------------------
+      // Header / contact card
       // ----------------------------
       const oTitle = new sap.m.Title({ text: "Communication Preferences", level: "H2" });
-
       const oSub = new sap.m.Text({
-        text: "Choose how you want to receive updates by process and channel. Your changes are saved locally in this demo."
+        text: "Select your default contact info, and optionally choose a specific email/phone per business process."
       }).addStyleClass("muted tinyTopPad");
+
+      // "Default Email" as a Select from emails on file (so you can set the default)
+      const oDefaultEmailSelect = new sap.m.Select({
+        selectedKey: "{/customer/defaultEmail}",
+        width: "100%",
+        items: {
+          path: "/customer/emailsOnFile",
+          template: new sap.ui.core.Item({ key: "{= ${$source>}.toString() }", text: "{$source>}" }),
+          templateShareable: false
+        },
+        change: function () {
+          // If any row is using DEFAULT email and had a stale specific, keep as-is.
+          // No extra action needed because DEFAULT reads /customer/defaultEmail at export time.
+        }
+      });
+
+      // Allow adding a new email to the "on file" list in-demo
+      const oAddEmailInput = new sap.m.Input({ placeholder: "Add another email…", width: "100%" });
+      const oAddEmailBtn = new sap.m.Button({
+        text: "Add",
+        type: "Transparent",
+        press: function () {
+          const v = (oAddEmailInput.getValue() || "").trim();
+          if (!v || !isValidEmail(v)) {
+            sap.m.MessageToast.show("Enter a valid email to add.");
+            return;
+          }
+          const data = oModel.getData();
+          data.customer.emailsOnFile = data.customer.emailsOnFile || [];
+          if (!data.customer.emailsOnFile.includes(v)) data.customer.emailsOnFile.push(v);
+          // If no default, set it
+          if (!data.customer.defaultEmail) data.customer.defaultEmail = v;
+          oModel.refresh(true);
+          oAddEmailInput.setValue("");
+          sap.m.MessageToast.show("Email added");
+        }
+      });
+
+      // "Default Phone" as a Select from phones on file
+      const oDefaultPhoneSelect = new sap.m.Select({
+        selectedKey: "{/customer/defaultPhone}",
+        width: "100%",
+        items: {
+          path: "/customer/phonesOnFile",
+          template: new sap.ui.core.Item({ key: "{= ${$source>}.toString() }", text: "{$source>}" }),
+          templateShareable: false
+        }
+      });
+
+      const oAddPhoneInput = new sap.m.Input({ placeholder: "Add another phone…", width: "100%" });
+      const oAddPhoneBtn = new sap.m.Button({
+        text: "Add",
+        type: "Transparent",
+        press: function () {
+          const v = (oAddPhoneInput.getValue() || "").trim();
+          if (!v || !isValidPhone(v)) {
+            sap.m.MessageToast.show("Enter a valid phone to add.");
+            return;
+          }
+          const data = oModel.getData();
+          data.customer.phonesOnFile = data.customer.phonesOnFile || [];
+          if (!data.customer.phonesOnFile.includes(v)) data.customer.phonesOnFile.push(v);
+          if (!data.customer.defaultPhone) data.customer.defaultPhone = v;
+          oModel.refresh(true);
+          oAddPhoneInput.setValue("");
+          sap.m.MessageToast.show("Phone added");
+        }
+      });
 
       const oPreferredName = new sap.m.Input({
         value: "{/customer/preferredName}",
@@ -164,37 +260,8 @@
         width: "100%"
       });
 
-      const oEmail = new sap.m.Input({
-        value: "{/customer/email}",
-        type: sap.m.InputType.Email,
-        placeholder: "name@email.com",
-        width: "100%",
-        liveChange: function (e) {
-          const v = e.getParameter("value");
-          e.getSource().setValueState(isValidEmail(v) ? "None" : "Error");
-          e.getSource().setValueStateText(isValidEmail(v) ? "" : "Enter a valid email address.");
-        }
-      });
-
-      const oPhone = new sap.m.Input({
-        value: "{/customer/phone}",
-        type: sap.m.InputType.Tel,
-        placeholder: "+1 (555) 123-4567",
-        width: "100%",
-        liveChange: function (e) {
-          const v = e.getParameter("value");
-          e.getSource().setValueState(isValidPhone(v) ? "None" : "Error");
-          e.getSource().setValueStateText(isValidPhone(v) ? "" : "Enter a valid phone number.");
-        }
-      });
-
-      const oAllowMarketing = new sap.m.Switch({
-        state: "{/global/allowMarketing}"
-      });
-
-      const oQuietHoursSwitch = new sap.m.Switch({
-        state: "{/global/quietHours/enabled}"
-      });
+      const oAllowMarketing = new sap.m.Switch({ state: "{/global/allowMarketing}" });
+      const oQuietHoursSwitch = new sap.m.Switch({ state: "{/global/quietHours/enabled}" });
 
       const oQuietStart = new sap.m.TimePicker({
         value: "{/global/quietHours/start}",
@@ -214,40 +281,33 @@
         editable: true,
         layout: "ResponsiveGridLayout",
         labelSpanXL: 4, labelSpanL: 4, labelSpanM: 4, labelSpanS: 12,
-        emptySpanXL: 0, emptySpanL: 0, emptySpanM: 0, emptySpanS: 0,
         columnsXL: 2, columnsL: 2, columnsM: 2,
         content: [
-          new sap.m.Label({ text: "Preferred Name" }),
-          oPreferredName,
+          new sap.m.Label({ text: "Preferred Name" }), oPreferredName,
 
-          new sap.m.Label({ text: "Email" }),
-          oEmail,
+          new sap.m.Label({ text: "Default Email" }), oDefaultEmailSelect,
+          new sap.m.Label({ text: "Add Email" }),
+          new sap.m.HBox({ width: "100%", items: [oAddEmailInput, oAddEmailBtn] }),
 
-          new sap.m.Label({ text: "Phone" }),
-          oPhone,
+          new sap.m.Label({ text: "Default Phone" }), oDefaultPhoneSelect,
+          new sap.m.Label({ text: "Add Phone" }),
+          new sap.m.HBox({ width: "100%", items: [oAddPhoneInput, oAddPhoneBtn] }),
 
-          new sap.m.Label({ text: "Allow Program/Offer Recommendations" }),
-          oAllowMarketing,
+          new sap.m.Label({ text: "Allow Program/Offer Recommendations" }), oAllowMarketing,
 
-          new sap.m.Label({ text: "Quiet Hours" }),
-          oQuietHoursSwitch,
-
-          new sap.m.Label({ text: "Quiet Hours Start" }),
-          oQuietStart,
-
-          new sap.m.Label({ text: "Quiet Hours End" }),
-          oQuietEnd
+          new sap.m.Label({ text: "Quiet Hours" }), oQuietHoursSwitch,
+          new sap.m.Label({ text: "Quiet Hours Start" }), oQuietStart,
+          new sap.m.Label({ text: "Quiet Hours End" }), oQuietEnd
         ]
       });
 
       const oContactCard = new sap.m.Panel({
         headerText: "Contact & Global Settings",
-        expandable: false,
         content: [oContactForm]
       });
 
       // ----------------------------
-      // UI: Preferences Table (matrix)
+      // Preferences Table
       // ----------------------------
       const oTable = new sap.m.Table({
         inset: false,
@@ -280,15 +340,13 @@
         })
       });
 
-      // Columns
+      // Columns: Process | channel switches... | Email Target | Phone Target | Notes
       oTable.addColumn(new sap.m.Column({ width: "18rem", header: new sap.m.Text({ text: "Process" }) }));
-      CHANNELS.forEach(c => {
-        oTable.addColumn(new sap.m.Column({
-          hAlign: "Center",
-          header: new sap.m.Text({ text: c.label })
-        }));
-      });
-      oTable.addColumn(new sap.m.Column({ width: "16rem", header: new sap.m.Text({ text: "Notes" }) }));
+      CHANNELS.forEach(c => oTable.addColumn(new sap.m.Column({ hAlign: "Center", header: new sap.m.Text({ text: c.label }) })));
+
+      oTable.addColumn(new sap.m.Column({ width: "14rem", header: new sap.m.Text({ text: "Email Target" }) }));
+      oTable.addColumn(new sap.m.Column({ width: "14rem", header: new sap.m.Text({ text: "Phone Target" }) }));
+      oTable.addColumn(new sap.m.Column({ width: "14rem", header: new sap.m.Text({ text: "Notes" }) }));
 
       function channelSwitchTemplate(channelKey) {
         return new sap.m.Switch({
@@ -296,6 +354,79 @@
           customTextOn: "On",
           customTextOff: "Off"
         });
+      }
+
+      function emailTargetCell() {
+        const modeSelect = new sap.m.Select({
+          selectedKey: "{contactTargets/emailMode}",
+          width: "100%",
+          items: [
+            new sap.ui.core.Item({ key: "DEFAULT", text: "Use Default Email" }),
+            new sap.ui.core.Item({ key: "SPECIFIC", text: "Pick Specific Email" })
+          ],
+          change: function (e) {
+            const ctx = e.getSource().getBindingContext();
+            const row = ctx.getObject();
+            if (e.getParameter("selectedItem").getKey() === "DEFAULT") {
+              row.contactTargets.emailValue = "";
+              oModel.refresh(true);
+            } else {
+              // if switching to SPECIFIC and none set, default to current defaultEmail
+              const data = oModel.getData();
+              row.contactTargets.emailValue = row.contactTargets.emailValue || data.customer.defaultEmail || "";
+              oModel.refresh(true);
+            }
+          }
+        });
+
+        const specificSelect = new sap.m.Select({
+          selectedKey: "{contactTargets/emailValue}",
+          width: "100%",
+          enabled: "{= ${contactTargets/emailMode} === 'SPECIFIC' }",
+          items: {
+            path: "/customer/emailsOnFile",
+            template: new sap.ui.core.Item({ key: "{= ${$source>}.toString() }", text: "{$source>}" }),
+            templateShareable: false
+          }
+        });
+
+        return new sap.m.VBox({ items: [modeSelect, specificSelect] });
+      }
+
+      function phoneTargetCell() {
+        const modeSelect = new sap.m.Select({
+          selectedKey: "{contactTargets/phoneMode}",
+          width: "100%",
+          items: [
+            new sap.ui.core.Item({ key: "DEFAULT", text: "Use Default Phone" }),
+            new sap.ui.core.Item({ key: "SPECIFIC", text: "Pick Specific Phone" })
+          ],
+          change: function (e) {
+            const ctx = e.getSource().getBindingContext();
+            const row = ctx.getObject();
+            if (e.getParameter("selectedItem").getKey() === "DEFAULT") {
+              row.contactTargets.phoneValue = "";
+              oModel.refresh(true);
+            } else {
+              const data = oModel.getData();
+              row.contactTargets.phoneValue = row.contactTargets.phoneValue || data.customer.defaultPhone || "";
+              oModel.refresh(true);
+            }
+          }
+        });
+
+        const specificSelect = new sap.m.Select({
+          selectedKey: "{contactTargets/phoneValue}",
+          width: "100%",
+          enabled: "{= ${contactTargets/phoneMode} === 'SPECIFIC' }",
+          items: {
+            path: "/customer/phonesOnFile",
+            template: new sap.ui.core.Item({ key: "{= ${$source>}.toString() }", text: "{$source>}" }),
+            templateShareable: false
+          }
+        });
+
+        return new sap.m.VBox({ items: [modeSelect, specificSelect] });
       }
 
       const oItemTemplate = new sap.m.ColumnListItem({
@@ -315,15 +446,13 @@
               }).addStyleClass("muted")
             ]
           }),
-          ...CHANNELS.map(c => new sap.m.HBox({
-            justifyContent: "Center",
-            items: [channelSwitchTemplate(c.key)]
-          })),
-          new sap.m.Input({
-            value: "{notes}",
-            placeholder: "Optional…",
-            width: "100%"
-          })
+          ...CHANNELS.map(c => new sap.m.HBox({ justifyContent: "Center", items: [channelSwitchTemplate(c.key)] })),
+
+          // NEW: row-level targets
+          emailTargetCell(),
+          phoneTargetCell(),
+
+          new sap.m.Input({ value: "{notes}", placeholder: "Optional…", width: "100%" })
         ]
       });
 
@@ -334,14 +463,12 @@
       });
 
       // ----------------------------
-      // Footer actions: Save, Reset, Export
+      // Footer actions
       // ----------------------------
       const oLastSaved = new sap.m.Text({
         text: {
           path: "/meta/lastSavedAt",
-          formatter: function (v) {
-            return v ? `Last saved: ${v}` : "Not saved yet";
-          }
+          formatter: function (v) { return v ? `Last saved: ${v}` : "Not saved yet"; }
         }
       }).addStyleClass("muted");
 
@@ -356,36 +483,41 @@
 
       const oExportDialog = new sap.m.Dialog({
         title: "Export Preferences (JSON)",
-        contentWidth: "720px",
+        contentWidth: "760px",
         content: [
           new sap.m.Text({ text: "Copy/paste this JSON to send to an API, workflow, or middleware." }).addStyleClass("muted"),
           oExportArea
         ],
-        beginButton: new sap.m.Button({
-          text: "Close",
-          press: function () { oExportDialog.close(); }
-        })
+        beginButton: new sap.m.Button({ text: "Close", press: function () { oExportDialog.close(); } })
       });
 
       function validateBeforeSave() {
         const data = oModel.getData();
 
-        const emailOk = isValidEmail(data.customer.email);
-        const phoneOk = isValidPhone(data.customer.phone);
-        const contactOk = ensureAtLeastOneContactIfAnyEnabled();
+        const emailOk = isValidEmail(data.customer.defaultEmail);
+        const phoneOk = isValidPhone(data.customer.defaultPhone);
 
-        oEmail.setValueState(emailOk ? "None" : "Error");
-        oPhone.setValueState(phoneOk ? "None" : "Error");
+        if (!emailOk) sap.m.MessageToast.show("Default Email looks invalid.");
+        if (!phoneOk) sap.m.MessageToast.show("Default Phone looks invalid.");
 
-        if (!contactOk) {
-          sap.m.MessageToast.show("Add an email or phone number if any preferences are enabled.");
+        if (!ensureAtLeastOneContactIfAnyEnabled()) {
+          sap.m.MessageToast.show("Add at least one email or phone if any preferences are enabled.");
           return false;
         }
-        if (!emailOk || !phoneOk) {
-          sap.m.MessageToast.show("Fix invalid email/phone fields before saving.");
-          return false;
+
+        // If a row is SPECIFIC, make sure it has a chosen value
+        for (const row of data.preferences) {
+          if (row.contactTargets?.emailMode === "SPECIFIC" && !row.contactTargets.emailValue) {
+            sap.m.MessageToast.show(`Pick a specific email for "${row.processTitle}".`);
+            return false;
+          }
+          if (row.contactTargets?.phoneMode === "SPECIFIC" && !row.contactTargets.phoneValue) {
+            sap.m.MessageToast.show(`Pick a specific phone for "${row.processTitle}".`);
+            return false;
+          }
         }
-        return true;
+
+        return emailOk && phoneOk;
       }
 
       const oSaveBtn = new sap.m.Button({
@@ -394,11 +526,9 @@
         icon: "sap-icon://save",
         press: function () {
           if (!validateBeforeSave()) return;
-
           const data = oModel.getData();
           data.meta.lastSavedAt = formatNow();
           oModel.refresh(true);
-
           saveState(data);
           sap.m.MessageToast.show("Saved");
         }
@@ -425,8 +555,7 @@
         icon: "sap-icon://download",
         type: "Transparent",
         press: function () {
-          const payload = buildExportJson();
-          oExportArea.setValue(JSON.stringify(payload, null, 2));
+          oExportArea.setValue(JSON.stringify(buildExportJson(), null, 2));
           oExportDialog.open();
         }
       });
@@ -437,10 +566,11 @@
         type: "Transparent",
         press: function () {
           const loaded = loadState();
-          if (!loaded) {
-            sap.m.MessageToast.show("No saved preferences found.");
-            return;
-          }
+          if (!loaded) return sap.m.MessageToast.show("No saved preferences found.");
+          // Light upgrade
+          loaded.preferences?.forEach(p => {
+            if (!p.contactTargets) p.contactTargets = { emailMode: "DEFAULT", emailValue: "", phoneMode: "DEFAULT", phoneValue: "" };
+          });
           oModel.setData(loaded);
           sap.m.MessageToast.show("Loaded");
         }
@@ -459,7 +589,7 @@
       });
 
       // ----------------------------
-      // Layout: Page
+      // Page layout
       // ----------------------------
       const oPage = new sap.m.Page({
         title: "Preferences",
@@ -484,3 +614,4 @@
   </script>
 </body>
 </html>
+
