@@ -20,7 +20,6 @@
     html, body, #content { height: 100%; margin: 0; }
     .pageWrap { max-width: 1100px; margin: 0 auto; }
     .muted { opacity: 0.75; }
-    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
     .tinyTopPad { padding-top: 0.25rem; }
   </style>
 </head>
@@ -47,7 +46,7 @@
         { id: "PROFILE_UPDATES", title: "Profile Updates", desc: "Account changes, security notices, preference confirmations." }
       ];
 
-      const STORAGE_KEY = "scv2_comm_prefs_v1b";
+      const STORAGE_KEY = "scv2_comm_prefs_v1c";
 
       function newBlankPrefs() {
         return PROCESSES.map(p => ({
@@ -96,30 +95,13 @@
         return hasEmail || hasPhone;
       }
 
-      function buildExportJson() {
-        const data = oModel.getData();
-        return {
-          customer: data.customer,
-          global: data.global,
-          preferences: data.preferences.map(p => ({
-            processId: p.processId,
-            channels: p.channels,
-            notes: p.notes || ""
-          })),
-          meta: data.meta
-        };
-      }
-
       // ----------------------------
-      // Default state (demo "on file" options)
+      // Default state (demo values)
       // ----------------------------
       const defaultState = {
         customer: {
-          // NOW: dropdown-selected values
           email: "alex.primary@email.com",
           phone: "+1 (916) 555-0123",
-
-          // NOW: available values
           emailsOnFile: [
             "alex.primary@email.com",
             "alex.work@email.com",
@@ -135,20 +117,20 @@
           quietHours: { enabled: false, start: "21:00", end: "08:00" }
         },
         preferences: newBlankPrefs(),
-        meta: { lastSavedAt: "", version: "1.1" }
+        meta: { lastSavedAt: "", version: "1.2" }
       };
 
       const persisted = loadState();
-      const state = persisted ? persisted : defaultState;
+      const initialState = persisted ? persisted : defaultState;
 
-      // Light upgrade safety if older saved state exists
-      state.customer = state.customer || {};
-      state.customer.emailsOnFile = state.customer.emailsOnFile || defaultState.customer.emailsOnFile;
-      state.customer.phonesOnFile = state.customer.phonesOnFile || defaultState.customer.phonesOnFile;
-      if (!state.customer.email) state.customer.email = state.customer.emailsOnFile[0] || "";
-      if (!state.customer.phone) state.customer.phone = state.customer.phonesOnFile[0] || "";
+      // Ensure lists exist (for older saves)
+      initialState.customer = initialState.customer || {};
+      initialState.customer.emailsOnFile = initialState.customer.emailsOnFile || defaultState.customer.emailsOnFile;
+      initialState.customer.phonesOnFile = initialState.customer.phonesOnFile || defaultState.customer.phonesOnFile;
+      if (!initialState.customer.email) initialState.customer.email = initialState.customer.emailsOnFile[0] || "";
+      if (!initialState.customer.phone) initialState.customer.phone = initialState.customer.phonesOnFile[0] || "";
 
-      const oModel = new sap.ui.model.json.JSONModel(state);
+      const oModel = new sap.ui.model.json.JSONModel(initialState);
       oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
 
       // ----------------------------
@@ -159,18 +141,19 @@
         text: "Choose how you want to receive updates by process and channel."
       }).addStyleClass("muted tinyTopPad");
 
+      // FIX: correct binding for array of strings -> "{.}"
       const oEmailSelect = new sap.m.Select({
         selectedKey: "{/customer/email}",
         width: "100%",
         items: {
           path: "/customer/emailsOnFile",
-          template: new sap.ui.core.Item({ key: "{$source>}", text: "{$source>}" }),
+          template: new sap.ui.core.Item({ key: "{.}", text: "{.}" }),
           templateShareable: false
         },
         change: function (e) {
           const v = e.getParameter("selectedItem")?.getKey() || "";
           e.getSource().setValueState(isValidEmail(v) ? "None" : "Error");
-          e.getSource().setValueStateText(isValidEmail(v) ? "" : "Enter a valid email address.");
+          e.getSource().setValueStateText(isValidEmail(v) ? "" : "Select a valid email address.");
         }
       });
 
@@ -179,13 +162,13 @@
         width: "100%",
         items: {
           path: "/customer/phonesOnFile",
-          template: new sap.ui.core.Item({ key: "{$source>}", text: "{$source>}" }),
+          template: new sap.ui.core.Item({ key: "{.}", text: "{.}" }),
           templateShareable: false
         },
         change: function (e) {
           const v = e.getParameter("selectedItem")?.getKey() || "";
           e.getSource().setValueState(isValidPhone(v) ? "None" : "Error");
-          e.getSource().setValueStateText(isValidPhone(v) ? "" : "Enter a valid phone number.");
+          e.getSource().setValueStateText(isValidPhone(v) ? "" : "Select a valid phone number.");
         }
       });
 
@@ -325,7 +308,7 @@
       });
 
       // ----------------------------
-      // Footer actions: Save, Reset, Export
+      // Footer actions: Save + Cancel
       // ----------------------------
       const oLastSaved = new sap.m.Text({
         text: {
@@ -333,25 +316,6 @@
           formatter: function (v) { return v ? `Last saved: ${v}` : "Not saved yet"; }
         }
       }).addStyleClass("muted");
-
-      const oExportArea = new sap.m.TextArea({
-        rows: 10,
-        width: "100%",
-        growing: true,
-        growingMaxLines: 16,
-        value: "",
-        editable: false
-      }).addStyleClass("mono");
-
-      const oExportDialog = new sap.m.Dialog({
-        title: "Export Preferences (JSON)",
-        contentWidth: "720px",
-        content: [
-          new sap.m.Text({ text: "Copy/paste this JSON to send to an API, workflow, or middleware." }).addStyleClass("muted"),
-          oExportArea
-        ],
-        beginButton: new sap.m.Button({ text: "Close", press: function () { oExportDialog.close(); } })
-      });
 
       function validateBeforeSave() {
         const data = oModel.getData();
@@ -389,62 +353,39 @@
         }
       });
 
-      const oResetBtn = new sap.m.Button({
-        text: "Reset",
-        icon: "sap-icon://reset",
+      // Cancel = revert to last saved (if exists) else defaults
+      const oCancelBtn = new sap.m.Button({
+        text: "Cancel",
+        icon: "sap-icon://decline",
         type: "Transparent",
         press: function () {
-          sap.m.MessageBox.confirm("Reset all fields to defaults?", {
+          sap.m.MessageBox.confirm("Discard unsaved changes?", {
             onClose: function (action) {
               if (action !== sap.m.MessageBox.Action.OK) return;
-              oModel.setData(JSON.parse(JSON.stringify(defaultState)));
-              localStorage.removeItem(STORAGE_KEY);
-              sap.m.MessageToast.show("Reset complete");
+
+              const loaded = loadState();
+              const revert = loaded ? loaded : defaultState;
+
+              // ensure lists exist (for safety)
+              revert.customer = revert.customer || {};
+              revert.customer.emailsOnFile = revert.customer.emailsOnFile || defaultState.customer.emailsOnFile;
+              revert.customer.phonesOnFile = revert.customer.phonesOnFile || defaultState.customer.phonesOnFile;
+              if (!revert.customer.email) revert.customer.email = revert.customer.emailsOnFile[0] || "";
+              if (!revert.customer.phone) revert.customer.phone = revert.customer.phonesOnFile[0] || "";
+
+              oModel.setData(JSON.parse(JSON.stringify(revert)));
+              sap.m.MessageToast.show("Changes discarded");
             }
           });
-        }
-      });
-
-      const oExportBtn = new sap.m.Button({
-        text: "Export JSON",
-        icon: "sap-icon://download",
-        type: "Transparent",
-        press: function () {
-          oExportArea.setValue(JSON.stringify(buildExportJson(), null, 2));
-          oExportDialog.open();
-        }
-      });
-
-      const oLoadBtn = new sap.m.Button({
-        text: "Load Saved",
-        icon: "sap-icon://refresh",
-        type: "Transparent",
-        press: function () {
-          const loaded = loadState();
-          if (!loaded) {
-            sap.m.MessageToast.show("No saved preferences found.");
-            return;
-          }
-          // Ensure dropdown lists exist for older saves
-          loaded.customer = loaded.customer || {};
-          loaded.customer.emailsOnFile = loaded.customer.emailsOnFile || defaultState.customer.emailsOnFile;
-          loaded.customer.phonesOnFile = loaded.customer.phonesOnFile || defaultState.customer.phonesOnFile;
-          if (!loaded.customer.email) loaded.customer.email = loaded.customer.emailsOnFile[0] || "";
-          if (!loaded.customer.phone) loaded.customer.phone = loaded.customer.phonesOnFile[0] || "";
-          oModel.setData(loaded);
-          sap.m.MessageToast.show("Loaded");
         }
       });
 
       const oActionBar = new sap.m.Toolbar({
         content: [
           oSaveBtn,
-          oResetBtn,
+          oCancelBtn,
           new sap.m.ToolbarSpacer(),
-          oLastSaved,
-          new sap.m.ToolbarSpacer(),
-          oLoadBtn,
-          oExportBtn
+          oLastSaved
         ]
       });
 
@@ -474,3 +415,4 @@
   </script>
 </body>
 </html>
+
