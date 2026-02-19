@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Communication Preferences</title>
 
-  <!-- OpenUI5 -->
   <script
     id="sap-ui-bootstrap"
     src="https://sdk.openui5.org/resources/sap-ui-core.js"
@@ -33,9 +32,9 @@
       const CHANNELS = [
         { key: "EMAIL", label: "Email" },
         { key: "SMS", label: "SMS" },
-        { key: "PUSH", label: "In-App Push" }
-      //  { key: "VOICE", label: "Voice Call" }
-      //  { key: "MAIL", label: "Mail" }
+        { key: "PUSH", label: "In-App Push" },
+        { key: "VOICE", label: "Voice Call" },
+        { key: "MAIL", label: "Mail" }
       ];
 
       const PROCESSES = [
@@ -46,7 +45,7 @@
         { id: "PROFILE_UPDATES", title: "Profile Updates", desc: "Account changes, security notices, preference confirmations." }
       ];
 
-      const STORAGE_KEY = "scv2_comm_prefs_v1c";
+      const STORAGE_KEY = "scv2_comm_prefs_v1d";
 
       function newBlankPrefs() {
         return PROCESSES.map(p => ({
@@ -83,8 +82,8 @@
         return /^[0-9()+\-.\s]{7,}$/.test(String(v).trim());
       }
 
-      function ensureAtLeastOneContactIfAnyEnabled() {
-        const data = oModel.getData();
+      function ensureAtLeastOneContactIfAnyEnabled(model) {
+        const data = model.getData();
         const anyEnabled = data.preferences.some(row =>
           Object.values(row.channels || {}).some(Boolean)
         );
@@ -95,6 +94,17 @@
         return hasEmail || hasPhone;
       }
 
+      // --- NEW: normalize "on file" arrays to [{value:"..."}]
+      function normalizeValueList(list) {
+        if (!Array.isArray(list)) return [];
+        if (list.length === 0) return [];
+        if (typeof list[0] === "string") {
+          return list.map(v => ({ value: v }));
+        }
+        // already object-ish
+        return list.map(x => ({ value: x.value ?? x }));
+      }
+
       // ----------------------------
       // Default state (demo values)
       // ----------------------------
@@ -103,13 +113,13 @@
           email: "alex.primary@email.com",
           phone: "+1 (916) 555-0123",
           emailsOnFile: [
-            "alex.primary@email.com",
-            "alex.work@email.com",
-            "alex.family@email.com"
+            { value: "alex.primary@email.com" },
+            { value: "alex.work@email.com" },
+            { value: "alex.family@email.com" }
           ],
           phonesOnFile: [
-            "+1 (916) 555-0123",
-            "+1 (916) 555-0456"
+            { value: "+1 (916) 555-0123" },
+            { value: "+1 (916) 555-0456" }
           ]
         },
         global: {
@@ -117,18 +127,27 @@
           quietHours: { enabled: false, start: "21:00", end: "08:00" }
         },
         preferences: newBlankPrefs(),
-        meta: { lastSavedAt: "", version: "1.2" }
+        meta: { lastSavedAt: "", version: "1.3" }
       };
 
       const persisted = loadState();
       const initialState = persisted ? persisted : defaultState;
 
-      // Ensure lists exist (for older saves)
+      // Upgrade/normalize persisted state
       initialState.customer = initialState.customer || {};
-      initialState.customer.emailsOnFile = initialState.customer.emailsOnFile || defaultState.customer.emailsOnFile;
-      initialState.customer.phonesOnFile = initialState.customer.phonesOnFile || defaultState.customer.phonesOnFile;
-      if (!initialState.customer.email) initialState.customer.email = initialState.customer.emailsOnFile[0] || "";
-      if (!initialState.customer.phone) initialState.customer.phone = initialState.customer.phonesOnFile[0] || "";
+      initialState.customer.emailsOnFile = normalizeValueList(
+        initialState.customer.emailsOnFile ?? defaultState.customer.emailsOnFile
+      );
+      initialState.customer.phonesOnFile = normalizeValueList(
+        initialState.customer.phonesOnFile ?? defaultState.customer.phonesOnFile
+      );
+
+      if (!initialState.customer.email) {
+        initialState.customer.email = (initialState.customer.emailsOnFile[0]?.value) || "";
+      }
+      if (!initialState.customer.phone) {
+        initialState.customer.phone = (initialState.customer.phonesOnFile[0]?.value) || "";
+      }
 
       const oModel = new sap.ui.model.json.JSONModel(initialState);
       oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
@@ -141,13 +160,13 @@
         text: "Choose how you want to receive updates by process and channel."
       }).addStyleClass("muted tinyTopPad");
 
-      // FIX: correct binding for array of strings -> "{.}"
+      // FIX: bind to object list {value:"..."} for guaranteed rendering
       const oEmailSelect = new sap.m.Select({
         selectedKey: "{/customer/email}",
         width: "100%",
         items: {
           path: "/customer/emailsOnFile",
-          template: new sap.ui.core.Item({ key: "{.}", text: "{.}" }),
+          template: new sap.ui.core.Item({ key: "{value}", text: "{value}" }),
           templateShareable: false
         },
         change: function (e) {
@@ -162,7 +181,7 @@
         width: "100%",
         items: {
           path: "/customer/phonesOnFile",
-          template: new sap.ui.core.Item({ key: "{.}", text: "{.}" }),
+          template: new sap.ui.core.Item({ key: "{value}", text: "{value}" }),
           templateShareable: false
         },
         change: function (e) {
@@ -319,14 +338,13 @@
 
       function validateBeforeSave() {
         const data = oModel.getData();
-
         const emailOk = isValidEmail(data.customer.email);
         const phoneOk = isValidPhone(data.customer.phone);
 
         oEmailSelect.setValueState(emailOk ? "None" : "Error");
         oPhoneSelect.setValueState(phoneOk ? "None" : "Error");
 
-        if (!ensureAtLeastOneContactIfAnyEnabled()) {
+        if (!ensureAtLeastOneContactIfAnyEnabled(oModel)) {
           sap.m.MessageToast.show("Select an email or phone number if any preferences are enabled.");
           return false;
         }
@@ -343,17 +361,14 @@
         icon: "sap-icon://save",
         press: function () {
           if (!validateBeforeSave()) return;
-
           const data = oModel.getData();
           data.meta.lastSavedAt = formatNow();
           oModel.refresh(true);
-
           saveState(data);
           sap.m.MessageToast.show("Saved");
         }
       });
 
-      // Cancel = revert to last saved (if exists) else defaults
       const oCancelBtn = new sap.m.Button({
         text: "Cancel",
         icon: "sap-icon://decline",
@@ -366,12 +381,12 @@
               const loaded = loadState();
               const revert = loaded ? loaded : defaultState;
 
-              // ensure lists exist (for safety)
+              // normalize on cancel too
               revert.customer = revert.customer || {};
-              revert.customer.emailsOnFile = revert.customer.emailsOnFile || defaultState.customer.emailsOnFile;
-              revert.customer.phonesOnFile = revert.customer.phonesOnFile || defaultState.customer.phonesOnFile;
-              if (!revert.customer.email) revert.customer.email = revert.customer.emailsOnFile[0] || "";
-              if (!revert.customer.phone) revert.customer.phone = revert.customer.phonesOnFile[0] || "";
+              revert.customer.emailsOnFile = normalizeValueList(revert.customer.emailsOnFile ?? defaultState.customer.emailsOnFile);
+              revert.customer.phonesOnFile = normalizeValueList(revert.customer.phonesOnFile ?? defaultState.customer.phonesOnFile);
+              if (!revert.customer.email) revert.customer.email = (revert.customer.emailsOnFile[0]?.value) || "";
+              if (!revert.customer.phone) revert.customer.phone = (revert.customer.phonesOnFile[0]?.value) || "";
 
               oModel.setData(JSON.parse(JSON.stringify(revert)));
               sap.m.MessageToast.show("Changes discarded");
@@ -415,4 +430,5 @@
   </script>
 </body>
 </html>
+
 
