@@ -472,7 +472,7 @@ body {
 <div id="overview" class="tab-content active">
   <div class="page-grid">
 
-  <div class="card">
+<!--  <div class="card">
     <h3>Alerts</h3>
     <div class="message-strip message-error">
         <span>Warning - High Risk Customer</span>
@@ -485,24 +485,21 @@ body {
       <div class="message-strip message-success">
         <span>2 Customer Relationships Exist</span>
       </div>
-  </div>
- <!-- <div class="card">
+  </div>-->
+ <div class="card">
     <h3>Contact Prediction</h3>
     <div class="message-strip message-success">
         <span>Disconnect Warning Call - Payment Assistance</span>
-       <!-- <button class="message-button" onclick="window.open('https://example.com/budget', '_blank')">Go</button>
       </div>
       
       <div class="message-strip message-success">
         <span>Adjust Payment Arrangement</span>
-        <!--<button class="message-button" onclick="window.open('https://example.com/payment', '_blank')">Go</button>
       </div>
       
       <div class="message-strip message-neutral">
         <span>Make Payment</span>
-        <!--<button class="message-button" onclick="window.open('https://example.com/ebill', '_blank')">Go</button>
       </div>
-  </div> -->
+  </div>
   <div class="card">
     <h3>Next Best Actions</h3>
     <div class="message-strip message-success has-tooltip">
@@ -872,27 +869,27 @@ function updateSection(id, html) {
 const bp = getUrlParam("bp");
 
 const scenarios = {
-  "US00016976": {
+  "US00017567": {
     contactPredictions: `
-      <div class="message-strip message-success"><span>Payment Due - Consider Arrangement</span></div>
-      <div class="message-strip message-error"><span>Energy Usage Alert</span></div>
-      <div class="message-strip message-neutral"><span>Update Contact Info</span></div>
+      <div class="message-strip message-success"><span>In-Process Case - High Bill Investigation</span></div>
+      <div class="message-strip message-error"><span>Open Service Order for 1412 Carl Miller Blvd</span></div>
+      <div class="message-strip message-neutral"><span>Marketing Campaign - Line Protection Program</span></div>
     `,
     nextBestActions: `
       <div class="message-strip message-success has-tooltip">
-        <span>1. Recommend Payment Arrangement</span>
-        <div class="tooltip-box"><b>SAY: </b>You may qualify for a flexible plan to manage your past due balance. Would you like to explore that?</div>
-        <button class="message-button" onclick="window.open('https://ssamyaccount.cxlive.ai/Portal/PaymentPlan', '_blank')">Go</button>
+        <span>1. Review updates on In-Process Case</span>
+        <div class="tooltip-box"><b>SAY: </b>You have an open case that is currently In Process</div>
+     <!--   <button class="message-button" onclick="window.open('https://ssamyaccount.cxlive.ai/Portal/PaymentPlan', '_blank')">Go</button>-->
       </div>
       <div class="message-strip message-neutral has-tooltip">
-        <span>2. Recommend eBill</span>
+        <span>2. Sign up for Line Protection Program</span>
         <div class="tooltip-box"><b>SAY: </b>We can enroll you in eBill so you’ll get your bill emailed and manage it online.</div>
-        <button class="message-button" onclick="window.open('https://ssamyaccount.cxlive.ai/Portal/NotificationPreferences', '_blank')">Go</button>
+      <!--  <button class="message-button" onclick="window.open('https://ssamyaccount.cxlive.ai/Portal/NotificationPreferences', '_blank')">Go</button>-->
       </div>
       <div class="message-strip message-error has-tooltip">
-        <span>3. No AutoPay Eligibility</span>
-        <div class="tooltip-box"><b>SAY: </b>Customer does not meet eligibility for AutoPay enrollment at this time.</div>
-        <button class="message-button disabled">Go</button>
+        <span>3. Enroll in E-Bill</span>
+        <div class="tooltip-box"><b>SAY: </b>Go green by signing up for eBill.</div>
+        <!--<button class="message-button disabled">Go</button>-->
       </div>
     `,
     recommendedPrograms: `
