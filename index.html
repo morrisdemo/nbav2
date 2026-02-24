@@ -1096,7 +1096,7 @@ function loadScenario(bp) {
   const content = scenarios[bp];
   if (content) {
     updateSection(".card:nth-of-type(1) .message-strip", "");
-    updateSection(".card:nth-of-type(1)", `<h3>Contact Prediction</h3>` + content.contactPredictions);
+    updateSection(".card:nth-of-type(1)", `<h3>Alerts</h3>` + content.contactPredictions);
 
     updateSection(".card:nth-of-type(2) .message-strip", "");
     updateSection(".card:nth-of-type(2)", `<h3>Next Best Actions</h3>` + content.nextBestActions);
