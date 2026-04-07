@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Communication Preferences</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --bg-app: #f5f6f8;
+  --bg-surface: #ffffff;
+  --bg-surface-hover: #fafbfc;
+  --bg-inset: #f0f2f5;
+  --border-base: #e2e5ea;
+  --border-subtle: #eceef2;
+  --text-primary: #1a1f2b;
+  --text-secondary: #5c6370;
+  --text-tertiary: #8b919e;
+  --text-inverse: #fff;
+  --accent-blue: #2b6cb0;
+  --accent-blue-light: #ebf2fa;
+  --accent-blue-muted: #3b7ddd;
+  --status-critical: #c53030;
+  --status-critical-bg: #fef2f2;
+  --status-success: #276749;
+  --status-success-bg: #f0fdf4;
+  --status-success-border: #bbf7d0;
+  --status-warning: #b7791f;
+  --status-warning-bg: #fefce8;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --shadow-card: 0 1px 3px rgba(26,31,43,.04), 0 0 0 1px var(--border-subtle);
+  --shadow-md: 0 2px 8px rgba(26,31,43,.06);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-app);
+  color: var(--text-primary);
+  font-size: 13.5px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Layout Shell ── */
+.page-wrap {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 16px 20px 80px;
+}
+
+/* ── Customer Context Bar ── */
+.context-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  margin-bottom: 16px;
+}
+
+.ctx-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, var(--accent-blue-light), #d0e2f5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--accent-blue);
+  flex-shrink: 0;
+}
+
+.ctx-info { flex: 1; min-width: 0; }
+.ctx-name { font-size: 13.5px; font-weight: 600; }
+.ctx-meta { font-size: 11px; color: var(--text-tertiary); }
+.ctx-meta .mono { font-family: var(--font-mono); font-size: 10.5px; }
+
+.save-status {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.save-status.saved { color: var(--status-success); }
+
+/* ── Section Cards ── */
+.card {
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.card-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-title svg { flex-shrink: 0; color: var(--text-tertiary); }
+
+.card-body { padding: 16px 18px; }
+
+/* ── Form Fields ── */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 20px;
+}
+
+.form-group { display: flex; flex-direction: column; gap: 4px; }
+
+.form-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.form-select, .form-input, .form-time {
+  font-family: var(--font-body);
+  font-size: 13px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-base);
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
+  width: 100%;
+}
+
+.form-select:focus, .form-input:focus, .form-time:focus {
+  border-color: var(--accent-blue-muted);
+  box-shadow: 0 0 0 2px rgba(59,125,221,.1);
+}
+
+.form-select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238b919e' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
+
+/* ── Toggle Switch ── */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.toggle-row + .toggle-row { border-top: 1px solid var(--border-subtle); }
+
+.toggle-label-wrap { flex: 1; min-width: 0; }
+
+.toggle-label { font-size: 13px; font-weight: 500; }
+
+.toggle-desc { font-size: 11.5px; color: var(--text-secondary); line-height: 1.4; }
+
+.toggle-switch {
+  position: relative;
+  width: 40px;
+  height: 22px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+
+.toggle-track {
+  position: absolute;
+  inset: 0;
+  background: var(--border-base);
+  border-radius: 11px;
+  transition: background .2s ease;
+}
+
+.toggle-switch input:checked + .toggle-track { background: var(--accent-blue); }
+
+.toggle-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0,0,0,.15);
+  transition: transform .2s ease;
+}
+
+.toggle-switch input:checked ~ .toggle-knob { transform: translateX(18px); }
+
+/* ── Quiet Hours Inline ── */
+.quiet-hours-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+.quiet-hours-row .form-time { width: 100px; text-align: center; }
+
+.quiet-hours-sep { font-size: 12px; color: var(--text-tertiary); font-weight: 500; }
+
+/* ── Process / Channel Matrix ── */
+.matrix-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.matrix-table th {
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--text-tertiary);
+  padding: 10px 12px;
+  text-align: center;
+  border-bottom: 1px solid var(--border-base);
+  position: sticky;
+  top: 0;
+  background: var(--bg-surface);
+  z-index: 2;
+}
+
+.matrix-table th:first-child { text-align: left; }
+
+.matrix-table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+}
+
+.matrix-table tr:last-child td { border-bottom: none; }
+
+.matrix-table td:not(:first-child) { text-align: center; }
+
+.process-cell { min-width: 200px; }
+
+.process-name { font-size: 13px; font-weight: 600; line-height: 1.3; }
+
+.process-desc { font-size: 11px; color: var(--text-secondary); line-height: 1.4; margin-top: 1px; }
+
+.notes-input {
+  font-family: var(--font-body);
+  font-size: 12px;
+  padding: 6px 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  width: 100%;
+  min-width: 120px;
+  outline: none;
+  color: var(--text-primary);
+  transition: border-color .15s ease;
+  background: var(--bg-inset);
+}
+
+.notes-input:focus { border-color: var(--accent-blue-muted); background: var(--bg-surface); }
+
+.notes-input::placeholder { color: var(--text-tertiary); }
+
+/* Channel toggle (compact) */
+.ch-toggle {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  display: inline-block;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.ch-toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+
+.ch-track {
+  position: absolute;
+  inset: 0;
+  background: var(--border-base);
+  border-radius: 10px;
+  transition: background .2s ease;
+}
+
+.ch-toggle input:checked + .ch-track { background: var(--accent-blue); }
+
+.ch-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0,0,0,.12);
+  transition: transform .2s ease;
+}
+
+.ch-toggle input:checked ~ .ch-knob { transform: translateX(16px); }
+
+/* ── Action Bar ── */
+.action-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-surface);
+  border-top: 1px solid var(--border-base);
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 20;
+  box-shadow: 0 -2px 8px rgba(26,31,43,.04);
+}
+
+.action-bar-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all .15s ease;
+  border: 1px solid transparent;
+  text-decoration: none;
+}
+
+.btn:active { transform: translateY(1px) scale(.98); }
+.btn-primary { background: var(--accent-blue); color: var(--text-inverse); border-color: var(--accent-blue); }
+.btn-primary:hover { background: #245a94; }
+.btn-secondary { background: var(--bg-surface); color: var(--text-primary); border-color: var(--border-base); }
+.btn-secondary:hover { background: var(--bg-inset); }
+.btn-text { background: none; color: var(--accent-blue); border: none; padding: 8px 10px; }
+.btn-text:hover { background: var(--accent-blue-light); }
+.btn-danger-text { background: none; color: var(--status-critical); border: none; padding: 8px 10px; }
+.btn-danger-text:hover { background: var(--status-critical-bg); }
+
+.spacer { flex: 1; }
+
+.last-saved { font-size: 11px; color: var(--text-tertiary); }
+
+/* ── Toast ── */
+.toast {
+  position: fixed;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--text-primary);
+  color: var(--text-inverse);
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0;
+  transition: all .3s ease;
+  z-index: 30;
+  pointer-events: none;
+}
+
+.toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── Bulk Actions ── */
+.bulk-actions {
+  display: flex;
+  gap: 4px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 700px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .page-wrap { padding: 12px 12px 80px; }
+  .matrix-table { display: block; overflow-x: auto; }
+}
+
+/* ── Stagger ── */
+.stagger { opacity: 0; transform: translateY(6px); animation: staggerIn .3s ease forwards; }
+@keyframes staggerIn { to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- Customer Context -->
+  <div class="context-bar stagger" style="animation-delay:.05s">
+    <div class="ctx-avatar" id="ctxAvatar">MR</div>
+    <div class="ctx-info">
+      <div class="ctx-name" id="ctxName">Maria Rodriguez</div>
+      <div class="ctx-meta"><span class="mono" id="ctxBP">BP 1000001</span> &middot; Communication preferences</div>
+    </div>
+    <div class="save-status" id="saveStatus">Not saved yet</div>
+  </div>
+
+  <!-- Contact & Global Settings -->
+  <div class="card stagger" style="animation-delay:.1s">
+    <div class="card-header">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="5" r="3"/><path d="M2.5 14c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/></svg>
+        Contact &amp; global settings
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label" for="selEmail">Primary email</label>
+          <select class="form-select" id="selEmail"></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="selPhone">Primary phone</label>
+          <select class="form-select" id="selPhone"></select>
+        </div>
+      </div>
+
+      <div style="margin-top:14px">
+        <div class="toggle-row">
+          <div class="toggle-label-wrap">
+            <div class="toggle-label">Allow program and offer recommendations</div>
+            <div class="toggle-desc">Receive suggestions for rebates, assistance programs, and rate optimization</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="togMarketing">
+            <span class="toggle-track"></span>
+            <span class="toggle-knob"></span>
+          </label>
+        </div>
+
+        <div class="toggle-row">
+          <div class="toggle-label-wrap">
+            <div class="toggle-label">Quiet hours</div>
+            <div class="toggle-desc">Suppress non-emergency notifications during specified hours</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="togQuiet">
+            <span class="toggle-track"></span>
+            <span class="toggle-knob"></span>
+          </label>
+        </div>
+
+        <div class="quiet-hours-row" id="quietRow" style="display:none">
+          <span class="form-label" style="text-transform:none;letter-spacing:0;font-weight:500">From</span>
+          <input type="time" class="form-time" id="quietStart" value="21:00">
+          <span class="quiet-hours-sep">to</span>
+          <input type="time" class="form-time" id="quietEnd" value="08:00">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Preferences Matrix -->
+  <div class="card stagger" style="animation-delay:.15s">
+    <div class="card-header">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="2" width="12" height="12" rx="2"/><path d="M2 6h12M6 2v12"/></svg>
+        Preferences by process &amp; channel
+      </div>
+      <div class="bulk-actions">
+        <button class="btn btn-text" onclick="bulkToggle(true)">Enable all</button>
+        <button class="btn btn-danger-text" onclick="bulkToggle(false)">Disable all</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="matrix-table" id="matrixTable">
+        <thead><tr id="matrixHead"></tr></thead>
+        <tbody id="matrixBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- Fixed Action Bar -->
+<div class="action-bar">
+  <div class="action-bar-inner">
+    <button class="btn btn-primary" onclick="savePrefs()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M11.5 12.5H2.5a1 1 0 01-1-1v-9a1 1 0 011-1h7.59a1 1 0 01.7.29l2.12 2.12a1 1 0 01.29.7V11.5a1 1 0 01-1 1z"/><path d="M4.5 12.5v-4h5v4"/><path d="M4.5 1.5v3h4"/></svg>
+      Save preferences
+    </button>
+    <button class="btn btn-secondary" onclick="cancelChanges()">Cancel</button>
+    <div class="spacer"></div>
+    <span class="last-saved" id="lastSaved">Not saved yet</span>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════
+   CONFIG
+   ═══════════════════════════════════════ */
+const DEFAULTS = { bp:'1000001', first:'Maria', last:'Rodriguez' };
+const STORAGE_KEY = 'scv2_comm_prefs_v2';
+
+const CHANNELS = [
+  { key:'EMAIL', label:'Email', icon:'envelope' },
+  { key:'SMS',   label:'SMS',   icon:'phone' },
+  { key:'PUSH',  label:'In-App Push', icon:'bell' }
+];
+
+const PROCESSES = [
+  { id:'BILLING_PAYMENTS', title:'Billing and payments',      desc:'Statements, bills, payment reminders, payment confirmations' },
+  { id:'USAGE_ALERTS',     title:'Usage alerts',              desc:'High usage, threshold alerts, leak detection (if applicable)' },
+  { id:'OUTAGES',          title:'Outages and emergencies',   desc:'Service interruptions, restoration updates, emergency notices' },
+  { id:'PROGRAM_RECS',     title:'Program recommendations',   desc:'Rebates, assistance programs, time-of-use rate suggestions' },
+  { id:'PROFILE_UPDATES',  title:'Profile and security',      desc:'Account changes, security notices, preference confirmations' }
+];
+
+const DEFAULT_STATE = {
+  customer: {
+    email: 'saputilitiesdemo@gmail.com',
+    phone: '+1 (720) 402-5379',
+    emailsOnFile: ['saputilitiesdemo@gmail.com','sapdemo.family@gmail.com','sapdemo.work@gmail.com'],
+    phonesOnFile: ['+1 (720) 402-5379','+1 (248) 977-7948']
+  },
+  global: {
+    allowMarketing: false,
+    quietHours: { enabled: false, start: '21:00', end: '08:00' }
+  },
+  preferences: PROCESSES.map(p => ({
+    processId: p.id,
+    channels: CHANNELS.reduce((a,c) => (a[c.key]=false,a), {}),
+    notes: ''
+  })),
+  meta: { lastSavedAt: '' }
+};
+
+
+/* ═══════════════════════════════════════
+   STATE
+   ═══════════════════════════════════════ */
+let state = loadState() || JSON.parse(JSON.stringify(DEFAULT_STATE));
+
+function loadState() {
+  try { const r = localStorage.getItem(STORAGE_KEY); return r ? JSON.parse(r) : null; }
+  catch { return null; }
+}
+
+function persistState() {
+  state.meta.lastSavedAt = new Date().toLocaleString();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+
+/* ═══════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  const ctx = parseParams();
+  renderCustomerContext(ctx);
+  renderContactForm();
+  renderMatrix();
+  updateSaveStatus();
+});
+
+function parseParams() {
+  const p = new URLSearchParams(window.location.search);
+  return {
+    bp:    p.get('bp')    || DEFAULTS.bp,
+    first: p.get('first') || DEFAULTS.first,
+    last:  p.get('last')  || DEFAULTS.last
+  };
+}
+
+
+/* ═══════════════════════════════════════
+   CUSTOMER CONTEXT
+   ═══════════════════════════════════════ */
+function renderCustomerContext(ctx) {
+  const init = `${ctx.first[0]}${ctx.last[0]}`.toUpperCase();
+  document.getElementById('ctxAvatar').textContent = init;
+  document.getElementById('ctxName').textContent = `${ctx.first} ${ctx.last}`;
+  document.getElementById('ctxBP').textContent = `BP ${ctx.bp}`;
+}
+
+
+/* ═══════════════════════════════════════
+   CONTACT FORM
+   ═══════════════════════════════════════ */
+function renderContactForm() {
+  // Email dropdown
+  const selEmail = document.getElementById('selEmail');
+  state.customer.emailsOnFile.forEach(e => {
+    const opt = document.createElement('option');
+    opt.value = e; opt.textContent = e;
+    if (e === state.customer.email) opt.selected = true;
+    selEmail.appendChild(opt);
+  });
+  selEmail.addEventListener('change', () => { state.customer.email = selEmail.value; });
+
+  // Phone dropdown
+  const selPhone = document.getElementById('selPhone');
+  state.customer.phonesOnFile.forEach(ph => {
+    const opt = document.createElement('option');
+    opt.value = ph; opt.textContent = ph;
+    if (ph === state.customer.phone) opt.selected = true;
+    selPhone.appendChild(opt);
+  });
+  selPhone.addEventListener('change', () => { state.customer.phone = selPhone.value; });
+
+  // Marketing toggle
+  const togMkt = document.getElementById('togMarketing');
+  togMkt.checked = state.global.allowMarketing;
+  togMkt.addEventListener('change', () => { state.global.allowMarketing = togMkt.checked; });
+
+  // Quiet hours
+  const togQuiet = document.getElementById('togQuiet');
+  const quietRow = document.getElementById('quietRow');
+  const quietStart = document.getElementById('quietStart');
+  const quietEnd = document.getElementById('quietEnd');
+
+  togQuiet.checked = state.global.quietHours.enabled;
+  quietStart.value = state.global.quietHours.start;
+  quietEnd.value = state.global.quietHours.end;
+  quietRow.style.display = togQuiet.checked ? 'flex' : 'none';
+
+  togQuiet.addEventListener('change', () => {
+    state.global.quietHours.enabled = togQuiet.checked;
+    quietRow.style.display = togQuiet.checked ? 'flex' : 'none';
+  });
+  quietStart.addEventListener('change', () => { state.global.quietHours.start = quietStart.value; });
+  quietEnd.addEventListener('change', () => { state.global.quietHours.end = quietEnd.value; });
+}
+
+
+/* ═══════════════════════════════════════
+   PREFERENCES MATRIX
+   ═══════════════════════════════════════ */
+function renderMatrix() {
+  // Header
+  const head = document.getElementById('matrixHead');
+  head.innerHTML = `<th>Process</th>${CHANNELS.map(c => `<th>${c.label}</th>`).join('')}<th>Notes</th>`;
+
+  // Body
+  const body = document.getElementById('matrixBody');
+  body.innerHTML = '';
+
+  state.preferences.forEach((pref, idx) => {
+    const proc = PROCESSES.find(p => p.id === pref.processId);
+    if (!proc) return;
+
+    const tr = document.createElement('tr');
+
+    // Process cell
+    tr.innerHTML = `<td class="process-cell"><div class="process-name">${proc.title}</div><div class="process-desc">${proc.desc}</div></td>`;
+
+    // Channel toggles
+    CHANNELS.forEach(ch => {
+      const td = document.createElement('td');
+      const isOn = pref.channels[ch.key];
+      td.innerHTML = `
+        <label class="ch-toggle">
+          <input type="checkbox" data-idx="${idx}" data-ch="${ch.key}" ${isOn ? 'checked' : ''}>
+          <span class="ch-track"></span>
+          <span class="ch-knob"></span>
+        </label>
+      `;
+      td.querySelector('input').addEventListener('change', function() {
+        state.preferences[this.dataset.idx].channels[this.dataset.ch] = this.checked;
+      });
+      tr.appendChild(td);
+    });
+
+    // Notes
+    const notesTd = document.createElement('td');
+    notesTd.innerHTML = `<input type="text" class="notes-input" placeholder="Optional note..." value="${pref.notes || ''}" data-idx="${idx}">`;
+    notesTd.querySelector('input').addEventListener('input', function() {
+      state.preferences[this.dataset.idx].notes = this.value;
+    });
+    tr.appendChild(notesTd);
+
+    body.appendChild(tr);
+  });
+}
+
+
+/* ═══════════════════════════════════════
+   ACTIONS
+   ═══════════════════════════════════════ */
+function bulkToggle(on) {
+  state.preferences.forEach(p => {
+    CHANNELS.forEach(c => { p.channels[c.key] = on; });
+  });
+  renderMatrix();
+  showToast(on ? 'All channels enabled' : 'All channels disabled');
+}
+
+function savePrefs() {
+  // Validate at least one contact if any channel is enabled
+  const anyOn = state.preferences.some(p => Object.values(p.channels).some(Boolean));
+  const hasEmail = (state.customer.email || '').trim().length > 0;
+  const hasPhone = (state.customer.phone || '').trim().length > 0;
+
+  if (anyOn && !hasEmail && !hasPhone) {
+    showToast('Select an email or phone number before saving');
+    return;
+  }
+
+  persistState();
+  updateSaveStatus();
+  showToast('Preferences saved');
+}
+
+function cancelChanges() {
+  if (!confirm('Discard unsaved changes?')) return;
+  const loaded = loadState();
+  state = loaded || JSON.parse(JSON.stringify(DEFAULT_STATE));
+  renderContactForm_reset();
+  renderMatrix();
+  updateSaveStatus();
+  showToast('Changes discarded');
+}
+
+function renderContactForm_reset() {
+  document.getElementById('selEmail').value = state.customer.email;
+  document.getElementById('selPhone').value = state.customer.phone;
+  document.getElementById('togMarketing').checked = state.global.allowMarketing;
+  document.getElementById('togQuiet').checked = state.global.quietHours.enabled;
+  document.getElementById('quietRow').style.display = state.global.quietHours.enabled ? 'flex' : 'none';
+  document.getElementById('quietStart').value = state.global.quietHours.start;
+  document.getElementById('quietEnd').value = state.global.quietHours.end;
+}
+
+function updateSaveStatus() {
+  const el = document.getElementById('lastSaved');
+  const ctx = document.getElementById('saveStatus');
+  if (state.meta.lastSavedAt) {
+    el.textContent = `Last saved: ${state.meta.lastSavedAt}`;
+    ctx.textContent = `Saved ${state.meta.lastSavedAt}`;
+    ctx.classList.add('saved');
+  } else {
+    el.textContent = 'Not saved yet';
+    ctx.textContent = 'Not saved yet';
+    ctx.classList.remove('saved');
+  }
+}
+
+
+/* ═══════════════════════════════════════
+   TOAST
+   ═══════════════════════════════════════ */
+let toastTimer;
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('visible');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('visible'), 2500);
+}
+</script>
+</body>
+</html>
