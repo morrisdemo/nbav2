@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=1280">
 <title>Utility Customer 360</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
 
 *{margin:0;padding:0;box-sizing:border-box}
 
@@ -20,7 +20,9 @@
   --bdr:#E5E5E5;--bdr-lt:#F0F1F2;
   --txt:#1D2D3E;--txt2:#556B82;--txt3:#8396A8;--link:#0064D9;
   --shadow:0 1px 4px rgba(29,45,62,.05);
-  --rs:8px;--rm:12px;--pill:100px
+  --rs:8px;--rm:12px;--pill:100px;
+  /* BTP Differentiation layer accent */
+  --btp:#0A6ED1;--btp-bg:#F0F8FF;--btp-border:#C2DFFB;--btp-accent:#D4EDFF;
 }
 
 body{
@@ -30,7 +32,7 @@ body{
 }
 
 /* ================================================================
-   HEADER BAR
+   HEADER
    ================================================================ */
 .hdr{
   background:var(--surf);border-bottom:1px solid var(--bdr);
@@ -41,7 +43,7 @@ body{
   width:38px;height:38px;border-radius:var(--rs);
   background:linear-gradient(135deg,#0070F2,#4DA6FF);
   display:flex;align-items:center;justify-content:center;
-  color:#fff;font-size:14px;font-weight:700;flex-shrink:0
+  color:#fff;font-size:18px;flex-shrink:0
 }
 .hdr-id h2{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
 .hdr-id .sub{font-size:11px;color:var(--txt2);margin-top:1px}
@@ -54,9 +56,15 @@ body{
 .pill.crit{background:var(--crit-bg);color:var(--crit);border:1px solid var(--crit-border)}
 .pill.ntl{background:var(--neutral-bg);color:var(--neutral);border:1px solid var(--bdr)}
 
-.hdr-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.hdr-kpis{display:flex;gap:16px;margin-left:auto}
+.hkpi{text-align:center}
+.hkpi .v{font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:600;line-height:1.2}
+.hkpi .v.pos{color:var(--pos)}.hkpi .v.crit{color:var(--crit)}
+.hkpi .l{font-size:9px;font-weight:500;color:var(--txt3);text-transform:uppercase;letter-spacing:.04em}
 
-/* Source tag */
+.hdr-right{display:flex;align-items:center;gap:10px;margin-left:16px}
+
+/* Source tags */
 .src{
   display:inline-flex;align-items:center;gap:4px;
   font-size:9px;font-weight:600;color:var(--txt3);
@@ -65,74 +73,59 @@ body{
 .src .dot{width:5px;height:5px;border-radius:50%;background:var(--pos);animation:pulse 3s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* Compact KPIs in header */
-.hdr-kpis{display:flex;gap:16px;margin-left:16px}
-.hkpi{text-align:center}
-.hkpi .v{font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:600;line-height:1.2}
-.hkpi .v.pos{color:var(--pos)}.hkpi .v.crit{color:var(--crit)}.hkpi .v.warn{color:var(--warn)}
-.hkpi .l{font-size:9px;font-weight:500;color:var(--txt3);text-transform:uppercase;letter-spacing:.04em}
+/* BTP tag — distinct from standard source tag */
+.btp-tag{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:9px;font-weight:700;color:var(--btp);
+  padding:3px 8px;border-radius:4px;background:var(--btp-bg);border:1px solid var(--btp-border);
+  letter-spacing:.02em
+}
+.btp-tag .btp-icon{font-size:10px}
 
 /* ================================================================
-   CONTENT AREA
+   LAYER LEGEND — explains the two visual layers
+   ================================================================ */
+.layer-legend{
+  padding:8px 24px;display:flex;align-items:center;gap:16px;
+  background:var(--surf);border-bottom:1px solid var(--bdr);
+  font-size:11px;color:var(--txt2)
+}
+.ll-item{display:flex;align-items:center;gap:6px}
+.ll-swatch{width:14px;height:14px;border-radius:4px;border:1.5px solid}
+.ll-swatch.std{background:var(--surf);border-color:var(--bdr)}
+.ll-swatch.btp{background:var(--btp-bg);border-color:var(--btp-border)}
+.ll-label{font-weight:600}
+.ll-desc{color:var(--txt3);font-size:10px}
+
+/* ================================================================
+   CONTENT
    ================================================================ */
 .content{padding:14px 24px;display:flex;flex-direction:column;gap:10px}
 
 /* ================================================================
-   SCORE STRIP — Digital, Green, Feedback scores in a horizontal band
-   ================================================================ */
-.score-strip{
-  display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px
-}
-.score-card{
-  background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rm);
-  padding:14px 16px;box-shadow:var(--shadow);overflow:hidden;position:relative
-}
-.score-card .sc-header{
-  display:flex;align-items:center;gap:8px;margin-bottom:10px
-}
-.sc-icon{
-  width:30px;height:30px;border-radius:var(--rs);
-  display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0
-}
-.sc-title{font-size:12px;font-weight:700;color:var(--txt)}
-.sc-subtitle{font-size:10px;color:var(--txt3);font-weight:400}
-
-/* Score ring */
-.score-ring-row{display:flex;align-items:center;gap:16px}
-.score-ring{position:relative;width:56px;height:56px;flex-shrink:0}
-.score-ring svg{transform:rotate(-90deg)}
-.score-ring .ring-bg{fill:none;stroke:var(--bdr-lt);stroke-width:5}
-.score-ring .ring-fill{fill:none;stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset .8s ease}
-.score-ring .ring-label{
-  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:700;
-}
-
-.score-details{flex:1;display:flex;flex-direction:column;gap:3px}
-.sd-row{display:flex;justify-content:space-between;align-items:center}
-.sd-row .sd-label{font-size:11px;color:var(--txt2)}
-.sd-row .sd-val{font-size:11px;font-weight:600;color:var(--txt)}
-.sd-row .sd-val.pos{color:var(--pos)}
-.sd-row .sd-val.crit{color:var(--crit)}
-.sd-row .sd-val.warn{color:var(--warn)}
-
-/* Feedback stars */
-.stars{display:inline-flex;gap:1px;font-size:12px;color:#F5B731}
-.stars .empty{color:var(--bdr)}
-
-/* ================================================================
-   COLLAPSIBLE SECTION
+   SECTION — Standard (white border)
    ================================================================ */
 .section{
   background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rm);
   box-shadow:var(--shadow);overflow:hidden
 }
+
+/* ================================================================
+   SECTION — BTP Extended (blue-tinted left border + subtle bg)
+   ================================================================ */
+.section.btp{
+  border-left:3px solid var(--btp);
+  background:var(--surf);
+}
+.section.btp .sec-trigger{background:linear-gradient(90deg,var(--btp-bg) 0%,var(--surf) 100%)}
+
+/* Shared section mechanics */
 .sec-trigger{
   width:100%;display:flex;align-items:center;gap:8px;
   padding:11px 16px;background:none;border:none;cursor:pointer;
   font-family:inherit;text-align:left
 }
-.sec-trigger:hover{background:var(--bg2)}
+.sec-trigger:hover{filter:brightness(.98)}
 .sec-icon{
   width:24px;height:24px;border-radius:6px;
   display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0
@@ -140,15 +133,14 @@ body{
 .sec-title{font-size:13px;font-weight:700;color:var(--txt);flex:1}
 .sec-meta{display:flex;align-items:center;gap:8px}
 .sec-chevron{
-  font-size:12px;color:var(--txt3);transition:transform .2s ease;
-  display:flex;align-items:center
+  font-size:12px;color:var(--txt3);transition:transform .2s ease;display:flex;align-items:center
 }
 .section.collapsed .sec-chevron{transform:rotate(-90deg)}
 .sec-body{border-top:1px solid var(--bdr-lt)}
 .section.collapsed .sec-body{display:none}
 
 /* ================================================================
-   DATA GRID — 2, 3, or 4-col form layouts within sections
+   DATA GRIDS
    ================================================================ */
 .dg{display:grid;gap:0}
 .dg.c2{grid-template-columns:1fr 1fr}
@@ -163,9 +155,7 @@ body{
 .df .fv.pos{color:var(--pos)}.df .fv.crit{color:var(--crit)}.df .fv.warn{color:var(--warn)}.df .fv.ntl{color:var(--txt3)}
 .df .fv .mono{font-family:'IBM Plex Mono',monospace;font-weight:600}
 
-/* ================================================================
-   FI-CA SUMMARY BOXES
-   ================================================================ */
+/* FI-CA boxes */
 .fica-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:12px 16px}
 .fica-box{
   background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--rs);
@@ -175,9 +165,7 @@ body{
 .fica-box .fb-val.pos{color:var(--pos)}.fica-box .fb-val.crit{color:var(--crit)}.fica-box .fb-val.warn{color:var(--warn)}
 .fica-box .fb-label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--txt3);margin-top:2px}
 
-/* ================================================================
-   RATE CARD
-   ================================================================ */
+/* Rate card */
 .rate-card{
   background:linear-gradient(135deg,#0054B4 0%,#0070F2 60%,#1B90FF 100%);
   border-radius:var(--rm);padding:14px 16px;color:#fff;margin:12px 16px
@@ -188,9 +176,7 @@ body{
 .rc-item .rc-v{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:700}
 .rc-item .rc-l{font-size:9px;text-transform:uppercase;letter-spacing:.04em;opacity:.6}
 
-/* ================================================================
-   EQUIPMENT TABLE
-   ================================================================ */
+/* Equipment table */
 .eq-table{width:100%;border-collapse:collapse}
 .eq-table th{
   text-align:left;padding:8px 16px;font-size:10px;font-weight:600;
@@ -202,20 +188,14 @@ body{
 .eq-table a{color:var(--link);text-decoration:none;font-weight:600}
 .eq-table .mono{font-family:'IBM Plex Mono',monospace;font-weight:500}
 
-/* ================================================================
-   PROGRAMS GRID
-   ================================================================ */
+/* Programs grid */
 .prog-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
 .prog-section{padding:12px 16px}
 .prog-section h4{
   font-size:10px;font-weight:700;text-transform:uppercase;
-  letter-spacing:.05em;color:var(--txt3);margin-bottom:8px;
-  display:flex;align-items:center;gap:6px
+  letter-spacing:.05em;color:var(--txt3);margin-bottom:8px;display:flex;align-items:center;gap:6px
 }
-.prog-item{
-  display:flex;align-items:center;gap:8px;padding:6px 0;
-  border-bottom:1px solid var(--bdr-lt)
-}
+.prog-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--bdr-lt)}
 .prog-item:last-child{border-bottom:none}
 .prog-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .prog-dot.on{background:var(--pos)}.prog-dot.off{background:var(--bdr);border:1.5px solid var(--txt3)}
@@ -229,65 +209,82 @@ body{
 }
 .prog-action:hover{background:var(--brand-bg)}
 
-/* ================================================================
-   USAGE SPARKLINE AREA
-   ================================================================ */
-.usage-row{display:grid;grid-template-columns:1fr 200px;gap:16px;padding:12px 16px;align-items:end}
-.usage-stats{display:flex;gap:20px}
-.usage-stat .us-v{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600}
-.usage-stat .us-l{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--txt3)}
-.usage-stat .us-delta{font-size:10px;font-weight:600;margin-top:1px}
-.usage-stat .us-delta.up{color:var(--crit)}.usage-stat .us-delta.dn{color:var(--pos)}
+/* Score strip */
+.score-strip{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.score-card{
+  background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rm);
+  padding:14px 16px;box-shadow:var(--shadow);overflow:hidden;position:relative
+}
+/* BTP score cards get the blue left accent */
+.score-card.btp{border-left:3px solid var(--btp)}
+.score-card .sc-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.sc-icon{
+  width:30px;height:30px;border-radius:var(--rs);
+  display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0
+}
+.sc-title{font-size:12px;font-weight:700;color:var(--txt)}
+.sc-subtitle{font-size:10px;color:var(--txt3);font-weight:400}
+.score-ring-row{display:flex;align-items:center;gap:16px}
+.score-ring{position:relative;width:56px;height:56px;flex-shrink:0}
+.score-ring svg{transform:rotate(-90deg)}
+.score-ring .ring-bg{fill:none;stroke:var(--bdr-lt);stroke-width:5}
+.score-ring .ring-fill{fill:none;stroke-width:5;stroke-linecap:round}
+.score-ring .ring-label{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:700
+}
+.score-details{flex:1;display:flex;flex-direction:column;gap:3px}
+.sd-row{display:flex;justify-content:space-between;align-items:center}
+.sd-row .sd-label{font-size:11px;color:var(--txt2)}
+.sd-row .sd-val{font-size:11px;font-weight:600;color:var(--txt)}
+.sd-row .sd-val.pos{color:var(--pos)}
+.stars{display:inline-flex;gap:1px;font-size:12px;color:#F5B731}
 
-/* ================================================================
-   TIMELINE
-   ================================================================ */
+/* Timeline */
 .tl-list{padding:8px 16px}
 .tl-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--bdr-lt)}
 .tl-item:last-child{border-bottom:none}
 .tl-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
 .tl-dot.phone{background:var(--brand)}.tl-dot.system{background:var(--txt3)}
 .tl-dot.email{background:#7C3AED}.tl-dot.success{background:var(--pos)}
-.tl-dot.alert{background:var(--warn)}
+.tl-dot.alert{background:var(--warn)}.tl-dot.field{background:#0E8A16}
 .tl-body .tl-t{font-size:12px;font-weight:600;color:var(--txt)}
 .tl-body .tl-d{font-size:11px;color:var(--txt2);line-height:1.5;margin-top:1px}
 .tl-body .tl-time{font-size:10px;color:var(--txt3);margin-top:2px}
 
-/* ================================================================
-   CASES TABLE
-   ================================================================ */
-/* reuse eq-table */
+/* Usage compact */
+.usage-row{display:grid;grid-template-columns:1fr 200px;gap:16px;padding:12px 16px;align-items:end}
+.usage-stats{display:flex;gap:20px;flex-wrap:wrap}
+.usage-stat .us-v{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600}
+.usage-stat .us-l{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--txt3)}
+.usage-stat .us-delta{font-size:10px;font-weight:600;margin-top:1px}
+.usage-stat .us-delta.up{color:var(--crit)}.usage-stat .us-delta.dn{color:var(--pos)}
 
-/* ================================================================
-   INTEGRATION FOOTER
-   ================================================================ */
+/* Integration footer */
 .int-footer{
   position:fixed;bottom:0;left:0;right:0;
   background:var(--surf);border-top:1px solid var(--bdr);
   padding:8px 24px;display:flex;align-items:center;gap:12px;
   font-size:10px;color:var(--txt3);z-index:50
 }
-.int-footer .sap-mark{
-  font-family:'IBM Plex Sans',sans-serif;font-weight:700;
-  font-size:11px;color:var(--txt);letter-spacing:.5px;margin-right:4px
-}
+.int-footer .sap-mark{font-weight:700;font-size:11px;color:var(--txt);letter-spacing:.5px}
 </style>
 </head>
 <body>
 
 <!-- ================================================================
-     CONTEXT HEADER
+     HEADER
      ================================================================ -->
 <div class="hdr">
-  <div class="hdr-av">MR</div>
+  <div class="hdr-av">👤</div>
   <div class="hdr-id">
     <h2>
-     Maria Rodriguez
+      <span id="bp-name">Maria Rodriguez</span>
       <span class="pill pos">Active</span>
       <span class="pill info">Residential</span>
     </h2>
     <div class="sub">
-      <a href="#">BP 10042817</a> · <a href="#">CA 200048211</a> · <a href="#">Contract 300048211</a> · 142 Maple Ave, Waltham MA 02451 · Since Jan 2019
+      <a href="#">BP <span id="bp-number">10042817</span></a> · <a href="#">CA <span id="ca-number">200048211</span></a> · 142 Maple Ave, Waltham MA 02451 · Since Jan 2019
     </div>
   </div>
   <div class="hdr-kpis">
@@ -301,24 +298,40 @@ body{
 </div>
 
 <!-- ================================================================
-     SCORE STRIP — Digital Engagement, Green Profile, Customer Feedback
+     LAYER LEGEND
      ================================================================ -->
+<div class="layer-legend">
+  <div class="ll-item">
+    <div class="ll-swatch std"></div>
+    <span class="ll-label">Standard Integration</span>
+    <span class="ll-desc">— S/4HANA Utilities APIs available today</span>
+  </div>
+  <div class="ll-item">
+    <div class="ll-swatch btp"></div>
+    <span class="ll-label">BTP Differentiation</span>
+    <span class="ll-desc">— Custom intelligence built on the platform · Your competitive advantage</span>
+  </div>
+</div>
+
 <div class="content">
 
+<!-- ================================================================
+     BTP LAYER — SCORE STRIP (Digital, Green, Feedback)
+     ================================================================ -->
 <div class="score-strip">
 
-  <!-- Digital Engagement Score -->
-  <div class="score-card">
+  <!-- Digital Engagement — BTP -->
+  <div class="score-card btp">
     <div class="sc-header">
-      <div class="sc-icon" style="background:var(--brand-bg);color:var(--brand);">📱</div>
+      <div class="sc-icon" style="background:var(--brand-bg);color:var(--brand)">📱</div>
       <div><div class="sc-title">Digital Engagement</div><div class="sc-subtitle">Self-service adoption & channel preference</div></div>
+      <span class="btp-tag" style="margin-left:auto"><span class="btp-icon">◆</span> BTP</span>
     </div>
     <div class="score-ring-row">
       <div class="score-ring">
         <svg viewBox="0 0 56 56" width="56" height="56">
           <circle cx="28" cy="28" r="23" class="ring-bg"/>
-          <circle cx="28" cy="28" r="23" class="ring-fill" stroke="var(--brand)"
-            stroke-dasharray="144.51" stroke-dashoffset="21.68"/>
+          <circle cx="28" cy="28" r="23" class="ring-fill" stroke="var(--brand)" stroke-dasharray="144.51" stroke-dashoffset="21.68"/>
         </svg>
         <div class="ring-label" style="color:var(--brand)">85</div>
       </div>
@@ -333,18 +346,18 @@ body{
     </div>
   </div>
 
-  <!-- Green / Sustainability Profile -->
-  <div class="score-card">
+  <!-- Sustainability — BTP -->
+  <div class="score-card btp">
     <div class="sc-header">
-      <div class="sc-icon" style="background:var(--pos-bg);color:var(--pos);">🌱</div>
+      <div class="sc-icon" style="background:var(--pos-bg);color:var(--pos)">🌱</div>
       <div><div class="sc-title">Sustainability Profile</div><div class="sc-subtitle">Green program participation & carbon impact</div></div>
+      <span class="btp-tag" style="margin-left:auto"><span class="btp-icon">◆</span> BTP</span>
     </div>
     <div class="score-ring-row">
       <div class="score-ring">
         <svg viewBox="0 0 56 56" width="56" height="56">
           <circle cx="28" cy="28" r="23" class="ring-bg"/>
-          <circle cx="28" cy="28" r="23" class="ring-fill" stroke="var(--pos)"
-            stroke-dasharray="144.51" stroke-dashoffset="14.45"/>
+          <circle cx="28" cy="28" r="23" class="ring-fill" stroke="var(--pos)" stroke-dasharray="144.51" stroke-dashoffset="14.45"/>
         </svg>
         <div class="ring-label" style="color:var(--pos)">92</div>
       </div>
@@ -359,18 +372,18 @@ body{
     </div>
   </div>
 
-  <!-- Customer Feedback -->
-  <div class="score-card">
+  <!-- Customer Feedback — BTP (aggregated from V2 surveys) -->
+  <div class="score-card btp">
     <div class="sc-header">
-      <div class="sc-icon" style="background:var(--warn-bg);color:var(--warn);">⭐</div>
+      <div class="sc-icon" style="background:var(--warn-bg);color:var(--warn)">⭐</div>
       <div><div class="sc-title">Customer Feedback</div><div class="sc-subtitle">Survey responses & satisfaction history</div></div>
+      <span class="btp-tag" style="margin-left:auto"><span class="btp-icon">◆</span> BTP</span>
     </div>
     <div class="score-ring-row">
       <div class="score-ring">
         <svg viewBox="0 0 56 56" width="56" height="56">
           <circle cx="28" cy="28" r="23" class="ring-bg"/>
-          <circle cx="28" cy="28" r="23" class="ring-fill" stroke="#F5B731"
-            stroke-dasharray="144.51" stroke-dashoffset="7.23"/>
+          <circle cx="28" cy="28" r="23" class="ring-fill" stroke="#F5B731" stroke-dasharray="144.51" stroke-dashoffset="7.23"/>
         </svg>
         <div class="ring-label" style="color:#C99100">4.8</div>
       </div>
@@ -388,10 +401,10 @@ body{
 </div>
 
 <!-- ================================================================
-     FINANCIAL SNAPSHOT — FI-CA
+     STANDARD LAYER — Financial Summary (FI-CA)
      ================================================================ -->
 <div class="section" id="sec-fica">
-  <button class="sec-trigger" onclick="toggleSec('sec-fica')">
+  <button class="sec-trigger" onclick="toggle('sec-fica')">
     <div class="sec-icon" style="background:var(--warn-bg);color:var(--warn)">💰</div>
     <span class="sec-title">Financial Summary (FI-CA)</span>
     <div class="sec-meta">
@@ -408,7 +421,7 @@ body{
       <div class="fica-box"><div class="fb-val pos">On-Time</div><div class="fb-label">Pay History</div></div>
     </div>
     <div class="dg c3">
-      <div class="df"><div class="fl">Contract Account</div><div class="fv"><a href="#">200048211</a></div></div>
+      <div class="df"><div class="fl">Contract Account</div><div class="fv"><a href="#"><span class="ca-ref">200048211</span></a></div></div>
       <div class="df"><div class="fl">Autopay Status</div><div class="fv pos">✓ Active — BofA ···4821</div></div>
       <div class="df"><div class="fl">Paperless Billing</div><div class="fv pos">✓ Email Delivery</div></div>
       <div class="df"><div class="fl">Last Payment</div><div class="fv"><span class="mono">$154.22</span> · Mar 12, 2026</div></div>
@@ -422,10 +435,10 @@ body{
 </div>
 
 <!-- ================================================================
-     SERVICE LOCATION / PREMISE
+     STANDARD LAYER — Service Location / Premise
      ================================================================ -->
 <div class="section" id="sec-premise">
-  <button class="sec-trigger" onclick="toggleSec('sec-premise')">
+  <button class="sec-trigger" onclick="toggle('sec-premise')">
     <div class="sec-icon" style="background:var(--brand-bg);color:var(--brand)">📍</div>
     <span class="sec-title">Service Location & Premise</span>
     <div class="sec-meta">
@@ -442,8 +455,8 @@ body{
       <div class="df"><div class="fl">Grid Segment</div><div class="fv">Waltham Sub-12 · Feeder 04</div></div>
       <div class="df"><div class="fl">Outage Zone</div><div class="fv">Zone WA-04-N</div></div>
       <div class="df"><div class="fl">Service Entrance</div><div class="fv">200A · Single Phase · 240V</div></div>
-      <div class="df"><div class="fl">Meter Room / Location</div><div class="fv">Exterior — South Wall</div></div>
-      <div class="df"><div class="fl">MRU (Meter Reading Unit)</div><div class="fv">Waltham-District-07</div></div>
+      <div class="df"><div class="fl">Meter Location</div><div class="fv">Exterior — South Wall</div></div>
+      <div class="df"><div class="fl">MRU</div><div class="fv">Waltham-District-07</div></div>
       <div class="df"><div class="fl">Lat / Long</div><div class="fv mono">42.3765, -71.2356</div></div>
       <div class="df"><div class="fl">Property Type</div><div class="fv">Single Family — Owner Occupied</div></div>
       <div class="df"><div class="fl">Sq. Footage (Est.)</div><div class="fv">2,140 sq ft</div></div>
@@ -452,77 +465,59 @@ body{
 </div>
 
 <!-- ================================================================
-     INSTALLED EQUIPMENT
+     STANDARD LAYER — Installed Equipment
+     BTP LAYER — DER Assets (combined section, mixed sources)
      ================================================================ -->
 <div class="section" id="sec-equip">
-  <button class="sec-trigger" onclick="toggleSec('sec-equip')">
+  <button class="sec-trigger" onclick="toggle('sec-equip')">
     <div class="sec-icon" style="background:#E3F2FD;color:#0277BD">⚡</div>
     <span class="sec-title">Installed Equipment & DER Assets</span>
     <div class="sec-meta">
-      <span class="pill info">4 DER Assets</span>
-      <span class="src"><span class="dot"></span> S/4HANA DI/MDM</span>
+      <span class="src"><span class="dot"></span> S/4HANA DI</span>
+      <span class="btp-tag"><span class="btp-icon">◆</span> BTP — DER Registry</span>
       <span class="sec-chevron">▾</span>
     </div>
   </button>
   <div class="sec-body">
     <table class="eq-table">
       <thead>
-        <tr>
-          <th>Device</th>
-          <th>Type</th>
-          <th>Serial / ID</th>
-          <th>Install Date</th>
-          <th>Details</th>
-          <th>Status</th>
-        </tr>
+        <tr><th>Device</th><th>Type</th><th>Serial / ID</th><th>Install Date</th><th>Details</th><th>Source</th><th>Status</th></tr>
       </thead>
       <tbody>
         <tr>
-          <td><a href="#">Electric Meter</a></td>
-          <td>AMI Smart Meter</td>
-          <td class="mono">AMI-4821003</td>
-          <td>Jun 2022</td>
-          <td>15-min intervals · Last read: Apr 6, 23:45 · Installation <a href="#">INST-0048211-E</a></td>
+          <td><a href="#">Electric Meter</a></td><td>AMI Smart Meter</td><td class="mono">AMI-4821003</td><td>Jun 2022</td>
+          <td>15-min intervals · Last read: Apr 6, 23:45 · <a href="#">INST-0048211-E</a></td>
+          <td><span class="src"><span class="dot"></span> S/4HANA</span></td>
           <td><span class="pill pos">Active</span></td>
         </tr>
         <tr>
-          <td><a href="#">Gas Meter</a></td>
-          <td>AMR</td>
-          <td class="mono">G-77201</td>
-          <td>Mar 2019</td>
-          <td>Monthly read · Last read: Mar 28 · Installation <a href="#">INST-0048211-G</a></td>
+          <td><a href="#">Gas Meter</a></td><td>AMR</td><td class="mono">G-77201</td><td>Mar 2019</td>
+          <td>Monthly read · Last: Mar 28 · <a href="#">INST-0048211-G</a></td>
+          <td><span class="src"><span class="dot"></span> S/4HANA</span></td>
           <td><span class="pill pos">Active</span></td>
         </tr>
-        <tr>
-          <td><a href="#">Rooftop Solar</a></td>
-          <td>PV System (DER)</td>
-          <td class="mono">SOL-8400-SP</td>
-          <td>Oct 2023</td>
-          <td>SunPower M-Series · 8.4 kW · Net Metering <a href="#">NM-2024-4821</a></td>
+        <tr style="background:var(--btp-bg)">
+          <td><a href="#">Rooftop Solar</a></td><td>PV System (DER)</td><td class="mono">SOL-8400-SP</td><td>Oct 2023</td>
+          <td>SunPower M-Series · 8.4 kW · <a href="#">NM-2024-4821</a></td>
+          <td><span class="btp-tag"><span class="btp-icon">◆</span> BTP</span></td>
           <td><span class="pill pos">Producing</span></td>
         </tr>
-        <tr>
-          <td><a href="#">Home Battery</a></td>
-          <td>ESS (DER)</td>
-          <td class="mono">BAT-PW2-1350</td>
-          <td>Oct 2023</td>
+        <tr style="background:var(--btp-bg)">
+          <td><a href="#">Home Battery</a></td><td>ESS (DER)</td><td class="mono">BAT-PW2-1350</td><td>Oct 2023</td>
           <td>Tesla Powerwall 2 · 13.5 kWh · VPP-enrolled · SOC: 92%</td>
+          <td><span class="btp-tag"><span class="btp-icon">◆</span> BTP</span></td>
           <td><span class="pill pos">Online</span></td>
         </tr>
-        <tr>
-          <td><a href="#">EV Charger</a></td>
-          <td>EVSE L2 (DER)</td>
-          <td class="mono">EV-CPF-2248</td>
-          <td>Apr 2024</td>
-          <td>ChargePoint Home Flex · 48A · Managed Charging: 11 PM – 6 AM</td>
+        <tr style="background:var(--btp-bg)">
+          <td><a href="#">EV Charger</a></td><td>EVSE L2 (DER)</td><td class="mono">EV-CPF-2248</td><td>Apr 2024</td>
+          <td>ChargePoint Home Flex · 48A · Managed: 11 PM – 6 AM</td>
+          <td><span class="btp-tag"><span class="btp-icon">◆</span> BTP</span></td>
           <td><span class="pill info">Charging</span></td>
         </tr>
-        <tr>
-          <td><a href="#">Smart Thermostat</a></td>
-          <td>Connected Device</td>
-          <td class="mono">NEST-3G-7821</td>
-          <td>Jan 2022</td>
+        <tr style="background:var(--btp-bg)">
+          <td><a href="#">Smart Thermostat</a></td><td>Connected Device</td><td class="mono">NEST-3G-7821</td><td>Jan 2022</td>
           <td>Nest Learning 3rd Gen · DR-capable · Set: 68°F</td>
+          <td><span class="btp-tag"><span class="btp-icon">◆</span> BTP</span></td>
           <td><span class="pill ntl">Idle</span></td>
         </tr>
       </tbody>
@@ -531,10 +526,10 @@ body{
 </div>
 
 <!-- ================================================================
-     RATE DATA
+     STANDARD LAYER — Rate Schedule
      ================================================================ -->
 <div class="section" id="sec-rate">
-  <button class="sec-trigger" onclick="toggleSec('sec-rate')">
+  <button class="sec-trigger" onclick="toggle('sec-rate')">
     <div class="sec-icon" style="background:#EDE7F6;color:#5E35B1">📐</div>
     <span class="sec-title">Rate Schedule & Tariff</span>
     <div class="sec-meta">
@@ -551,7 +546,7 @@ body{
         <div class="rc-item"><div class="rc-v">$0.24</div><div class="rc-l">Peak (2–7 PM)</div></div>
         <div class="rc-item"><div class="rc-v">$0.16</div><div class="rc-l">Mid-Peak (7–10 PM)</div></div>
         <div class="rc-item"><div class="rc-v">$0.11</div><div class="rc-l">Off-Peak (10 PM–2 PM)</div></div>
-        <div class="rc-item"><div class="rc-v">$9.48</div><div class="rc-l">Monthly Cust. Charge</div></div>
+        <div class="rc-item"><div class="rc-v">$9.48</div><div class="rc-l">Customer Charge</div></div>
       </div>
     </div>
     <div class="dg c3">
@@ -561,90 +556,54 @@ body{
       <div class="df"><div class="fl">Regulatory Tariff</div><div class="fv">MA DPU Tariff #312</div></div>
       <div class="df"><div class="fl">Effective Date</div><div class="fv">Oct 1, 2024</div></div>
       <div class="df"><div class="fl">Last Rate Change</div><div class="fv">Jan 1, 2026 — Supply adj. +$0.012/kWh</div></div>
-      <div class="df"><div class="fl">Eligible Alternatives</div><div class="fv"><a href="#">Flat-R</a> · <a href="#">TOU-D Standard</a> · <a href="#">EV-TOU</a></div></div>
-      <div class="df"><div class="fl">Rate Comparison</div><div class="fv"><a href="#">Run Rate Comparison Tool →</a></div></div>
-      <div class="df"><div class="fl">Est. Annual Cost (Current)</div><div class="fv mono">$1,676</div></div>
+      <div class="df"><div class="fl">Eligible Alternatives</div><div class="fv"><a href="#">Flat-R</a> · <a href="#">TOU-D Std</a> · <a href="#">EV-TOU</a></div></div>
+      <div class="df"><div class="fl">Rate Comparison</div><div class="fv"><a href="#">Run EASIM Rate Comparison →</a></div></div>
+      <div class="df"><div class="fl">Est. Annual Cost</div><div class="fv mono">$1,676</div></div>
     </div>
   </div>
 </div>
 
 <!-- ================================================================
-     PROGRAMS — Enrolled + Available
+     STANDARD + BTP — Programs (Enrolled + Available)
      ================================================================ -->
 <div class="section" id="sec-prog">
-  <button class="sec-trigger" onclick="toggleSec('sec-prog')">
+  <button class="sec-trigger" onclick="toggle('sec-prog')">
     <div class="sec-icon" style="background:var(--pos-bg);color:var(--pos)">🏷️</div>
     <span class="sec-title">Programs & Enrollments</span>
     <div class="sec-meta">
       <span class="pill pos">6 Enrolled</span>
       <span class="pill warn">3 Eligible</span>
+      <span class="src"><span class="dot"></span> S/4HANA</span>
+      <span class="btp-tag"><span class="btp-icon">◆</span> BTP — Eligibility Engine</span>
       <span class="sec-chevron">▾</span>
     </div>
   </button>
   <div class="sec-body">
     <div class="prog-grid">
-      <!-- Enrolled -->
       <div class="prog-section" style="border-right:1px solid var(--bdr-lt)">
         <h4><span style="color:var(--pos)">●</span> Enrolled Programs</h4>
-        <div class="prog-item">
-          <div class="prog-dot on"></div>
-          <div class="prog-info"><div class="pn">Autopay</div><div class="pd">Bank of America ···4821 · Since Mar 2020</div></div>
-          <button class="prog-action">Manage</button>
-        </div>
-        <div class="prog-item">
-          <div class="prog-dot on"></div>
-          <div class="prog-info"><div class="pn">Paperless Billing</div><div class="pd">Email delivery · Since Mar 2020</div></div>
-          <button class="prog-action">Manage</button>
-        </div>
-        <div class="prog-item">
-          <div class="prog-dot on"></div>
-          <div class="prog-info"><div class="pn">Virtual Power Plant (VPP)</div><div class="pd">Solar + Powerwall enrolled · Since Jan 2026 · Earned $36.90 YTD</div></div>
-          <button class="prog-action">Details</button>
-        </div>
-        <div class="prog-item">
-          <div class="prog-dot on"></div>
-          <div class="prog-info"><div class="pn">100% Green Energy</div><div class="pd">Renewable offset program · Since Oct 2023</div></div>
-          <button class="prog-action">Manage</button>
-        </div>
-        <div class="prog-item">
-          <div class="prog-dot on"></div>
-          <div class="prog-info"><div class="pn">Net Metering (NM-II)</div><div class="pd">Monthly excess credit · 8.4 kW solar qualified</div></div>
-          <button class="prog-action">Details</button>
-        </div>
-        <div class="prog-item">
-          <div class="prog-dot on"></div>
-          <div class="prog-info"><div class="pn">Managed EV Charging</div><div class="pd">Off-peak window: 11 PM – 6 AM · ChargePoint integrated</div></div>
-          <button class="prog-action">Manage</button>
-        </div>
+        <div class="prog-item"><div class="prog-dot on"></div><div class="prog-info"><div class="pn">Autopay</div><div class="pd">Bank of America ···4821 · Since Mar 2020</div></div><button class="prog-action">Manage</button></div>
+        <div class="prog-item"><div class="prog-dot on"></div><div class="prog-info"><div class="pn">Paperless Billing</div><div class="pd">Email delivery · Since Mar 2020</div></div><button class="prog-action">Manage</button></div>
+        <div class="prog-item"><div class="prog-dot on"></div><div class="prog-info"><div class="pn">Virtual Power Plant (VPP)</div><div class="pd">Solar + Powerwall · Since Jan 2026 · Earned $36.90 YTD</div></div><button class="prog-action">Details</button></div>
+        <div class="prog-item"><div class="prog-dot on"></div><div class="prog-info"><div class="pn">100% Green Energy</div><div class="pd">Renewable offset program · Since Oct 2023</div></div><button class="prog-action">Manage</button></div>
+        <div class="prog-item"><div class="prog-dot on"></div><div class="prog-info"><div class="pn">Net Metering (NM-II)</div><div class="pd">Monthly excess credit · 8.4 kW solar qualified</div></div><button class="prog-action">Details</button></div>
+        <div class="prog-item"><div class="prog-dot on"></div><div class="prog-info"><div class="pn">Managed EV Charging</div><div class="pd">Off-peak window: 11 PM – 6 AM</div></div><button class="prog-action">Manage</button></div>
       </div>
-      <!-- Available / Eligible -->
-      <div class="prog-section">
-        <h4><span style="color:var(--warn)">○</span> Available — Eligible to Enroll</h4>
-        <div class="prog-item">
-          <div class="prog-dot off"></div>
-          <div class="prog-info"><div class="pn">Budget Billing</div><div class="pd">Estimated $148/mo · Smooths seasonal variance · 12-mo levelized</div></div>
-          <button class="prog-action">Enroll →</button>
-        </div>
-        <div class="prog-item">
-          <div class="prog-dot off"></div>
-          <div class="prog-info"><div class="pn">Peak Time Rebate (PTR)</div><div class="pd">Earn rebates by reducing usage during critical peak events · Eligible via AMI</div></div>
-          <button class="prog-action">Enroll →</button>
-        </div>
-        <div class="prog-item">
-          <div class="prog-dot off"></div>
-          <div class="prog-info"><div class="pn">Home Energy Audit</div><div class="pd">Free in-home assessment · Eligible based on acct tenure &gt; 3 years</div></div>
-          <button class="prog-action">Schedule →</button>
-        </div>
+      <div class="prog-section" style="background:linear-gradient(90deg,var(--btp-bg),var(--surf))">
+        <h4><span style="color:var(--warn)">○</span> Available — Eligible to Enroll <span class="btp-tag" style="font-size:8px"><span class="btp-icon">◆</span> BTP Eligibility</span></h4>
+        <div class="prog-item"><div class="prog-dot off"></div><div class="prog-info"><div class="pn">Budget Billing</div><div class="pd">Estimated $148/mo · Smooths seasonal variance</div></div><button class="prog-action">Enroll →</button></div>
+        <div class="prog-item"><div class="prog-dot off"></div><div class="prog-info"><div class="pn">Peak Time Rebate (PTR)</div><div class="pd">Earn rebates during critical peak events · AMI eligible</div></div><button class="prog-action">Enroll →</button></div>
+        <div class="prog-item"><div class="prog-dot off"></div><div class="prog-info"><div class="pn">Home Energy Audit</div><div class="pd">Free in-home assessment · Eligible: tenure &gt; 3 years</div></div><button class="prog-action">Schedule →</button></div>
       </div>
     </div>
   </div>
 </div>
 
 <!-- ================================================================
-     CONSUMPTION SUMMARY
+     STANDARD LAYER — Consumption Summary
      ================================================================ -->
 <div class="section" id="sec-usage">
-  <button class="sec-trigger" onclick="toggleSec('sec-usage')">
+  <button class="sec-trigger" onclick="toggle('sec-usage')">
     <div class="sec-icon" style="background:#E3F2FD;color:#0277BD">📊</div>
     <span class="sec-title">Consumption Summary</span>
     <div class="sec-meta">
@@ -655,39 +614,18 @@ body{
   <div class="sec-body">
     <div class="usage-row">
       <div class="usage-stats">
-        <div class="usage-stat">
-          <div class="us-v">1,128</div>
-          <div class="us-l">kWh — Mar 2026</div>
-          <div class="us-delta up">▲ 34% vs. 12-mo avg</div>
-        </div>
-        <div class="usage-stat">
-          <div class="us-v">842</div>
-          <div class="us-l">kWh — 12-mo Average</div>
-          <div class="us-delta" style="color:var(--txt3)">Baseline</div>
-        </div>
-        <div class="usage-stat">
-          <div class="us-v" style="color:var(--pos)">312</div>
-          <div class="us-l">kWh — Solar Generated (Mar)</div>
-          <div class="us-delta dn">▼ 18% vs. Mar 2025</div>
-        </div>
-        <div class="usage-stat">
-          <div class="us-v">816</div>
-          <div class="us-l">Net kWh — Mar 2026</div>
-          <div class="us-delta up">▲ 29% vs. Mar 2025</div>
-        </div>
+        <div class="usage-stat"><div class="us-v">1,128</div><div class="us-l">kWh — Mar 2026</div><div class="us-delta up">▲ 34% vs. 12-mo avg</div></div>
+        <div class="usage-stat"><div class="us-v">842</div><div class="us-l">kWh — 12-mo Average</div><div class="us-delta" style="color:var(--txt3)">Baseline</div></div>
+        <div class="usage-stat"><div class="us-v" style="color:var(--pos)">312</div><div class="us-l">kWh — Solar Gen (Mar)</div><div class="us-delta dn">▼ 18% vs. Mar 2025</div></div>
+        <div class="usage-stat"><div class="us-v">816</div><div class="us-l">Net kWh — Mar 2026</div><div class="us-delta up">▲ 29% vs. Mar 2025</div></div>
       </div>
-      <!-- Compact sparkline -->
       <div>
         <svg viewBox="0 0 200 60" style="width:200px;height:60px">
           <polyline points="5,42 20,38 35,35 50,40 65,30 80,28 95,22 110,32 125,25 140,45 155,35 170,48" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           <polyline points="5,48 20,47 35,46 50,48 65,44 80,42 95,40 110,36 125,34 140,32 155,30 170,28" fill="none" stroke="var(--pos)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4,3"/>
           <text x="5" y="58" fill="var(--txt3)" font-size="7" font-family="'IBM Plex Sans'">Apr '25</text>
-          <text x="165" y="58" fill="var(--txt3)" font-size="7" font-family="'IBM Plex Sans'">Mar '26</text>
+          <text x="158" y="58" fill="var(--txt3)" font-size="7" font-family="'IBM Plex Sans'">Mar '26</text>
           <circle cx="170" cy="48" r="3" fill="var(--brand)"/>
-          <text x="130" y="10" fill="var(--txt3)" font-size="7" font-family="'IBM Plex Sans'">— Consumption</text>
-          <line x1="120" y1="8" x2="128" y2="8" stroke="var(--brand)" stroke-width="2"/>
-          <text x="130" y="18" fill="var(--txt3)" font-size="7" font-family="'IBM Plex Sans'">--- Solar Gen</text>
-          <line x1="120" y1="16" x2="128" y2="16" stroke="var(--pos)" stroke-width="1.5" stroke-dasharray="3,2"/>
         </svg>
       </div>
     </div>
@@ -701,154 +639,135 @@ body{
 </div>
 
 <!-- ================================================================
-     ACTIVITY TIMELINE
+     STANDARD LAYER — Service Orders (NEW)
      ================================================================ -->
-<div class="section" id="sec-timeline">
-  <button class="sec-trigger" onclick="toggleSec('sec-timeline')">
-    <div class="sec-icon" style="background:#F3E8FD;color:#7C3AED">🕐</div>
-    <span class="sec-title">Activity Timeline</span>
+<div class="section" id="sec-so">
+  <button class="sec-trigger" onclick="toggle('sec-so')">
+    <div class="sec-icon" style="background:#E8F5E9;color:var(--pos)">🔧</div>
+    <span class="sec-title">Service Orders</span>
     <div class="sec-meta">
-      <span class="sec-chevron">▾</span>
-    </div>
-  </button>
-  <div class="sec-body">
-    <div class="tl-list">
-      <div class="tl-item">
-        <div class="tl-dot phone"></div>
-        <div class="tl-body">
-          <div class="tl-t">Inbound Call — Active</div>
-          <div class="tl-d">Customer calling regarding March bill amount. ANI match confirmed.</div>
-          <div class="tl-time">Today · 2:14 PM · Agent: S. Mitchell</div>
-        </div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-dot alert"></div>
-        <div class="tl-body">
-          <div class="tl-t">High Bill Alert Triggered</div>
-          <div class="tl-d">March bill exceeds 12-mo average by 34%. Auto-flagged by CDS analytical rule.</div>
-          <div class="tl-time">Apr 2 · System</div>
-        </div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-dot email"></div>
-        <div class="tl-body">
-          <div class="tl-t">Bill Ready Notification</div>
-          <div class="tl-d">Monthly invoice notification sent. Customer opened email same day.</div>
-          <div class="tl-time">Apr 1 · Auto</div>
-        </div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-dot success"></div>
-        <div class="tl-body">
-          <div class="tl-t">Demand Response Event — Participated</div>
-          <div class="tl-d">Powerwall discharged 8.2 kWh during grid stress event. Earned $12.30 credit posted to FI-CA.</div>
-          <div class="tl-time">Mar 22 · DER Platform → FI-CA</div>
-        </div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-dot system"></div>
-        <div class="tl-body">
-          <div class="tl-t">Self-Service: EV Charging Schedule Updated</div>
-          <div class="tl-d">Customer adjusted charging window to 11 PM – 6 AM via mobile app.</div>
-          <div class="tl-time">Mar 15 · Self-Service Portal</div>
-        </div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-dot phone"></div>
-        <div class="tl-body">
-          <div class="tl-t">Inbound Call — Rate Plan Inquiry</div>
-          <div class="tl-d">Compared TOU-D Prime vs. Flat-R. Agent showed comparison tool. Customer chose to remain on TOU-D Prime.</div>
-          <div class="tl-time">Feb 8 · Agent: T. Nguyen · Duration: 8m 42s</div>
-        </div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-dot success"></div>
-        <div class="tl-body">
-          <div class="tl-t">Program Enrollment — Virtual Power Plant</div>
-          <div class="tl-d">Customer enrolled Powerwall + solar in VPP program via self-service portal.</div>
-          <div class="tl-time">Jan 20 · Self-Service</div>
-        </div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-dot system"></div>
-        <div class="tl-body">
-          <div class="tl-t">Survey Response Received</div>
-          <div class="tl-d">Post-interaction survey: 5.0/5.0. Comment: "Very helpful agent, explained everything clearly."</div>
-          <div class="tl-time">Feb 8 · Post-Call Survey</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ================================================================
-     CASES
-     ================================================================ -->
-<div class="section" id="sec-cases">
-  <button class="sec-trigger" onclick="toggleSec('sec-cases')">
-    <div class="sec-icon" style="background:#FFF3E0;color:#E65100">📋</div>
-    <span class="sec-title">Cases</span>
-    <div class="sec-meta">
-      <span class="pill warn">1 Open</span>
-      <span class="pill pos">4 Closed</span>
+      <span class="pill info">1 Scheduled</span>
+      <span class="src"><span class="dot"></span> S/4HANA PM / FSM</span>
       <span class="sec-chevron">▾</span>
     </div>
   </button>
   <div class="sec-body">
     <table class="eq-table">
       <thead>
-        <tr>
-          <th>Case ID</th>
-          <th>Subject</th>
-          <th>Category</th>
-          <th>Status</th>
-          <th>Created</th>
-          <th>Agent</th>
-        </tr>
+        <tr><th>Order</th><th>Type</th><th>Description</th><th>Priority</th><th>Status</th><th>Scheduled</th><th>Assigned</th></tr>
       </thead>
       <tbody>
-        <tr style="background:#FFFDF5">
-          <td><a href="#">CS-2026-04821</a></td>
-          <td>High Bill Inquiry — March 2026</td>
-          <td><span class="pill warn">Billing</span></td>
-          <td><span class="pill warn">In Progress</span></td>
-          <td>Apr 7, 2026</td>
-          <td>S. Mitchell</td>
+        <tr>
+          <td><a href="#">SO-2026-12844</a></td><td>Meter Test</td>
+          <td>Annual AMI meter accuracy verification — customer-requested</td>
+          <td><span class="pill ntl">Normal</span></td>
+          <td><span class="pill info">Scheduled</span></td>
+          <td>Apr 18, 2026 · 9:00–11:00 AM</td>
+          <td>Crew: Waltham-T3</td>
         </tr>
         <tr>
-          <td><a href="#">CS-2026-02104</a></td>
-          <td>Rate Plan Comparison Request</td>
-          <td><span class="pill info">Rates</span></td>
-          <td><span class="pill pos">Closed</span></td>
-          <td>Feb 8, 2026</td>
-          <td>T. Nguyen</td>
+          <td><a href="#">SO-2025-09213</a></td><td>Solar Inspection</td>
+          <td>Net metering annual interconnection inspection — NM-II compliance</td>
+          <td><span class="pill ntl">Normal</span></td>
+          <td><span class="pill pos">Completed</span></td>
+          <td>Sep 15, 2025</td>
+          <td>Crew: Solar-1</td>
         </tr>
         <tr>
-          <td><a href="#">CS-2026-01330</a></td>
-          <td>VPP Program Enrollment</td>
-          <td><span class="pill info">Programs</span></td>
-          <td><span class="pill pos">Closed</span></td>
-          <td>Jan 20, 2026</td>
-          <td>Self-Service</td>
+          <td><a href="#">SO-2024-15602</a></td><td>EV Charger Inspection</td>
+          <td>Post-installation service entrance verification — 200A panel confirmed</td>
+          <td><span class="pill ntl">Normal</span></td>
+          <td><span class="pill pos">Completed</span></td>
+          <td>Apr 28, 2024</td>
+          <td>Crew: Waltham-T1</td>
         </tr>
         <tr>
-          <td><a href="#">CS-2025-09213</a></td>
-          <td>Annual Solar Interconnection Inspection</td>
-          <td><span class="pill ntl">Field Service</span></td>
-          <td><span class="pill pos">Closed</span></td>
-          <td>Sep 10, 2025</td>
-          <td>Dispatch</td>
-        </tr>
-        <tr>
-          <td><a href="#">CS-2025-06701</a></td>
-          <td>EV Charger Installation Coordination</td>
-          <td><span class="pill ntl">New Service</span></td>
-          <td><span class="pill pos">Closed</span></td>
-          <td>Apr 2, 2024</td>
-          <td>K. Patel</td>
+          <td><a href="#">SO-2022-08471</a></td><td>AMI Meter Install</td>
+          <td>Smart meter deployment — replaced legacy electromechanical meter</td>
+          <td><span class="pill ntl">Normal</span></td>
+          <td><span class="pill pos">Completed</span></td>
+          <td>Jun 12, 2022</td>
+          <td>Crew: AMI-Deploy-7</td>
         </tr>
       </tbody>
     </table>
+  </div>
+</div>
+
+<!-- ================================================================
+     STANDARD LAYER — Cases
+     ================================================================ -->
+<div class="section" id="sec-cases">
+  <button class="sec-trigger" onclick="toggle('sec-cases')">
+    <div class="sec-icon" style="background:#FFF3E0;color:#E65100">📋</div>
+    <span class="sec-title">Cases</span>
+    <div class="sec-meta">
+      <span class="pill warn">1 Open</span>
+      <span class="pill pos">4 Closed</span>
+      <span class="src"><span class="dot"></span> Service Cloud V2</span>
+      <span class="sec-chevron">▾</span>
+    </div>
+  </button>
+  <div class="sec-body">
+    <table class="eq-table">
+      <thead>
+        <tr><th>Case ID</th><th>Subject</th><th>Category</th><th>Status</th><th>Created</th><th>Agent</th></tr>
+      </thead>
+      <tbody>
+        <tr style="background:#FFFDF5">
+          <td><a href="#">CS-2026-04821</a></td><td>High Bill Inquiry — March 2026</td>
+          <td><span class="pill warn">Billing</span></td><td><span class="pill warn">In Progress</span></td>
+          <td>Apr 7, 2026</td><td>S. Mitchell</td>
+        </tr>
+        <tr>
+          <td><a href="#">CS-2026-02104</a></td><td>Rate Plan Comparison Request</td>
+          <td><span class="pill info">Rates</span></td><td><span class="pill pos">Closed</span></td>
+          <td>Feb 8, 2026</td><td>T. Nguyen</td>
+        </tr>
+        <tr>
+          <td><a href="#">CS-2026-01330</a></td><td>VPP Program Enrollment</td>
+          <td><span class="pill info">Programs</span></td><td><span class="pill pos">Closed</span></td>
+          <td>Jan 20, 2026</td><td>Self-Service</td>
+        </tr>
+        <tr>
+          <td><a href="#">CS-2025-09213</a></td><td>Solar Interconnection Inspection</td>
+          <td><span class="pill ntl">Field Service</span></td><td><span class="pill pos">Closed</span></td>
+          <td>Sep 10, 2025</td><td>Dispatch</td>
+        </tr>
+        <tr>
+          <td><a href="#">CS-2024-06701</a></td><td>EV Charger Installation</td>
+          <td><span class="pill ntl">New Service</span></td><td><span class="pill pos">Closed</span></td>
+          <td>Apr 2, 2024</td><td>K. Patel</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ================================================================
+     STANDARD LAYER — Activity Timeline
+     ================================================================ -->
+<div class="section" id="sec-timeline">
+  <button class="sec-trigger" onclick="toggle('sec-timeline')">
+    <div class="sec-icon" style="background:#F3E8FD;color:#7C3AED">🕐</div>
+    <span class="sec-title">Activity Timeline</span>
+    <div class="sec-meta">
+      <span class="src"><span class="dot"></span> Service Cloud V2</span>
+      <span class="sec-chevron">▾</span>
+    </div>
+  </button>
+  <div class="sec-body">
+    <div class="tl-list">
+      <div class="tl-item"><div class="tl-dot phone"></div><div class="tl-body"><div class="tl-t">Inbound Call — Active</div><div class="tl-d">Customer calling re: March bill amount. ANI match confirmed.</div><div class="tl-time">Today · 2:14 PM · Agent: S. Mitchell</div></div></div>
+      <div class="tl-item"><div class="tl-dot alert"></div><div class="tl-body"><div class="tl-t">High Bill Alert Triggered</div><div class="tl-d">March bill exceeds 12-mo avg by 34%. Auto-flagged by CDS analytical rule.</div><div class="tl-time">Apr 2 · System</div></div></div>
+      <div class="tl-item"><div class="tl-dot email"></div><div class="tl-body"><div class="tl-t">Bill Ready Notification</div><div class="tl-d">Monthly invoice sent. Opened same day.</div><div class="tl-time">Apr 1 · Auto</div></div></div>
+      <div class="tl-item"><div class="tl-dot success"></div><div class="tl-body"><div class="tl-t">Demand Response Event — Participated</div><div class="tl-d">Powerwall discharged 8.2 kWh. Earned $12.30 credit posted to FI-CA.</div><div class="tl-time">Mar 22 · DER Platform → FI-CA</div></div></div>
+      <div class="tl-item"><div class="tl-dot field"></div><div class="tl-body"><div class="tl-t">Service Order Scheduled — Meter Test</div><div class="tl-d">SO-2026-12844 scheduled for Apr 18. Crew: Waltham-T3.</div><div class="tl-time">Mar 20 · SAP FSM</div></div></div>
+      <div class="tl-item"><div class="tl-dot system"></div><div class="tl-body"><div class="tl-t">Self-Service: EV Schedule Updated</div><div class="tl-d">Charging window set to 11 PM – 6 AM via mobile app.</div><div class="tl-time">Mar 15 · Portal</div></div></div>
+      <div class="tl-item"><div class="tl-dot phone"></div><div class="tl-body"><div class="tl-t">Inbound Call — Rate Inquiry</div><div class="tl-d">Compared TOU-D vs Flat-R. Customer chose to remain on TOU-D Prime.</div><div class="tl-time">Feb 8 · Agent: T. Nguyen · 8m 42s</div></div></div>
+      <div class="tl-item"><div class="tl-dot system"></div><div class="tl-body"><div class="tl-t">Survey Response</div><div class="tl-d">Post-call survey: 5.0/5.0 — "Very helpful, explained everything clearly."</div><div class="tl-time">Feb 8 · Post-Call Survey</div></div></div>
+      <div class="tl-item"><div class="tl-dot success"></div><div class="tl-body"><div class="tl-t">VPP Program Enrollment</div><div class="tl-d">Powerwall + solar enrolled in Virtual Power Plant via self-service.</div><div class="tl-time">Jan 20 · Self-Service</div></div></div>
+    </div>
   </div>
 </div>
 
@@ -859,19 +778,50 @@ body{
      ================================================================ -->
 <div class="int-footer">
   <span class="sap-mark">SAP</span>
-  Service Cloud V2 · Utility Customer 360 · Powered by BTP
-  <span style="margin:0 8px;color:var(--bdr)">|</span>
+  Service Cloud V2 · Utility Customer 360
+  <span style="margin:0 6px;color:var(--bdr)">|</span>
+  <span style="font-weight:600;color:var(--txt2)">Standard:</span>
   <span class="src"><span class="dot"></span> S/4HANA Utilities</span>
   <span class="src"><span class="dot"></span> FI-CA</span>
-  <span class="src"><span class="dot"></span> MDM / AMI</span>
-  <span class="src"><span class="dot"></span> Device Management</span>
-  <span style="margin-left:auto">All data retrieved in real-time via S/4HANA APIs — no replication</span>
+  <span class="src"><span class="dot"></span> MDM</span>
+  <span class="src"><span class="dot"></span> PM / FSM</span>
+  <span class="src"><span class="dot"></span> Service Cloud V2</span>
+  <span style="margin:0 6px;color:var(--bdr)">|</span>
+  <span style="font-weight:600;color:var(--btp)">BTP Extensions:</span>
+  <span class="btp-tag"><span class="btp-icon">◆</span> Digital Score</span>
+  <span class="btp-tag"><span class="btp-icon">◆</span> Sustainability</span>
+  <span class="btp-tag"><span class="btp-icon">◆</span> Feedback Agg.</span>
+  <span class="btp-tag"><span class="btp-icon">◆</span> DER Registry</span>
+  <span class="btp-tag"><span class="btp-icon">◆</span> Eligibility</span>
+  <span style="margin-left:auto">Real-time APIs — no replication</span>
 </div>
 
 <script>
-function toggleSec(id){
-  document.getElementById(id).classList.toggle('collapsed');
-}
+function toggle(id){document.getElementById(id).classList.toggle('collapsed')}
+
+// URL Parameter handling — pass ?name=John+Doe&bp=10042817&ca=200048211
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  
+  const bpName = params.get('name');
+  const bpNum = params.get('bp');
+  const caNum = params.get('ca');
+  
+  if(bpName){
+    document.getElementById('bp-name').textContent = bpName;
+    document.title = 'Utility 360 — ' + bpName;
+  }
+  if(bpNum){
+    document.getElementById('bp-number').textContent = bpNum;
+  }
+  if(caNum){
+    document.getElementById('ca-number').textContent = caNum;
+    // Also update any CA references in the body
+    document.querySelectorAll('.ca-ref').forEach(function(el){
+      el.textContent = caNum;
+    });
+  }
+})();
 </script>
 </body>
 </html>
