@@ -613,7 +613,7 @@ body{
 </div>
 
 <!-- EQUIPMENT -->
-<div class="section anim-in" style="animation-delay:.45s" id="sec-equip">
+<div class="section anim-in collapsed" style="animation-delay:.45s" id="sec-equip">
   <button class="sec-trigger" onclick="toggle('sec-equip')">
     <div class="sec-icon" style="background:var(--brand-bg);color:var(--brand)"><span class="si-electricity"></span></div>
     <span class="sec-title">Installed Equipment & DER Assets</span>
@@ -666,34 +666,6 @@ body{
   </div>
 </div>
 
-<!-- PROGRAMS -->
-<div class="section btp anim-in" style="animation-delay:.55s" id="sec-prog">
-  <button class="sec-trigger" onclick="toggle('sec-prog')">
-    <div class="sec-icon" style="background:var(--pos-bg);color:var(--pos)"><span class="si-tags"></span></div>
-    <span class="sec-title">Programs & Enrollments</span>
-    <div class="sec-meta"><span class="pill pos">6 Enrolled</span><span class="pill warn">3 Eligible</span><span class="tag-wrap"><span class="btp-tag"><span class="bi">◆</span> BTP — Eligibility</span><span class="tag-pop"><span class="tp-title"><span class="si-tags tp-icon" style="color:var(--btp)"></span> Program Eligibility Engine</span><span class="tp-body">Rules engine on SAP BTP that evaluates customer attributes from S/4HANA — rate, usage patterns, tenure, credit classification, DER assets — against program criteria to surface real-time enrollment opportunities.</span><div class="tp-arch btp-arch"><div class="arch-row"><strong>Platform:</strong> SAP BTP + Build Process Automation</div><div class="arch-row"><strong>Data Sources:</strong> S/4HANA (contracts, usage, credit) + BTP (DER registry)</div><div class="arch-row"><strong>Intelligence:</strong> Real-time eligibility scoring · Personalized program recommendations</div></div></span></span><span class="sec-chevron"><span class="si-slim-arrow-down"></span></span></div>
-  </button>
-  <div class="sec-body">
-    <div class="prog-grid">
-      <div class="prog-section" style="border-right:1px solid var(--bdr-lt)">
-        <h4><span style="color:var(--pos)">●</span> Enrolled Programs</h4>
-        <div class="prog-item"><div class="prog-dot on"></div><div class="prog-info"><div class="pn">Autopay</div><div class="pd">Bank of America ···4821 · Since Mar 2020</div></div><button class="prog-action">Manage</button></div>
-        <div class="prog-item"><div class="prog-dot on"></div><div class="prog-info"><div class="pn">Paperless Billing</div><div class="pd">Email delivery · Since Mar 2020</div></div><button class="prog-action">Manage</button></div>
-        <div class="prog-item"><div class="prog-dot on"></div><div class="prog-info"><div class="pn">Virtual Power Plant (VPP)</div><div class="pd">Solar + Powerwall · Since Jan 2026 · Earned $36.90 YTD</div></div><button class="prog-action">Details</button></div>
-        <div class="prog-item"><div class="prog-dot on"></div><div class="prog-info"><div class="pn">100% Green Energy</div><div class="pd">Renewable offset program · Since Oct 2023</div></div><button class="prog-action">Manage</button></div>
-        <div class="prog-item"><div class="prog-dot on"></div><div class="prog-info"><div class="pn">Net Metering (NM-II)</div><div class="pd">Monthly excess credit · 8.4 kW solar qualified</div></div><button class="prog-action">Details</button></div>
-        <div class="prog-item"><div class="prog-dot on"></div><div class="prog-info"><div class="pn">Managed EV Charging</div><div class="pd">Off-peak window: 11 PM – 6 AM</div></div><button class="prog-action">Manage</button></div>
-      </div>
-      <div class="prog-section" style="background:linear-gradient(90deg,var(--btp-bg),var(--surf))">
-        <h4><span style="color:var(--warn)">○</span> Available — Eligible <span class="btp-tag" style="font-size:8px"><span class="bi">◆</span> BTP</span></h4>
-        <div class="prog-item"><div class="prog-dot off"></div><div class="prog-info"><div class="pn">Budget Billing</div><div class="pd">Estimated $148/mo · Smooths seasonal variance</div></div><button class="prog-action">Enroll →</button></div>
-        <div class="prog-item"><div class="prog-dot off"></div><div class="prog-info"><div class="pn">Peak Time Rebate (PTR)</div><div class="pd">Earn rebates during critical peak events · AMI eligible</div></div><button class="prog-action">Enroll →</button></div>
-        <div class="prog-item"><div class="prog-dot off"></div><div class="prog-info"><div class="pn">Home Energy Audit</div><div class="pd">Free in-home assessment · Eligible: tenure > 3 years</div></div><button class="prog-action">Schedule →</button></div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- CONSUMPTION -->
 <div class="section anim-in" style="animation-delay:.6s" id="sec-usage">
   <button class="sec-trigger" onclick="toggle('sec-usage')">
@@ -727,9 +699,37 @@ body{
     </div>
   </div>
 </div>
+  
+<!-- PROGRAMS -->
+<div class="section btp anim-in collapsed" style="animation-delay:.55s" id="sec-prog">
+  <button class="sec-trigger" onclick="toggle('sec-prog')">
+    <div class="sec-icon" style="background:var(--pos-bg);color:var(--pos)"><span class="si-tags"></span></div>
+    <span class="sec-title">Programs & Enrollments</span>
+    <div class="sec-meta"><span class="pill pos">6 Enrolled</span><span class="pill warn">3 Eligible</span><span class="tag-wrap"><span class="btp-tag"><span class="bi">◆</span> BTP — Eligibility</span><span class="tag-pop"><span class="tp-title"><span class="si-tags tp-icon" style="color:var(--btp)"></span> Program Eligibility Engine</span><span class="tp-body">Rules engine on SAP BTP that evaluates customer attributes from S/4HANA — rate, usage patterns, tenure, credit classification, DER assets — against program criteria to surface real-time enrollment opportunities.</span><div class="tp-arch btp-arch"><div class="arch-row"><strong>Platform:</strong> SAP BTP + Build Process Automation</div><div class="arch-row"><strong>Data Sources:</strong> S/4HANA (contracts, usage, credit) + BTP (DER registry)</div><div class="arch-row"><strong>Intelligence:</strong> Real-time eligibility scoring · Personalized program recommendations</div></div></span></span><span class="sec-chevron"><span class="si-slim-arrow-down"></span></span></div>
+  </button>
+  <div class="sec-body">
+    <div class="prog-grid">
+      <div class="prog-section" style="border-right:1px solid var(--bdr-lt)">
+        <h4><span style="color:var(--pos)">●</span> Enrolled Programs</h4>
+        <div class="prog-item"><div class="prog-dot on"></div><div class="prog-info"><div class="pn">Autopay</div><div class="pd">Bank of America ···4821 · Since Mar 2020</div></div><button class="prog-action">Manage</button></div>
+        <div class="prog-item"><div class="prog-dot on"></div><div class="prog-info"><div class="pn">Paperless Billing</div><div class="pd">Email delivery · Since Mar 2020</div></div><button class="prog-action">Manage</button></div>
+        <div class="prog-item"><div class="prog-dot on"></div><div class="prog-info"><div class="pn">Virtual Power Plant (VPP)</div><div class="pd">Solar + Powerwall · Since Jan 2026 · Earned $36.90 YTD</div></div><button class="prog-action">Details</button></div>
+        <div class="prog-item"><div class="prog-dot on"></div><div class="prog-info"><div class="pn">100% Green Energy</div><div class="pd">Renewable offset program · Since Oct 2023</div></div><button class="prog-action">Manage</button></div>
+        <div class="prog-item"><div class="prog-dot on"></div><div class="prog-info"><div class="pn">Net Metering (NM-II)</div><div class="pd">Monthly excess credit · 8.4 kW solar qualified</div></div><button class="prog-action">Details</button></div>
+        <div class="prog-item"><div class="prog-dot on"></div><div class="prog-info"><div class="pn">Managed EV Charging</div><div class="pd">Off-peak window: 11 PM – 6 AM</div></div><button class="prog-action">Manage</button></div>
+      </div>
+      <div class="prog-section" style="background:linear-gradient(90deg,var(--btp-bg),var(--surf))">
+        <h4><span style="color:var(--warn)">○</span> Available — Eligible <span class="btp-tag" style="font-size:8px"><span class="bi">◆</span> BTP</span></h4>
+        <div class="prog-item"><div class="prog-dot off"></div><div class="prog-info"><div class="pn">Budget Billing</div><div class="pd">Estimated $148/mo · Smooths seasonal variance</div></div><button class="prog-action">Enroll →</button></div>
+        <div class="prog-item"><div class="prog-dot off"></div><div class="prog-info"><div class="pn">Peak Time Rebate (PTR)</div><div class="pd">Earn rebates during critical peak events · AMI eligible</div></div><button class="prog-action">Enroll →</button></div>
+        <div class="prog-item"><div class="prog-dot off"></div><div class="prog-info"><div class="pn">Home Energy Audit</div><div class="pd">Free in-home assessment · Eligible: tenure > 3 years</div></div><button class="prog-action">Schedule →</button></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- SERVICE ORDERS -->
-<div class="section anim-in" style="animation-delay:.65s" id="sec-so">
+<div class="section anim-in collapsed" style="animation-delay:.65s" id="sec-so">
   <button class="sec-trigger" onclick="toggle('sec-so')">
     <div class="sec-icon" style="background:var(--pos-bg);color:var(--pos)"><span class="si-wrench"></span></div>
     <span class="sec-title">Service Orders</span>
@@ -749,7 +749,7 @@ body{
 </div>
 
 <!-- CASES -->
-<div class="section anim-in" style="animation-delay:.7s" id="sec-cases">
+<div class="section anim-in collapsed" style="animation-delay:.7s" id="sec-cases">
   <button class="sec-trigger" onclick="toggle('sec-cases')">
     <div class="sec-icon" style="background:var(--warn-bg);color:var(--warn)"><span class="si-list"></span></div>
     <span class="sec-title">Cases</span>
