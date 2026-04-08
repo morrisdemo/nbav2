@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>Utility Customer 360</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --brand:#0070F2;--brand-bg:#EBF5FE;--brand-border:#B8D7F5;
+  --pos:#256F3A;--pos-bg:#F5FAE5;--pos-border:#B6D98C;
+  --crit:#AA0808;--crit-bg:#FFEBEB;--crit-border:#F4AAAA;
+  --warn:#E76500;--warn-bg:#FFF8D6;--warn-border:#F5D44E;
+  --info:#0070F2;--info-bg:#EBF5FE;
+  --neutral:#556B82;--neutral-bg:#EFF1F2;
+  --surf:#FFFFFF;--bg:#F5F6F7;--bg2:#FAFBFC;
+  --bdr:#E5E5E5;--bdr-lt:#F0F1F2;
+  --txt:#1D2D3E;--txt2:#556B82;--txt3:#8396A8;--link:#0064D9;
+  --shadow:0 1px 4px rgba(29,45,62,.05);
+  --rs:8px;--rm:12px;--pill:100px
+}
+
+body{
+  font-family:'72','IBM Plex Sans',-apple-system,sans-serif;
+  background:var(--bg);color:var(--txt);font-size:13px;line-height:1.5;
+  min-width:1080px;-webkit-font-smoothing:antialiased;padding-bottom:52px
+}
+
+/* ================================================================
+   HEADER BAR
+   ================================================================ */
+.hdr{
+  background:var(--surf);border-bottom:1px solid var(--bdr);
+  padding:10px 24px;display:flex;align-items:center;gap:12px;
+  position:sticky;top:0;z-index:50
+}
+.hdr-av{
+  width:38px;height:38px;border-radius:var(--rs);
+  background:linear-gradient(135deg,#0070F2,#4DA6FF);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:14px;font-weight:700;flex-shrink:0
+}
+.hdr-id h2{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+.hdr-id .sub{font-size:11px;color:var(--txt2);margin-top:1px}
+.hdr-id .sub a{color:var(--link);text-decoration:none}
+
+.pill{font-size:9px;font-weight:600;padding:2px 8px;border-radius:var(--pill);letter-spacing:.02em}
+.pill.pos{background:var(--pos-bg);color:var(--pos);border:1px solid var(--pos-border)}
+.pill.info{background:var(--info-bg);color:var(--info);border:1px solid var(--brand-border)}
+.pill.warn{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-border)}
+.pill.crit{background:var(--crit-bg);color:var(--crit);border:1px solid var(--crit-border)}
+.pill.ntl{background:var(--neutral-bg);color:var(--neutral);border:1px solid var(--bdr)}
+
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+
+/* Source tag */
+.src{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:9px;font-weight:600;color:var(--txt3);
+  padding:3px 8px;border-radius:4px;background:var(--bg2);border:1px solid var(--bdr)
+}
+.src .dot{width:5px;height:5px;border-radius:50%;background:var(--pos);animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* Compact KPIs in header */
+.hdr-kpis{display:flex;gap:16px;margin-left:16px}
+.hkpi{text-align:center}
+.hkpi .v{font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:600;line-height:1.2}
+.hkpi .v.pos{color:var(--pos)}.hkpi .v.crit{color:var(--crit)}.hkpi .v.warn{color:var(--warn)}
+.hkpi .l{font-size:9px;font-weight:500;color:var(--txt3);text-transform:uppercase;letter-spacing:.04em}
+
+/* ================================================================
+   CONTENT AREA
+   ================================================================ */
+.content{padding:14px 24px;display:flex;flex-direction:column;gap:10px}
+
+/* ================================================================
+   SCORE STRIP — Digital, Green, Feedback scores in a horizontal band
+   ================================================================ */
+.score-strip{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px
+}
+.score-card{
+  background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rm);
+  padding:14px 16px;box-shadow:var(--shadow);overflow:hidden;position:relative
+}
+.score-card .sc-header{
+  display:flex;align-items:center;gap:8px;margin-bottom:10px
+}
+.sc-icon{
+  width:30px;height:30px;border-radius:var(--rs);
+  display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0
+}
+.sc-title{font-size:12px;font-weight:700;color:var(--txt)}
+.sc-subtitle{font-size:10px;color:var(--txt3);font-weight:400}
+
+/* Score ring */
+.score-ring-row{display:flex;align-items:center;gap:16px}
+.score-ring{position:relative;width:56px;height:56px;flex-shrink:0}
+.score-ring svg{transform:rotate(-90deg)}
+.score-ring .ring-bg{fill:none;stroke:var(--bdr-lt);stroke-width:5}
+.score-ring .ring-fill{fill:none;stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset .8s ease}
+.score-ring .ring-label{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:700;
+}
+
+.score-details{flex:1;display:flex;flex-direction:column;gap:3px}
+.sd-row{display:flex;justify-content:space-between;align-items:center}
+.sd-row .sd-label{font-size:11px;color:var(--txt2)}
+.sd-row .sd-val{font-size:11px;font-weight:600;color:var(--txt)}
+.sd-row .sd-val.pos{color:var(--pos)}
+.sd-row .sd-val.crit{color:var(--crit)}
+.sd-row .sd-val.warn{color:var(--warn)}
+
+/* Feedback stars */
+.stars{display:inline-flex;gap:1px;font-size:12px;color:#F5B731}
+.stars .empty{color:var(--bdr)}
+
+/* ================================================================
+   COLLAPSIBLE SECTION
+   ================================================================ */
+.section{
+  background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rm);
+  box-shadow:var(--shadow);overflow:hidden
+}
+.sec-trigger{
+  width:100%;display:flex;align-items:center;gap:8px;
+  padding:11px 16px;background:none;border:none;cursor:pointer;
+  font-family:inherit;text-align:left
+}
+.sec-trigger:hover{background:var(--bg2)}
+.sec-icon{
+  width:24px;height:24px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0
+}
+.sec-title{font-size:13px;font-weight:700;color:var(--txt);flex:1}
+.sec-meta{display:flex;align-items:center;gap:8px}
+.sec-chevron{
+  font-size:12px;color:var(--txt3);transition:transform .2s ease;
+  display:flex;align-items:center
+}
+.section.collapsed .sec-chevron{transform:rotate(-90deg)}
+.sec-body{border-top:1px solid var(--bdr-lt)}
+.section.collapsed .sec-body{display:none}
+
+/* ================================================================
+   DATA GRID — 2, 3, or 4-col form layouts within sections
+   ================================================================ */
+.dg{display:grid;gap:0}
+.dg.c2{grid-template-columns:1fr 1fr}
+.dg.c3{grid-template-columns:1fr 1fr 1fr}
+.dg.c4{grid-template-columns:1fr 1fr 1fr 1fr}
+
+.df{padding:8px 16px;border-bottom:1px solid var(--bdr-lt)}
+.df:last-child{border-bottom:none}
+.df .fl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--txt3);margin-bottom:2px}
+.df .fv{font-size:12px;font-weight:500;color:var(--txt)}
+.df .fv a{color:var(--link);text-decoration:none;font-weight:600}
+.df .fv.pos{color:var(--pos)}.df .fv.crit{color:var(--crit)}.df .fv.warn{color:var(--warn)}.df .fv.ntl{color:var(--txt3)}
+.df .fv .mono{font-family:'IBM Plex Mono',monospace;font-weight:600}
+
+/* ================================================================
+   FI-CA SUMMARY BOXES
+   ================================================================ */
+.fica-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:12px 16px}
+.fica-box{
+  background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--rs);
+  padding:10px;text-align:center
+}
+.fica-box .fb-val{font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:600}
+.fica-box .fb-val.pos{color:var(--pos)}.fica-box .fb-val.crit{color:var(--crit)}.fica-box .fb-val.warn{color:var(--warn)}
+.fica-box .fb-label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--txt3);margin-top:2px}
+
+/* ================================================================
+   RATE CARD
+   ================================================================ */
+.rate-card{
+  background:linear-gradient(135deg,#0054B4 0%,#0070F2 60%,#1B90FF 100%);
+  border-radius:var(--rm);padding:14px 16px;color:#fff;margin:12px 16px
+}
+.rc-name{font-size:14px;font-weight:700}
+.rc-sub{font-size:11px;opacity:.75;margin-top:2px}
+.rc-rates{display:flex;gap:20px;margin-top:10px}
+.rc-item .rc-v{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:700}
+.rc-item .rc-l{font-size:9px;text-transform:uppercase;letter-spacing:.04em;opacity:.6}
+
+/* ================================================================
+   EQUIPMENT TABLE
+   ================================================================ */
+.eq-table{width:100%;border-collapse:collapse}
+.eq-table th{
+  text-align:left;padding:8px 16px;font-size:10px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.04em;color:var(--txt3);
+  background:var(--bg2);border-bottom:1px solid var(--bdr)
+}
+.eq-table td{padding:8px 16px;font-size:12px;border-bottom:1px solid var(--bdr-lt);vertical-align:middle}
+.eq-table tr:last-child td{border-bottom:none}
+.eq-table a{color:var(--link);text-decoration:none;font-weight:600}
+.eq-table .mono{font-family:'IBM Plex Mono',monospace;font-weight:500}
+
+/* ================================================================
+   PROGRAMS GRID
+   ================================================================ */
+.prog-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.prog-section{padding:12px 16px}
+.prog-section h4{
+  font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.05em;color:var(--txt3);margin-bottom:8px;
+  display:flex;align-items:center;gap:6px
+}
+.prog-item{
+  display:flex;align-items:center;gap:8px;padding:6px 0;
+  border-bottom:1px solid var(--bdr-lt)
+}
+.prog-item:last-child{border-bottom:none}
+.prog-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.prog-dot.on{background:var(--pos)}.prog-dot.off{background:var(--bdr);border:1.5px solid var(--txt3)}
+.prog-info{flex:1}
+.prog-info .pn{font-size:12px;font-weight:600;color:var(--txt)}
+.prog-info .pd{font-size:10px;color:var(--txt3)}
+.prog-action{
+  font-size:10px;font-weight:600;color:var(--link);
+  cursor:pointer;padding:3px 8px;border-radius:4px;
+  background:transparent;border:none;font-family:inherit
+}
+.prog-action:hover{background:var(--brand-bg)}
+
+/* ================================================================
+   USAGE SPARKLINE AREA
+   ================================================================ */
+.usage-row{display:grid;grid-template-columns:1fr 200px;gap:16px;padding:12px 16px;align-items:end}
+.usage-stats{display:flex;gap:20px}
+.usage-stat .us-v{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600}
+.usage-stat .us-l{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--txt3)}
+.usage-stat .us-delta{font-size:10px;font-weight:600;margin-top:1px}
+.usage-stat .us-delta.up{color:var(--crit)}.usage-stat .us-delta.dn{color:var(--pos)}
+
+/* ================================================================
+   TIMELINE
+   ================================================================ */
+.tl-list{padding:8px 16px}
+.tl-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--bdr-lt)}
+.tl-item:last-child{border-bottom:none}
+.tl-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.tl-dot.phone{background:var(--brand)}.tl-dot.system{background:var(--txt3)}
+.tl-dot.email{background:#7C3AED}.tl-dot.success{background:var(--pos)}
+.tl-dot.alert{background:var(--warn)}
+.tl-body .tl-t{font-size:12px;font-weight:600;color:var(--txt)}
+.tl-body .tl-d{font-size:11px;color:var(--txt2);line-height:1.5;margin-top:1px}
+.tl-body .tl-time{font-size:10px;color:var(--txt3);margin-top:2px}
+
+/* ================================================================
+   CASES TABLE
+   ================================================================ */
+/* reuse eq-table */
+
+/* ================================================================
+   INTEGRATION FOOTER
+   ================================================================ */
+.int-footer{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--surf);border-top:1px solid var(--bdr);
+  padding:8px 24px;display:flex;align-items:center;gap:12px;
+  font-size:10px;color:var(--txt3);z-index:50
+}
+.int-footer .sap-mark{
+  font-family:'IBM Plex Sans',sans-serif;font-weight:700;
+  font-size:11px;color:var(--txt);letter-spacing:.5px;margin-right:4px
+}
+</style>
+</head>
+<body>
+
+<!-- ================================================================
+     CONTEXT HEADER
+     ================================================================ -->
+<div class="hdr">
+  <div class="hdr-av">MR</div>
+  <div class="hdr-id">
+    <h2>
+      Maria Rodriguez
+      <span class="pill pos">Active</span>
+      <span class="pill info">Residential</span>
+    </h2>
+    <div class="sub">
+      <a href="#">BP 10042817</a> · <a href="#">CA 200048211</a> · <a href="#">Contract 300048211</a> · 142 Maple Ave, Waltham MA 02451 · Since Jan 2019
+    </div>
+  </div>
+  <div class="hdr-kpis">
+    <div class="hkpi"><div class="v pos">$0.00</div><div class="l">FI-CA Bal</div></div>
+    <div class="hkpi"><div class="v">842</div><div class="l">kWh/mo</div></div>
+    <div class="hkpi"><div class="v">A+</div><div class="l">Credit</div></div>
+  </div>
+  <div class="hdr-right">
+    <span class="src"><span class="dot"></span> S/4HANA Utilities · Live</span>
+  </div>
+</div>
+
+<!-- ================================================================
+     SCORE STRIP — Digital Engagement, Green Profile, Customer Feedback
+     ================================================================ -->
+<div class="content">
+
+<div class="score-strip">
+
+  <!-- Digital Engagement Score -->
+  <div class="score-card">
+    <div class="sc-header">
+      <div class="sc-icon" style="background:var(--brand-bg);color:var(--brand);">📱</div>
+      <div><div class="sc-title">Digital Engagement</div><div class="sc-subtitle">Self-service adoption & channel preference</div></div>
+    </div>
+    <div class="score-ring-row">
+      <div class="score-ring">
+        <svg viewBox="0 0 56 56" width="56" height="56">
+          <circle cx="28" cy="28" r="23" class="ring-bg"/>
+          <circle cx="28" cy="28" r="23" class="ring-fill" stroke="var(--brand)"
+            stroke-dasharray="144.51" stroke-dashoffset="21.68"/>
+        </svg>
+        <div class="ring-label" style="color:var(--brand)">85</div>
+      </div>
+      <div class="score-details">
+        <div class="sd-row"><span class="sd-label">Portal Logins (90d)</span><span class="sd-val">24</span></div>
+        <div class="sd-row"><span class="sd-label">Self-Service Actions</span><span class="sd-val">18</span></div>
+        <div class="sd-row"><span class="sd-label">Preferred Channel</span><span class="sd-val">Digital (App)</span></div>
+        <div class="sd-row"><span class="sd-label">Autopay</span><span class="sd-val pos">✓ Enrolled</span></div>
+        <div class="sd-row"><span class="sd-label">eBill / Paperless</span><span class="sd-val pos">✓ Enrolled</span></div>
+        <div class="sd-row"><span class="sd-label">Mobile App</span><span class="sd-val pos">✓ Active</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Green / Sustainability Profile -->
+  <div class="score-card">
+    <div class="sc-header">
+      <div class="sc-icon" style="background:var(--pos-bg);color:var(--pos);">🌱</div>
+      <div><div class="sc-title">Sustainability Profile</div><div class="sc-subtitle">Green program participation & carbon impact</div></div>
+    </div>
+    <div class="score-ring-row">
+      <div class="score-ring">
+        <svg viewBox="0 0 56 56" width="56" height="56">
+          <circle cx="28" cy="28" r="23" class="ring-bg"/>
+          <circle cx="28" cy="28" r="23" class="ring-fill" stroke="var(--pos)"
+            stroke-dasharray="144.51" stroke-dashoffset="14.45"/>
+        </svg>
+        <div class="ring-label" style="color:var(--pos)">92</div>
+      </div>
+      <div class="score-details">
+        <div class="sd-row"><span class="sd-label">Renewable Program</span><span class="sd-val pos">✓ 100% Green</span></div>
+        <div class="sd-row"><span class="sd-label">Solar Generation</span><span class="sd-val">8.4 kW Active</span></div>
+        <div class="sd-row"><span class="sd-label">Battery Storage</span><span class="sd-val">13.5 kWh</span></div>
+        <div class="sd-row"><span class="sd-label">EV Ownership</span><span class="sd-val pos">✓ Managed Charging</span></div>
+        <div class="sd-row"><span class="sd-label">DR / VPP</span><span class="sd-val pos">✓ Enrolled</span></div>
+        <div class="sd-row"><span class="sd-label">Est. Carbon Offset</span><span class="sd-val pos">4.2 tons/yr</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Customer Feedback -->
+  <div class="score-card">
+    <div class="sc-header">
+      <div class="sc-icon" style="background:var(--warn-bg);color:var(--warn);">⭐</div>
+      <div><div class="sc-title">Customer Feedback</div><div class="sc-subtitle">Survey responses & satisfaction history</div></div>
+    </div>
+    <div class="score-ring-row">
+      <div class="score-ring">
+        <svg viewBox="0 0 56 56" width="56" height="56">
+          <circle cx="28" cy="28" r="23" class="ring-bg"/>
+          <circle cx="28" cy="28" r="23" class="ring-fill" stroke="#F5B731"
+            stroke-dasharray="144.51" stroke-dashoffset="7.23"/>
+        </svg>
+        <div class="ring-label" style="color:#C99100">4.8</div>
+      </div>
+      <div class="score-details">
+        <div class="sd-row"><span class="sd-label">Average Score</span><span class="sd-val"><span class="stars">★★★★★</span> 4.8 / 5.0</span></div>
+        <div class="sd-row"><span class="sd-label">Total Responses</span><span class="sd-val">14 surveys</span></div>
+        <div class="sd-row"><span class="sd-label">Last Feedback</span><span class="sd-val">Mar 14, 2026</span></div>
+        <div class="sd-row"><span class="sd-label">Last Score</span><span class="sd-val"><span class="stars">★★★★★</span> 5.0</span></div>
+        <div class="sd-row"><span class="sd-label">NPS Category</span><span class="sd-val pos">Promoter (9)</span></div>
+        <div class="sd-row"><span class="sd-label">Response Rate</span><span class="sd-val">78%</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ================================================================
+     FINANCIAL SNAPSHOT — FI-CA
+     ================================================================ -->
+<div class="section" id="sec-fica">
+  <button class="sec-trigger" onclick="toggleSec('sec-fica')">
+    <div class="sec-icon" style="background:var(--warn-bg);color:var(--warn)">💰</div>
+    <span class="sec-title">Financial Summary (FI-CA)</span>
+    <div class="sec-meta">
+      <span class="src"><span class="dot"></span> FI-CA Live</span>
+      <span class="sec-chevron">▾</span>
+    </div>
+  </button>
+  <div class="sec-body">
+    <div class="fica-row">
+      <div class="fica-box"><div class="fb-val pos">$0.00</div><div class="fb-label">Current Balance</div></div>
+      <div class="fica-box"><div class="fb-val">$187.34</div><div class="fb-label">Last Invoice</div></div>
+      <div class="fica-box"><div class="fb-val pos">0</div><div class="fb-label">Dunning Level</div></div>
+      <div class="fica-box"><div class="fb-val">$0.00</div><div class="fb-label">Security Deposit</div></div>
+      <div class="fica-box"><div class="fb-val pos">On-Time</div><div class="fb-label">Pay History</div></div>
+    </div>
+    <div class="dg c3">
+      <div class="df"><div class="fl">Contract Account</div><div class="fv"><a href="#">200048211</a></div></div>
+      <div class="df"><div class="fl">Autopay Status</div><div class="fv pos">✓ Active — BofA ···4821</div></div>
+      <div class="df"><div class="fl">Paperless Billing</div><div class="fv pos">✓ Email Delivery</div></div>
+      <div class="df"><div class="fl">Last Payment</div><div class="fv"><span class="mono">$154.22</span> · Mar 12, 2026</div></div>
+      <div class="df"><div class="fl">Payment Plan</div><div class="fv ntl">None Active</div></div>
+      <div class="df"><div class="fl">Budget Billing</div><div class="fv ntl">Not Enrolled — Est. $148/mo</div></div>
+      <div class="df"><div class="fl">Write-Off History</div><div class="fv pos">$0.00</div></div>
+      <div class="df"><div class="fl">Open Items</div><div class="fv">1 — <span class="mono">$187.34</span> due Apr 15</div></div>
+      <div class="df"><div class="fl">Credit Classification</div><div class="fv pos">A+ — Excellent</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     SERVICE LOCATION / PREMISE
+     ================================================================ -->
+<div class="section" id="sec-premise">
+  <button class="sec-trigger" onclick="toggleSec('sec-premise')">
+    <div class="sec-icon" style="background:var(--brand-bg);color:var(--brand)">📍</div>
+    <span class="sec-title">Service Location & Premise</span>
+    <div class="sec-meta">
+      <span class="src"><span class="dot"></span> S/4HANA Live</span>
+      <span class="sec-chevron">▾</span>
+    </div>
+  </button>
+  <div class="sec-body">
+    <div class="dg c3">
+      <div class="df"><div class="fl">Premise ID</div><div class="fv"><a href="#">PREM-02451-0142</a></div></div>
+      <div class="df"><div class="fl">Service Address</div><div class="fv">142 Maple Ave, Waltham MA 02451</div></div>
+      <div class="df"><div class="fl">Mailing Address</div><div class="fv">Same as Service</div></div>
+      <div class="df"><div class="fl">Connection Object</div><div class="fv"><a href="#">CO-482100</a></div></div>
+      <div class="df"><div class="fl">Grid Segment</div><div class="fv">Waltham Sub-12 · Feeder 04</div></div>
+      <div class="df"><div class="fl">Outage Zone</div><div class="fv">Zone WA-04-N</div></div>
+      <div class="df"><div class="fl">Service Entrance</div><div class="fv">200A · Single Phase · 240V</div></div>
+      <div class="df"><div class="fl">Meter Room / Location</div><div class="fv">Exterior — South Wall</div></div>
+      <div class="df"><div class="fl">MRU (Meter Reading Unit)</div><div class="fv">Waltham-District-07</div></div>
+      <div class="df"><div class="fl">Lat / Long</div><div class="fv mono">42.3765, -71.2356</div></div>
+      <div class="df"><div class="fl">Property Type</div><div class="fv">Single Family — Owner Occupied</div></div>
+      <div class="df"><div class="fl">Sq. Footage (Est.)</div><div class="fv">2,140 sq ft</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     INSTALLED EQUIPMENT
+     ================================================================ -->
+<div class="section" id="sec-equip">
+  <button class="sec-trigger" onclick="toggleSec('sec-equip')">
+    <div class="sec-icon" style="background:#E3F2FD;color:#0277BD">⚡</div>
+    <span class="sec-title">Installed Equipment & DER Assets</span>
+    <div class="sec-meta">
+      <span class="pill info">4 DER Assets</span>
+      <span class="src"><span class="dot"></span> S/4HANA DI/MDM</span>
+      <span class="sec-chevron">▾</span>
+    </div>
+  </button>
+  <div class="sec-body">
+    <table class="eq-table">
+      <thead>
+        <tr>
+          <th>Device</th>
+          <th>Type</th>
+          <th>Serial / ID</th>
+          <th>Install Date</th>
+          <th>Details</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><a href="#">Electric Meter</a></td>
+          <td>AMI Smart Meter</td>
+          <td class="mono">AMI-4821003</td>
+          <td>Jun 2022</td>
+          <td>15-min intervals · Last read: Apr 6, 23:45 · Installation <a href="#">INST-0048211-E</a></td>
+          <td><span class="pill pos">Active</span></td>
+        </tr>
+        <tr>
+          <td><a href="#">Gas Meter</a></td>
+          <td>AMR</td>
+          <td class="mono">G-77201</td>
+          <td>Mar 2019</td>
+          <td>Monthly read · Last read: Mar 28 · Installation <a href="#">INST-0048211-G</a></td>
+          <td><span class="pill pos">Active</span></td>
+        </tr>
+        <tr>
+          <td><a href="#">Rooftop Solar</a></td>
+          <td>PV System (DER)</td>
+          <td class="mono">SOL-8400-SP</td>
+          <td>Oct 2023</td>
+          <td>SunPower M-Series · 8.4 kW · Net Metering <a href="#">NM-2024-4821</a></td>
+          <td><span class="pill pos">Producing</span></td>
+        </tr>
+        <tr>
+          <td><a href="#">Home Battery</a></td>
+          <td>ESS (DER)</td>
+          <td class="mono">BAT-PW2-1350</td>
+          <td>Oct 2023</td>
+          <td>Tesla Powerwall 2 · 13.5 kWh · VPP-enrolled · SOC: 92%</td>
+          <td><span class="pill pos">Online</span></td>
+        </tr>
+        <tr>
+          <td><a href="#">EV Charger</a></td>
+          <td>EVSE L2 (DER)</td>
+          <td class="mono">EV-CPF-2248</td>
+          <td>Apr 2024</td>
+          <td>ChargePoint Home Flex · 48A · Managed Charging: 11 PM – 6 AM</td>
+          <td><span class="pill info">Charging</span></td>
+        </tr>
+        <tr>
+          <td><a href="#">Smart Thermostat</a></td>
+          <td>Connected Device</td>
+          <td class="mono">NEST-3G-7821</td>
+          <td>Jan 2022</td>
+          <td>Nest Learning 3rd Gen · DR-capable · Set: 68°F</td>
+          <td><span class="pill ntl">Idle</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ================================================================
+     RATE DATA
+     ================================================================ -->
+<div class="section" id="sec-rate">
+  <button class="sec-trigger" onclick="toggleSec('sec-rate')">
+    <div class="sec-icon" style="background:#EDE7F6;color:#5E35B1">📐</div>
+    <span class="sec-title">Rate Schedule & Tariff</span>
+    <div class="sec-meta">
+      <span class="pill info">TOU-D Prime</span>
+      <span class="src"><span class="dot"></span> S/4HANA Rate Mgmt</span>
+      <span class="sec-chevron">▾</span>
+    </div>
+  </button>
+  <div class="sec-body">
+    <div class="rate-card">
+      <div class="rc-name">TOU-D Prime — Time-of-Use with Net Metering</div>
+      <div class="rc-sub">MA DPU Tariff #312 · Effective Oct 1, 2024 · Rate Category: Residential TOU · Net Metering Rider NM-II</div>
+      <div class="rc-rates">
+        <div class="rc-item"><div class="rc-v">$0.24</div><div class="rc-l">Peak (2–7 PM)</div></div>
+        <div class="rc-item"><div class="rc-v">$0.16</div><div class="rc-l">Mid-Peak (7–10 PM)</div></div>
+        <div class="rc-item"><div class="rc-v">$0.11</div><div class="rc-l">Off-Peak (10 PM–2 PM)</div></div>
+        <div class="rc-item"><div class="rc-v">$9.48</div><div class="rc-l">Monthly Cust. Charge</div></div>
+      </div>
+    </div>
+    <div class="dg c3">
+      <div class="df"><div class="fl">Rate Schedule</div><div class="fv"><a href="#">TOU-D-PRIME-NM</a></div></div>
+      <div class="df"><div class="fl">Rate Category</div><div class="fv">Residential — TOU</div></div>
+      <div class="df"><div class="fl">Net Metering Rider</div><div class="fv"><a href="#">NM-II</a> — Excess credited monthly</div></div>
+      <div class="df"><div class="fl">Regulatory Tariff</div><div class="fv">MA DPU Tariff #312</div></div>
+      <div class="df"><div class="fl">Effective Date</div><div class="fv">Oct 1, 2024</div></div>
+      <div class="df"><div class="fl">Last Rate Change</div><div class="fv">Jan 1, 2026 — Supply adj. +$0.012/kWh</div></div>
+      <div class="df"><div class="fl">Eligible Alternatives</div><div class="fv"><a href="#">Flat-R</a> · <a href="#">TOU-D Standard</a> · <a href="#">EV-TOU</a></div></div>
+      <div class="df"><div class="fl">Rate Comparison</div><div class="fv"><a href="#">Run Rate Comparison Tool →</a></div></div>
+      <div class="df"><div class="fl">Est. Annual Cost (Current)</div><div class="fv mono">$1,676</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     PROGRAMS — Enrolled + Available
+     ================================================================ -->
+<div class="section" id="sec-prog">
+  <button class="sec-trigger" onclick="toggleSec('sec-prog')">
+    <div class="sec-icon" style="background:var(--pos-bg);color:var(--pos)">🏷️</div>
+    <span class="sec-title">Programs & Enrollments</span>
+    <div class="sec-meta">
+      <span class="pill pos">6 Enrolled</span>
+      <span class="pill warn">3 Eligible</span>
+      <span class="sec-chevron">▾</span>
+    </div>
+  </button>
+  <div class="sec-body">
+    <div class="prog-grid">
+      <!-- Enrolled -->
+      <div class="prog-section" style="border-right:1px solid var(--bdr-lt)">
+        <h4><span style="color:var(--pos)">●</span> Enrolled Programs</h4>
+        <div class="prog-item">
+          <div class="prog-dot on"></div>
+          <div class="prog-info"><div class="pn">Autopay</div><div class="pd">Bank of America ···4821 · Since Mar 2020</div></div>
+          <button class="prog-action">Manage</button>
+        </div>
+        <div class="prog-item">
+          <div class="prog-dot on"></div>
+          <div class="prog-info"><div class="pn">Paperless Billing</div><div class="pd">Email delivery · Since Mar 2020</div></div>
+          <button class="prog-action">Manage</button>
+        </div>
+        <div class="prog-item">
+          <div class="prog-dot on"></div>
+          <div class="prog-info"><div class="pn">Virtual Power Plant (VPP)</div><div class="pd">Solar + Powerwall enrolled · Since Jan 2026 · Earned $36.90 YTD</div></div>
+          <button class="prog-action">Details</button>
+        </div>
+        <div class="prog-item">
+          <div class="prog-dot on"></div>
+          <div class="prog-info"><div class="pn">100% Green Energy</div><div class="pd">Renewable offset program · Since Oct 2023</div></div>
+          <button class="prog-action">Manage</button>
+        </div>
+        <div class="prog-item">
+          <div class="prog-dot on"></div>
+          <div class="prog-info"><div class="pn">Net Metering (NM-II)</div><div class="pd">Monthly excess credit · 8.4 kW solar qualified</div></div>
+          <button class="prog-action">Details</button>
+        </div>
+        <div class="prog-item">
+          <div class="prog-dot on"></div>
+          <div class="prog-info"><div class="pn">Managed EV Charging</div><div class="pd">Off-peak window: 11 PM – 6 AM · ChargePoint integrated</div></div>
+          <button class="prog-action">Manage</button>
+        </div>
+      </div>
+      <!-- Available / Eligible -->
+      <div class="prog-section">
+        <h4><span style="color:var(--warn)">○</span> Available — Eligible to Enroll</h4>
+        <div class="prog-item">
+          <div class="prog-dot off"></div>
+          <div class="prog-info"><div class="pn">Budget Billing</div><div class="pd">Estimated $148/mo · Smooths seasonal variance · 12-mo levelized</div></div>
+          <button class="prog-action">Enroll →</button>
+        </div>
+        <div class="prog-item">
+          <div class="prog-dot off"></div>
+          <div class="prog-info"><div class="pn">Peak Time Rebate (PTR)</div><div class="pd">Earn rebates by reducing usage during critical peak events · Eligible via AMI</div></div>
+          <button class="prog-action">Enroll →</button>
+        </div>
+        <div class="prog-item">
+          <div class="prog-dot off"></div>
+          <div class="prog-info"><div class="pn">Home Energy Audit</div><div class="pd">Free in-home assessment · Eligible based on acct tenure &gt; 3 years</div></div>
+          <button class="prog-action">Schedule →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     CONSUMPTION SUMMARY
+     ================================================================ -->
+<div class="section" id="sec-usage">
+  <button class="sec-trigger" onclick="toggleSec('sec-usage')">
+    <div class="sec-icon" style="background:#E3F2FD;color:#0277BD">📊</div>
+    <span class="sec-title">Consumption Summary</span>
+    <div class="sec-meta">
+      <span class="src"><span class="dot"></span> S/4HANA MDM</span>
+      <span class="sec-chevron">▾</span>
+    </div>
+  </button>
+  <div class="sec-body">
+    <div class="usage-row">
+      <div class="usage-stats">
+        <div class="usage-stat">
+          <div class="us-v">1,128</div>
+          <div class="us-l">kWh — Mar 2026</div>
+          <div class="us-delta up">▲ 34% vs. 12-mo avg</div>
+        </div>
+        <div class="usage-stat">
+          <div class="us-v">842</div>
+          <div class="us-l">kWh — 12-mo Average</div>
+          <div class="us-delta" style="color:var(--txt3)">Baseline</div>
+        </div>
+        <div class="usage-stat">
+          <div class="us-v" style="color:var(--pos)">312</div>
+          <div class="us-l">kWh — Solar Generated (Mar)</div>
+          <div class="us-delta dn">▼ 18% vs. Mar 2025</div>
+        </div>
+        <div class="usage-stat">
+          <div class="us-v">816</div>
+          <div class="us-l">Net kWh — Mar 2026</div>
+          <div class="us-delta up">▲ 29% vs. Mar 2025</div>
+        </div>
+      </div>
+      <!-- Compact sparkline -->
+      <div>
+        <svg viewBox="0 0 200 60" style="width:200px;height:60px">
+          <polyline points="5,42 20,38 35,35 50,40 65,30 80,28 95,22 110,32 125,25 140,45 155,35 170,48" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <polyline points="5,48 20,47 35,46 50,48 65,44 80,42 95,40 110,36 125,34 140,32 155,30 170,28" fill="none" stroke="var(--pos)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4,3"/>
+          <text x="5" y="58" fill="var(--txt3)" font-size="7" font-family="'IBM Plex Sans'">Apr '25</text>
+          <text x="165" y="58" fill="var(--txt3)" font-size="7" font-family="'IBM Plex Sans'">Mar '26</text>
+          <circle cx="170" cy="48" r="3" fill="var(--brand)"/>
+          <text x="130" y="10" fill="var(--txt3)" font-size="7" font-family="'IBM Plex Sans'">— Consumption</text>
+          <line x1="120" y1="8" x2="128" y2="8" stroke="var(--brand)" stroke-width="2"/>
+          <text x="130" y="18" fill="var(--txt3)" font-size="7" font-family="'IBM Plex Sans'">--- Solar Gen</text>
+          <line x1="120" y1="16" x2="128" y2="16" stroke="var(--pos)" stroke-width="1.5" stroke-dasharray="3,2"/>
+        </svg>
+      </div>
+    </div>
+    <div class="dg c4">
+      <div class="df"><div class="fl">Peak Usage (Mar)</div><div class="fv mono">482 kWh <span style="font-weight:400;color:var(--txt3)">(43%)</span></div></div>
+      <div class="df"><div class="fl">Off-Peak Usage (Mar)</div><div class="fv mono">646 kWh <span style="font-weight:400;color:var(--txt3)">(57%)</span></div></div>
+      <div class="df"><div class="fl">Solar Credit (Mar)</div><div class="fv pos mono">-$42.18</div></div>
+      <div class="df"><div class="fl">DR Credits YTD</div><div class="fv pos mono">$36.90</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     ACTIVITY TIMELINE
+     ================================================================ -->
+<div class="section" id="sec-timeline">
+  <button class="sec-trigger" onclick="toggleSec('sec-timeline')">
+    <div class="sec-icon" style="background:#F3E8FD;color:#7C3AED">🕐</div>
+    <span class="sec-title">Activity Timeline</span>
+    <div class="sec-meta">
+      <span class="sec-chevron">▾</span>
+    </div>
+  </button>
+  <div class="sec-body">
+    <div class="tl-list">
+      <div class="tl-item">
+        <div class="tl-dot phone"></div>
+        <div class="tl-body">
+          <div class="tl-t">Inbound Call — Active</div>
+          <div class="tl-d">Customer calling regarding March bill amount. ANI match confirmed.</div>
+          <div class="tl-time">Today · 2:14 PM · Agent: S. Mitchell</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot alert"></div>
+        <div class="tl-body">
+          <div class="tl-t">High Bill Alert Triggered</div>
+          <div class="tl-d">March bill exceeds 12-mo average by 34%. Auto-flagged by CDS analytical rule.</div>
+          <div class="tl-time">Apr 2 · System</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot email"></div>
+        <div class="tl-body">
+          <div class="tl-t">Bill Ready Notification</div>
+          <div class="tl-d">Monthly invoice notification sent. Customer opened email same day.</div>
+          <div class="tl-time">Apr 1 · Auto</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot success"></div>
+        <div class="tl-body">
+          <div class="tl-t">Demand Response Event — Participated</div>
+          <div class="tl-d">Powerwall discharged 8.2 kWh during grid stress event. Earned $12.30 credit posted to FI-CA.</div>
+          <div class="tl-time">Mar 22 · DER Platform → FI-CA</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot system"></div>
+        <div class="tl-body">
+          <div class="tl-t">Self-Service: EV Charging Schedule Updated</div>
+          <div class="tl-d">Customer adjusted charging window to 11 PM – 6 AM via mobile app.</div>
+          <div class="tl-time">Mar 15 · Self-Service Portal</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot phone"></div>
+        <div class="tl-body">
+          <div class="tl-t">Inbound Call — Rate Plan Inquiry</div>
+          <div class="tl-d">Compared TOU-D Prime vs. Flat-R. Agent showed comparison tool. Customer chose to remain on TOU-D Prime.</div>
+          <div class="tl-time">Feb 8 · Agent: T. Nguyen · Duration: 8m 42s</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot success"></div>
+        <div class="tl-body">
+          <div class="tl-t">Program Enrollment — Virtual Power Plant</div>
+          <div class="tl-d">Customer enrolled Powerwall + solar in VPP program via self-service portal.</div>
+          <div class="tl-time">Jan 20 · Self-Service</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot system"></div>
+        <div class="tl-body">
+          <div class="tl-t">Survey Response Received</div>
+          <div class="tl-d">Post-interaction survey: 5.0/5.0. Comment: "Very helpful agent, explained everything clearly."</div>
+          <div class="tl-time">Feb 8 · Post-Call Survey</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     CASES
+     ================================================================ -->
+<div class="section" id="sec-cases">
+  <button class="sec-trigger" onclick="toggleSec('sec-cases')">
+    <div class="sec-icon" style="background:#FFF3E0;color:#E65100">📋</div>
+    <span class="sec-title">Cases</span>
+    <div class="sec-meta">
+      <span class="pill warn">1 Open</span>
+      <span class="pill pos">4 Closed</span>
+      <span class="sec-chevron">▾</span>
+    </div>
+  </button>
+  <div class="sec-body">
+    <table class="eq-table">
+      <thead>
+        <tr>
+          <th>Case ID</th>
+          <th>Subject</th>
+          <th>Category</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th>Agent</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#FFFDF5">
+          <td><a href="#">CS-2026-04821</a></td>
+          <td>High Bill Inquiry — March 2026</td>
+          <td><span class="pill warn">Billing</span></td>
+          <td><span class="pill warn">In Progress</span></td>
+          <td>Apr 7, 2026</td>
+          <td>S. Mitchell</td>
+        </tr>
+        <tr>
+          <td><a href="#">CS-2026-02104</a></td>
+          <td>Rate Plan Comparison Request</td>
+          <td><span class="pill info">Rates</span></td>
+          <td><span class="pill pos">Closed</span></td>
+          <td>Feb 8, 2026</td>
+          <td>T. Nguyen</td>
+        </tr>
+        <tr>
+          <td><a href="#">CS-2026-01330</a></td>
+          <td>VPP Program Enrollment</td>
+          <td><span class="pill info">Programs</span></td>
+          <td><span class="pill pos">Closed</span></td>
+          <td>Jan 20, 2026</td>
+          <td>Self-Service</td>
+        </tr>
+        <tr>
+          <td><a href="#">CS-2025-09213</a></td>
+          <td>Annual Solar Interconnection Inspection</td>
+          <td><span class="pill ntl">Field Service</span></td>
+          <td><span class="pill pos">Closed</span></td>
+          <td>Sep 10, 2025</td>
+          <td>Dispatch</td>
+        </tr>
+        <tr>
+          <td><a href="#">CS-2025-06701</a></td>
+          <td>EV Charger Installation Coordination</td>
+          <td><span class="pill ntl">New Service</span></td>
+          <td><span class="pill pos">Closed</span></td>
+          <td>Apr 2, 2024</td>
+          <td>K. Patel</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<!-- ================================================================
+     INTEGRATION FOOTER
+     ================================================================ -->
+<div class="int-footer">
+  <span class="sap-mark">SAP</span>
+  Service Cloud V2 · Utility Customer 360 · Powered by BTP
+  <span style="margin:0 8px;color:var(--bdr)">|</span>
+  <span class="src"><span class="dot"></span> S/4HANA Utilities</span>
+  <span class="src"><span class="dot"></span> FI-CA</span>
+  <span class="src"><span class="dot"></span> MDM / AMI</span>
+  <span class="src"><span class="dot"></span> Device Management</span>
+  <span style="margin-left:auto">All data retrieved in real-time via S/4HANA APIs — no replication</span>
+</div>
+
+<script>
+function toggleSec(id){
+  document.getElementById(id).classList.toggle('collapsed');
+}
+</script>
+</body>
+</html>
