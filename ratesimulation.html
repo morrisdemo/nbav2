@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>Rate Comparison</title>
+<link rel="stylesheet" href="https://ui5.sap.com/resources/sap/ui/core/themes/base/SAP-icons.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
+
+[class^="si-"]::before,[class*=" si-"]::before{font-family:'SAP-icons';font-style:normal;font-weight:normal;display:inline-block;text-align:center;font-size:inherit;line-height:1}
+.si-money-bills::before{content:'\e07c'}.si-bar-chart::before{content:'\e090'}
+.si-accept::before{content:'\e05b'}.si-decline::before{content:'\e04f'}
+.si-alert::before{content:'\e05c'}.si-slim-arrow-down::before{content:'\e1e2'}
+.si-locate-me::before{content:'\e171'}.si-electricity::before{content:'\e221'}
+.si-customer::before{content:'\e036'}.si-process::before{content:'\e0cb'}
+.si-compare::before{content:'\e049'}.si-favorite::before{content:'\e068'}
+.si-status-positive::before{content:'\e106'}.si-status-negative::before{content:'\e107'}
+.si-status-critical::before{content:'\e109'}.si-connected::before{content:'\e1a3'}
+.si-tags::before{content:'\e0e4'}.si-lead::before{content:'\e084'}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --brand:#0070F2;--brand-bg:#EBF5FE;--brand-border:#B8D7F5;
+  --pos:#256F3A;--pos-bg:#F5FAE5;--pos-border:#B6D98C;
+  --crit:#AA0808;--crit-bg:#FFEBEB;
+  --warn:#E76500;--warn-bg:#FFF8D6;--warn-border:#F5D44E;
+  --info:#0070F2;--info-bg:#EBF5FE;
+  --neutral:#556B82;--neutral-bg:#EFF1F2;
+  --surf:#FFFFFF;--bg:#F5F6F7;--bg2:#FAFBFC;
+  --bdr:#E5E5E5;--bdr-lt:#F0F1F2;
+  --txt:#1D2D3E;--txt2:#556B82;--txt3:#8396A8;--link:#0064D9;
+  --shadow:0 1px 4px rgba(29,45,62,.05);
+  --shadow-hover:0 4px 16px rgba(29,45,62,.1);
+  --rs:8px;--rm:12px;--pill:100px;
+  --btp:#0A6ED1;--btp-bg:#F0F8FF;--btp-border:#C2DFFB;
+  --transition:all .25s cubic-bezier(.4,0,.2,1);
+  --current:#556B82;--plan-a:#0070F2;--plan-b:#256F3A;--plan-c:#7C3AED
+}
+
+body{
+  font-family:'72','IBM Plex Sans',-apple-system,sans-serif;
+  background:var(--bg);color:var(--txt);font-size:13px;line-height:1.5;
+  -webkit-font-smoothing:antialiased
+}
+
+.rc-container{max-width:1200px;margin:0 auto;padding:16px}
+
+/* Context strip */
+.ctx-strip{
+  background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rm);
+  padding:12px 16px;display:flex;align-items:center;gap:12px;
+  margin-bottom:12px;box-shadow:var(--shadow);flex-wrap:wrap
+}
+.ctx-strip .ctx-av{
+  width:34px;height:34px;border-radius:var(--rs);
+  background:linear-gradient(135deg,#0070F2,#4DA6FF);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:5px
+}
+.ctx-name{font-size:14px;font-weight:700}
+.ctx-detail{font-size:11px;color:var(--txt2)}
+.ctx-detail a{color:var(--link);text-decoration:none}
+.pill{font-size:9px;font-weight:600;padding:2px 8px;border-radius:var(--pill);letter-spacing:.02em}
+.pill.pos{background:var(--pos-bg);color:var(--pos);border:1px solid var(--pos-border)}
+.pill.info{background:var(--info-bg);color:var(--info);border:1px solid var(--brand-border)}
+.pill.ntl{background:var(--neutral-bg);color:var(--neutral);border:1px solid var(--bdr)}
+.ctx-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.btp-app-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:10px;font-weight:700;color:var(--btp);
+  padding:5px 12px;border-radius:var(--rs);background:var(--btp-bg);border:1px solid var(--btp-border)
+}
+
+/* Simulation bar */
+.sim-bar{
+  background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rm);
+  padding:12px 16px;margin-bottom:12px;box-shadow:var(--shadow);
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap
+}
+.sb-group{display:flex;flex-direction:column;gap:2px}
+.sb-label{font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.04em}
+.sb-value{font-size:12px;font-weight:600;color:var(--txt);background:var(--bg2);border:1px solid var(--bdr);border-radius:6px;padding:4px 10px;display:inline-flex;align-items:center;gap:4px}
+.sb-value select{font-family:inherit;font-size:12px;font-weight:600;color:var(--txt);background:transparent;border:none;cursor:pointer;outline:none}
+.sim-run{
+  margin-left:auto;height:32px;padding:0 16px;border-radius:var(--rs);
+  background:var(--brand);color:#fff;border:none;
+  font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;
+  display:flex;align-items:center;gap:5px;transition:var(--transition)
+}
+.sim-run:hover{background:var(--link)}
+.sim-run.running{opacity:.7;pointer-events:none}
+
+/* Shimmer loading effect */
+@keyframes shimmer{0%{background-position:-400px 0}100%{background-position:400px 0}}
+.shimmer{
+  position:relative;overflow:hidden
+}
+.shimmer::after{
+  content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+  background:linear-gradient(90deg,transparent 0%,rgba(0,112,242,.06) 50%,transparent 100%);
+  background-size:400px 100%;
+  animation:shimmer 1.2s ease-in-out infinite
+}
+
+/* Number transition */
+.num-transition{transition:opacity .15s ease}
+.num-fade{opacity:.3}
+
+/* Current plan anchor */
+.current-anchor{
+  background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rm);
+  padding:16px 20px;margin-bottom:12px;box-shadow:var(--shadow);
+  display:flex;align-items:center;gap:20px;flex-wrap:wrap
+}
+.ca-badge{
+  width:48px;height:48px;border-radius:var(--rm);
+  background:var(--neutral-bg);border:2px solid var(--bdr);
+  display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0
+}
+.ca-info{flex:1;min-width:200px}
+.ca-info .ca-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--txt3)}
+.ca-info .ca-name{font-size:16px;font-weight:700;color:var(--txt);margin-top:1px}
+.ca-info .ca-detail{font-size:11px;color:var(--txt2);margin-top:2px}
+.ca-costs{display:flex;gap:28px;flex-wrap:wrap}
+.ca-cost{text-align:center;cursor:default}
+.ca-cost .cc-val{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:700;color:var(--txt)}
+.ca-cost .cc-label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--txt3)}
+.ca-cost .cc-sub{font-size:10px;color:var(--txt3);margin-top:1px}
+
+/* Comparison cards */
+.compare-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
+@media(max-width:960px){.compare-grid{grid-template-columns:1fr}}
+
+.plan-card{
+  background:var(--surf);border:2px solid var(--bdr);border-radius:var(--rm);
+  overflow:visible;box-shadow:var(--shadow);
+  transition:border-color .2s,box-shadow .2s,transform .2s;
+  cursor:pointer;position:relative
+}
+.plan-card:hover{border-color:var(--brand-border);box-shadow:var(--shadow-hover);transform:translateY(-2px)}
+.plan-card.selected{border-color:var(--brand);box-shadow:0 0 0 1px var(--brand),var(--shadow-hover)}
+.plan-card.best::before{
+  content:'Best Match';position:absolute;top:-10px;right:12px;
+  font-size:9px;font-weight:700;padding:3px 10px;border-radius:var(--pill);
+  background:var(--pos);color:#fff;text-transform:uppercase;letter-spacing:.04em;
+  box-shadow:0 2px 6px rgba(37,111,58,.25)
+}
+
+.pc-head{padding:14px 16px 10px;border-bottom:1px solid var(--bdr-lt);position:relative}
+.pc-head .pc-color{width:4px;height:100%;position:absolute;left:0;top:0;border-radius:var(--rm) 0 0 var(--rm)}
+.pc-name{font-size:15px;font-weight:700;color:var(--txt);margin-left:4px}
+.pc-type{font-size:11px;color:var(--txt2);margin-top:2px;margin-left:4px}
+
+/* Savings hero */
+.pc-savings{padding:16px;text-align:center;border-bottom:1px solid var(--bdr-lt)}
+.sav-amount{font-family:'IBM Plex Mono',monospace;font-size:30px;font-weight:700;line-height:1.1}
+.sav-amount.positive{color:var(--pos)}.sav-amount.negative{color:var(--crit)}
+.sav-label{font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.04em;margin-top:4px}
+.sav-pct{display:inline-block;margin-top:6px;padding:3px 12px;border-radius:var(--pill);font-size:11px;font-weight:700}
+.sav-pct.positive{background:var(--pos-bg);color:var(--pos)}.sav-pct.negative{background:var(--crit-bg);color:var(--crit)}
+
+/* Projected costs */
+.pc-costs{padding:10px 16px;background:var(--bg2);border-bottom:1px solid var(--bdr-lt)}
+.pc-cost-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0}
+.pc-cost-row .pcr-label{font-size:11px;color:var(--txt2)}
+.pc-cost-row .pcr-val{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600}
+
+/* Rate summary */
+.pc-rates{padding:12px 16px;border-bottom:1px solid var(--bdr-lt)}
+.pr-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--txt3);margin-bottom:6px}
+.rate-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0}
+.rate-row .rr-period{font-size:11px;color:var(--txt2)}
+.rate-row .rr-price{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600}
+.rate-row .rr-delta{font-size:10px;font-weight:600;margin-left:6px}
+.rate-row .rr-delta.up{color:var(--crit)}.rate-row .rr-delta.dn{color:var(--pos)}
+
+/* Trade-offs */
+.pc-tradeoffs{padding:12px 16px;border-bottom:1px solid var(--bdr-lt)}
+.tradeoff-item{display:flex;align-items:flex-start;gap:6px;padding:3px 0;font-size:11px;color:var(--txt2)}
+.tradeoff-item .t-icon{flex-shrink:0;margin-top:2px;font-size:10px}
+.tradeoff-item .t-icon.pro{color:var(--pos)}.tradeoff-item .t-icon.con{color:var(--warn)}
+
+/* Action */
+.pc-action{padding:12px 16px}
+.fiori-btn{
+  width:100%;height:36px;border-radius:var(--rs);
+  font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:5px;
+  border:1px solid var(--bdr);background:var(--surf);color:var(--link);
+  transition:var(--transition)
+}
+.fiori-btn:hover{background:var(--brand-bg);border-color:var(--brand-border)}
+.fiori-btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+.fiori-btn.primary:hover{background:var(--link)}
+.fiori-btn.muted{color:var(--txt3);border-color:var(--bdr-lt)}
+
+/* Disclosure */
+.disclosure{
+  background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--rm);
+  padding:12px 16px;font-size:10px;color:var(--txt3);line-height:1.7;margin-bottom:12px
+}
+.disclosure strong{color:var(--txt2)}
+
+/* Footer */
+.int-footer{
+  background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rm);
+  padding:8px 16px;display:flex;align-items:center;gap:10px;
+  font-size:10px;color:var(--txt3);box-shadow:var(--shadow)
+}
+.int-footer .sap-mark{font-weight:700;font-size:11px;color:var(--txt);letter-spacing:.5px}
+</style>
+</head>
+<body>
+
+<div class="rc-container">
+
+<!-- Context -->
+<div class="ctx-strip">
+  <div class="ctx-av"><svg viewBox="0 0 100 50" width="28" height="14"><text x="50" y="36" text-anchor="middle" fill="#FFF" font-family="'IBM Plex Sans',sans-serif" font-weight="700" font-size="34" letter-spacing="2">SAP</text></svg></div>
+  <div>
+    <div class="ctx-name" id="bp-name">Maria Rodriguez</div>
+    <div class="ctx-detail"><a href="#">BP <span id="bp-number">10042817</span></a> · 142 Maple Ave, Waltham MA · <a href="#">INST-0048211-E</a></div>
+  </div>
+  <div style="display:flex;gap:6px"><span class="pill info">Electric</span><span class="pill ntl">Current: TOU-D Prime</span><span class="pill pos">AMI Smart Meter</span></div>
+  <div class="ctx-right">
+    <span class="btp-app-badge"><span class="si-process" style="font-size:12px"></span> BTP Application — Powered by EASIM Simulation Engine</span>
+  </div>
+</div>
+
+<!-- Simulation params -->
+<div class="sim-bar">
+  <div class="sb-group">
+    <span class="sb-label">Simulation Basis</span>
+    <span class="sb-value"><select id="sim-basis"><option value="12mo" selected>Last 12 Months Actual (Apr 2025 – Mar 2026)</option><option value="24mo">Last 24 Months Actual</option><option value="projected">Current Year Projected</option></select></span>
+  </div>
+  <div class="sb-group">
+    <span class="sb-label">Data Source</span>
+    <span class="sb-value">AMI 15-min Interval</span>
+  </div>
+  <div class="sb-group">
+    <span class="sb-label">Net Metering</span>
+    <span class="sb-value" style="color:var(--pos)">✓ Included</span>
+  </div>
+  <button class="sim-run"><span class="si-process"></span> Re-Run Simulation</button>
+</div>
+
+<!-- Current plan -->
+<div class="current-anchor" id="current-anchor">
+  <div class="ca-badge"><span class="si-electricity" style="font-size:22px;color:var(--neutral)"></span></div>
+  <div class="ca-info">
+    <div class="ca-label">Current Rate Schedule</div>
+    <div class="ca-name">TOU-D Prime — Time-of-Use with Net Metering</div>
+    <div class="ca-detail">MA DPU Tariff #312 · Peak: $0.24 · Mid-Peak: $0.16 · Off-Peak: $0.11 · Customer Charge: $9.48/mo</div>
+  </div>
+  <div class="ca-costs">
+    <div class="ca-cost"><div class="cc-val num-transition" id="ca-annual">$1,676</div><div class="cc-label">Annual Cost</div><div class="cc-sub">EASIM simulation result</div></div>
+    <div class="ca-cost"><div class="cc-val num-transition" id="ca-monthly">$139.72</div><div class="cc-label">Monthly Avg</div><div class="cc-sub" id="ca-range">Range: $108 – $187</div></div>
+    <div class="ca-cost"><div class="cc-val num-transition" style="color:var(--pos)" id="ca-solar">-$382</div><div class="cc-label">Solar Credits</div><div class="cc-sub">NM-II (12-mo)</div></div>
+  </div>
+</div>
+
+<!-- Comparison cards -->
+<div class="compare-grid">
+
+  <!-- Plan A: TOU-D Standard -->
+  <div class="plan-card" id="card-a" onclick="selectCard(this)">
+    <div class="pc-head"><div class="pc-color" style="background:var(--plan-a)"></div>
+      <div class="pc-name">TOU-D Standard</div>
+      <div class="pc-type">Time-of-Use · No NM Rider · Tariff #308</div>
+    </div>
+    <div class="pc-savings">
+      <div class="sav-amount negative num-transition" id="a-savings">+$214</div>
+      <div class="sav-label">Projected Annual Change</div>
+      <div class="sav-pct negative num-transition" id="a-pct">12.8% more per year</div>
+    </div>
+    <div class="pc-costs">
+      <div class="pc-cost-row"><span class="pcr-label">Projected Annual</span><span class="pcr-val num-transition" id="a-annual">$1,890</span></div>
+      <div class="pc-cost-row"><span class="pcr-label">Projected Monthly Avg</span><span class="pcr-val num-transition" id="a-monthly">$157.50</span></div>
+      <div class="pc-cost-row"><span class="pcr-label">Solar Credits</span><span class="pcr-val num-transition" id="a-solar" style="color:var(--crit)">$0 (no NM rider)</span></div>
+    </div>
+    <div class="pc-rates">
+      <div class="pr-title">Rate Structure</div>
+      <div class="rate-row"><span class="rr-period">Peak (2–7 PM)</span><span><span class="rr-price">$0.28</span><span class="rr-delta up">+$0.04</span></span></div>
+      <div class="rate-row"><span class="rr-period">Mid-Peak (7–10 PM)</span><span><span class="rr-price">$0.18</span><span class="rr-delta up">+$0.02</span></span></div>
+      <div class="rate-row"><span class="rr-period">Off-Peak (10 PM–2 PM)</span><span><span class="rr-price">$0.10</span><span class="rr-delta dn">-$0.01</span></span></div>
+      <div class="rate-row"><span class="rr-period">Customer Charge</span><span class="rr-price">$8.20/mo</span></div>
+    </div>
+    <div class="pc-tradeoffs">
+      <div class="pr-title">Trade-offs</div>
+      <div class="tradeoff-item"><span class="t-icon pro"><span class="si-status-positive"></span></span> Slightly lower off-peak rate</div>
+      <div class="tradeoff-item"><span class="t-icon con"><span class="si-status-critical"></span></span> No net metering — loses $382/yr in solar credits</div>
+      <div class="tradeoff-item"><span class="t-icon con"><span class="si-status-critical"></span></span> Higher peak rate increases summer bills</div>
+    </div>
+    <div class="pc-action"><button class="fiori-btn muted">Not Recommended</button></div>
+  </div>
+
+  <!-- Plan B: Flat-R (Best Match) -->
+  <div class="plan-card best selected" id="card-b" onclick="selectCard(this)">
+    <div class="pc-head"><div class="pc-color" style="background:var(--plan-b)"></div>
+      <div class="pc-name">Flat-R with Net Metering</div>
+      <div class="pc-type">Flat Rate · NM-II Rider · Tariff #304</div>
+    </div>
+    <div class="pc-savings">
+      <div class="sav-amount positive num-transition" id="b-savings">-$127</div>
+      <div class="sav-label">Projected Annual Savings</div>
+      <div class="sav-pct positive num-transition" id="b-pct">7.6% less per year</div>
+    </div>
+    <div class="pc-costs">
+      <div class="pc-cost-row"><span class="pcr-label">Projected Annual</span><span class="pcr-val num-transition" id="b-annual" style="color:var(--pos)">$1,549</span></div>
+      <div class="pc-cost-row"><span class="pcr-label">Projected Monthly Avg</span><span class="pcr-val num-transition" id="b-monthly" style="color:var(--pos)">$129.08</span></div>
+      <div class="pc-cost-row"><span class="pcr-label">Solar Credits</span><span class="pcr-val num-transition" id="b-solar" style="color:var(--pos)">-$382 (NM-II preserved)</span></div>
+    </div>
+    <div class="pc-rates">
+      <div class="pr-title">Rate Structure</div>
+      <div class="rate-row"><span class="rr-period">All Hours (Flat)</span><span class="rr-price">$0.165/kWh</span></div>
+      <div class="rate-row"><span class="rr-period">Customer Charge</span><span class="rr-price">$11.20/mo</span></div>
+      <div class="rate-row"><span class="rr-period">Net Metering</span><span class="rr-price" style="color:var(--pos)">✓ NM-II</span></div>
+    </div>
+    <div class="pc-tradeoffs">
+      <div class="pr-title">Trade-offs</div>
+      <div class="tradeoff-item"><span class="t-icon pro"><span class="si-status-positive"></span></span> Eliminates peak pricing risk</div>
+      <div class="tradeoff-item"><span class="t-icon pro"><span class="si-status-positive"></span></span> Preserves full solar credits</div>
+      <div class="tradeoff-item"><span class="t-icon pro"><span class="si-status-positive"></span></span> More predictable bills ($112 – $148 range)</div>
+      <div class="tradeoff-item"><span class="t-icon con"><span class="si-status-critical"></span></span> Higher off-peak rate ($0.165 vs $0.11)</div>
+    </div>
+    <div class="pc-action"><button class="fiori-btn primary">Switch to This Rate →</button></div>
+  </div>
+
+  <!-- Plan C: EV-TOU -->
+  <div class="plan-card" id="card-c" onclick="selectCard(this)">
+    <div class="pc-head"><div class="pc-color" style="background:var(--plan-c)"></div>
+      <div class="pc-name">EV-TOU</div>
+      <div class="pc-type">EV Time-of-Use · Extended Off-Peak · Tariff #316</div>
+    </div>
+    <div class="pc-savings">
+      <div class="sav-amount positive num-transition" id="c-savings">-$83</div>
+      <div class="sav-label">Projected Annual Savings</div>
+      <div class="sav-pct positive num-transition" id="c-pct">5.0% less per year</div>
+    </div>
+    <div class="pc-costs">
+      <div class="pc-cost-row"><span class="pcr-label">Projected Annual</span><span class="pcr-val num-transition" id="c-annual">$1,593</span></div>
+      <div class="pc-cost-row"><span class="pcr-label">Projected Monthly Avg</span><span class="pcr-val num-transition" id="c-monthly">$132.75</span></div>
+      <div class="pc-cost-row"><span class="pcr-label">Solar Credits</span><span class="pcr-val num-transition" id="c-solar" style="color:var(--warn)">Reduced (off-peak rate only)</span></div>
+    </div>
+    <div class="pc-rates">
+      <div class="pr-title">Rate Structure</div>
+      <div class="rate-row"><span class="rr-period">Peak (2–7 PM)</span><span><span class="rr-price">$0.30</span><span class="rr-delta up">+$0.06</span></span></div>
+      <div class="rate-row"><span class="rr-period">Off-Peak (9 PM–9 AM)</span><span><span class="rr-price">$0.08</span><span class="rr-delta dn">-$0.03</span></span></div>
+      <div class="rate-row"><span class="rr-period">Mid-Peak (other)</span><span><span class="rr-price">$0.17</span><span class="rr-delta up">+$0.01</span></span></div>
+      <div class="rate-row"><span class="rr-period">Customer Charge</span><span class="rr-price">$12.50/mo</span></div>
+    </div>
+    <div class="pc-tradeoffs">
+      <div class="pr-title">Trade-offs</div>
+      <div class="tradeoff-item"><span class="t-icon pro"><span class="si-status-positive"></span></span> Ultra-low overnight rate for EV + battery</div>
+      <div class="tradeoff-item"><span class="t-icon pro"><span class="si-status-positive"></span></span> Extended off-peak window (9 PM–9 AM)</div>
+      <div class="tradeoff-item"><span class="t-icon con"><span class="si-status-critical"></span></span> Highest peak rate — $0.30/kWh</div>
+      <div class="tradeoff-item"><span class="t-icon con"><span class="si-status-critical"></span></span> Solar credits reduced to off-peak rate</div>
+    </div>
+    <div class="pc-action"><button class="fiori-btn">Select This Rate →</button></div>
+  </div>
+
+</div>
+
+<!-- Disclosure -->
+<div class="disclosure">
+  <strong>Simulation Disclosure:</strong> All projected costs calculated by the S/4HANA EASIM rate simulation engine using 12 months of actual AMI interval consumption data from Installation INST-0048211-E. EASIM applies each rate schedule's full tariff structure — including energy charges, demand charges (where applicable), customer charges, riders, taxes, and surcharges — to the customer's actual load profile. Results represent what the customer would have paid on each rate over the simulation period. Actual future costs may vary based on usage changes, rate adjustments, and solar generation variance. Rate switch subject to 12-month minimum per MA DPU regulation.
+</div>
+
+<!-- Footer -->
+<div class="int-footer">
+  <span class="sap-mark">SAP</span>
+  BTP Application · Rate Comparison
+  <span style="margin:0 6px;color:var(--bdr)">|</span>
+  <span class="btp-app-badge" style="font-size:9px;padding:3px 8px"><span class="si-process" style="font-size:10px"></span> Powered by S/4HANA EASIM</span>
+  <span style="margin-left:auto" id="sim-timestamp">Simulation run: Apr 7, 2026 · 2:18 PM · Duration: 1.2s · 3 rates simulated</span>
+</div>
+
+</div>
+
+<script>
+// Simulation datasets — three scenarios keyed by the select value
+const scenarios = {
+  '12mo': {
+    label: 'Last 12 Months Actual (Apr 2025 – Mar 2026)',
+    current: { annual:'$1,676', monthly:'$139.72', range:'Range: $108 – $187', solar:'-$382' },
+    a: { savings:'+$214', pct:'12.8% more per year', savClass:'negative', annual:'$1,890', monthly:'$157.50', solar:'$0 (no NM rider)', solarColor:'var(--crit)' },
+    b: { savings:'-$127', pct:'7.6% less per year', savClass:'positive', annual:'$1,549', monthly:'$129.08', solar:'-$382 (NM-II preserved)', solarColor:'var(--pos)' },
+    c: { savings:'-$83', pct:'5.0% less per year', savClass:'positive', annual:'$1,593', monthly:'$132.75', solar:'Reduced (off-peak rate only)', solarColor:'var(--warn)' },
+    best: 'b',
+    duration: '1.2s'
+  },
+  '24mo': {
+    label: 'Last 24 Months Actual',
+    current: { annual:'$1,588', monthly:'$132.33', range:'Range: $96 – $187', solar:'-$410' },
+    a: { savings:'+$186', pct:'11.7% more per year', savClass:'negative', annual:'$1,774', monthly:'$147.83', solar:'$0 (no NM rider)', solarColor:'var(--crit)' },
+    b: { savings:'-$94', pct:'5.9% less per year', savClass:'positive', annual:'$1,494', monthly:'$124.50', solar:'-$410 (NM-II preserved)', solarColor:'var(--pos)' },
+    c: { savings:'-$142', pct:'8.9% less per year', savClass:'positive', annual:'$1,446', monthly:'$120.50', solar:'Reduced (off-peak rate only)', solarColor:'var(--warn)' },
+    best: 'c',
+    duration: '2.4s'
+  },
+  'projected': {
+    label: 'Current Year Projected',
+    current: { annual:'$1,740', monthly:'$145.00', range:'Range: $112 – $198', solar:'-$365' },
+    a: { savings:'+$248', pct:'14.3% more per year', savClass:'negative', annual:'$1,988', monthly:'$165.67', solar:'$0 (no NM rider)', solarColor:'var(--crit)' },
+    b: { savings:'-$108', pct:'6.2% less per year', savClass:'positive', annual:'$1,632', monthly:'$136.00', solar:'-$365 (NM-II preserved)', solarColor:'var(--pos)' },
+    c: { savings:'-$71', pct:'4.1% less per year', savClass:'positive', annual:'$1,669', monthly:'$139.08', solar:'Reduced (off-peak rate only)', solarColor:'var(--warn)' },
+    best: 'b',
+    duration: '1.5s'
+  }
+};
+
+function selectCard(el){
+  document.querySelectorAll('.plan-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function getScenarioKey(){
+  return document.getElementById('sim-basis').value;
+}
+
+function runSimulation(){
+  const btn = document.querySelector('.sim-run');
+  const key = getScenarioKey();
+  const data = scenarios[key];
+
+  // 1. Start loading state
+  btn.classList.add('running');
+  btn.innerHTML = '<span class="si-process"></span> Simulating...';
+
+  // Fade all numbers
+  document.querySelectorAll('.num-transition').forEach(el => el.classList.add('num-fade'));
+  document.querySelectorAll('.plan-card').forEach(c => c.classList.add('shimmer'));
+
+  // 2. After delay, update data
+  setTimeout(()=>{
+    // Current anchor
+    document.getElementById('ca-annual').textContent = data.current.annual;
+    document.getElementById('ca-monthly').textContent = data.current.monthly;
+    document.getElementById('ca-range').textContent = data.current.range;
+    document.getElementById('ca-solar').textContent = data.current.solar;
+
+    // Plan A
+    const aSav = document.getElementById('a-savings');
+    aSav.textContent = data.a.savings;
+    aSav.className = 'sav-amount '+data.a.savClass+' num-transition';
+    const aPct = document.getElementById('a-pct');
+    aPct.textContent = data.a.pct;
+    aPct.className = 'sav-pct '+data.a.savClass+' num-transition';
+    document.getElementById('a-annual').textContent = data.a.annual;
+    document.getElementById('a-monthly').textContent = data.a.monthly;
+    document.getElementById('a-solar').textContent = data.a.solar;
+    document.getElementById('a-solar').style.color = data.a.solarColor;
+
+    // Plan B
+    const bSav = document.getElementById('b-savings');
+    bSav.textContent = data.b.savings;
+    bSav.className = 'sav-amount '+data.b.savClass+' num-transition';
+    const bPct = document.getElementById('b-pct');
+    bPct.textContent = data.b.pct;
+    bPct.className = 'sav-pct '+data.b.savClass+' num-transition';
+    document.getElementById('b-annual').textContent = data.b.annual;
+    document.getElementById('b-annual').style.color = data.b.savClass==='positive'?'var(--pos)':'var(--txt)';
+    document.getElementById('b-monthly').textContent = data.b.monthly;
+    document.getElementById('b-monthly').style.color = data.b.savClass==='positive'?'var(--pos)':'var(--txt)';
+    document.getElementById('b-solar').textContent = data.b.solar;
+    document.getElementById('b-solar').style.color = data.b.solarColor;
+
+    // Plan C
+    const cSav = document.getElementById('c-savings');
+    cSav.textContent = data.c.savings;
+    cSav.className = 'sav-amount '+data.c.savClass+' num-transition';
+    const cPct = document.getElementById('c-pct');
+    cPct.textContent = data.c.pct;
+    cPct.className = 'sav-pct '+data.c.savClass+' num-transition';
+    document.getElementById('c-annual').textContent = data.c.annual;
+    document.getElementById('c-monthly').textContent = data.c.monthly;
+    document.getElementById('c-solar').textContent = data.c.solar;
+    document.getElementById('c-solar').style.color = data.c.solarColor;
+
+    // Move "best" badge
+    document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('best','selected'));
+    const bestCard = document.getElementById('card-'+data.best);
+    bestCard.classList.add('best','selected');
+
+    // Update action buttons
+    document.querySelectorAll('.pc-action .fiori-btn').forEach(btn => {
+      btn.className = 'fiori-btn';
+      btn.textContent = 'Select This Rate →';
+    });
+    bestCard.querySelector('.pc-action .fiori-btn').className = 'fiori-btn primary';
+    bestCard.querySelector('.pc-action .fiori-btn').textContent = 'Switch to This Rate →';
+    // Mark non-recommended
+    document.getElementById('card-a').querySelector('.pc-action .fiori-btn').className = 'fiori-btn muted';
+    document.getElementById('card-a').querySelector('.pc-action .fiori-btn').textContent = 'Not Recommended';
+
+    // Update timestamp
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+    document.getElementById('sim-timestamp').textContent = 'Simulation run: Apr 7, 2026 · '+timeStr+' · Duration: '+data.duration+' · 3 rates simulated';
+
+    // 3. Remove loading state
+    document.querySelectorAll('.num-transition').forEach(el => el.classList.remove('num-fade'));
+    document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('shimmer'));
+    btn.classList.remove('running');
+    btn.innerHTML = '<span class="si-process"></span> Re-Run Simulation';
+
+  }, 1400);
+}
+
+// Wire up button
+document.querySelector('.sim-run').addEventListener('click', runSimulation);
+</script>
+</body>
+</html>
