@@ -231,7 +231,7 @@ body{
 <!-- Simulation params -->
 <div class="sim-bar">
   <div class="sb-group">
-    <span class="sb-label">Simulation Basis</span>
+    <span class="sb-label">Simulation Scenario</span>
     <span class="sb-value"><select id="sim-basis"><option value="12mo" selected>Last 12 Months Actual (Apr 2025 – Mar 2026)</option><option value="24mo">Last 24 Months Actual</option><option value="projected">Current Year Projected</option></select></span>
   </div>
   <div class="sb-group">
@@ -250,8 +250,8 @@ body{
   <div class="ca-badge"><span class="si-electricity" style="font-size:22px;color:var(--neutral)"></span></div>
   <div class="ca-info">
     <div class="ca-label">Current Rate Schedule</div>
-    <div class="ca-name">TOU-D Prime — Time-of-Use with Net Metering</div>
-    <div class="ca-detail">MA DPU Tariff #312 · Peak: $0.24 · Mid-Peak: $0.16 · Off-Peak: $0.11 · Customer Charge: $9.48/mo</div>
+    <div class="ca-name">RES-TOU-NM — Residential TOU with Net Metering</div>
+    <div class="ca-detail">Residential TOU w/NM Tariff #312 · Peak: $0.24 · Mid-Peak: $0.16 · Off-Peak: $0.11 · Customer Charge: $9.48/mo</div>
   </div>
   <div class="ca-costs">
     <div class="ca-cost"><div class="cc-val num-transition" id="ca-annual">$1,676</div><div class="cc-label">Annual Cost</div><div class="cc-sub">EASIM simulation result</div></div>
@@ -266,8 +266,8 @@ body{
   <!-- Plan A: TOU-D Standard -->
   <div class="plan-card" id="card-a" onclick="selectCard(this)">
     <div class="pc-head"><div class="pc-color" style="background:var(--plan-a)"></div>
-      <div class="pc-name">TOU-D Standard</div>
-      <div class="pc-type">Time-of-Use · No NM Rider · Tariff #308</div>
+      <div class="pc-name">RES-TOU-SOFPK</div>
+      <div class="pc-type">Residential TOU Super Off Peak · No NM Rider · Tariff #308</div>
     </div>
     <div class="pc-savings">
       <div class="sav-amount negative num-transition" id="a-savings">+$214</div>
@@ -298,8 +298,8 @@ body{
   <!-- Plan B: Flat-R (Best Match) -->
   <div class="plan-card best selected" id="card-b" onclick="selectCard(this)">
     <div class="pc-head"><div class="pc-color" style="background:var(--plan-b)"></div>
-      <div class="pc-name">Flat-R with Net Metering</div>
-      <div class="pc-type">Flat Rate · NM-II Rider · Tariff #304</div>
+      <div class="pc-name">Non TOU with Net Metering</div>
+      <div class="pc-type">Non TOU · Net-Metering Rider · Tariff #304</div>
     </div>
     <div class="pc-savings">
       <div class="sav-amount positive num-transition" id="b-savings">-$127</div>
@@ -330,8 +330,8 @@ body{
   <!-- Plan C: EV-TOU -->
   <div class="plan-card" id="card-c" onclick="selectCard(this)">
     <div class="pc-head"><div class="pc-color" style="background:var(--plan-c)"></div>
-      <div class="pc-name">EV-TOU</div>
-      <div class="pc-type">EV Time-of-Use · Extended Off-Peak · Tariff #316</div>
+      <div class="pc-name">Residential TOU with EV</div>
+      <div class="pc-type">Time-of-Use w/EV · Extended Off-Peak + EV Rider · Tariff #316</div>
     </div>
     <div class="pc-savings">
       <div class="sav-amount positive num-transition" id="c-savings">-$83</div>
@@ -364,7 +364,7 @@ body{
 
 <!-- Disclosure -->
 <div class="disclosure">
-  <strong>Simulation Disclosure:</strong> All projected costs calculated by the S/4HANA EASIM rate simulation engine using 12 months of actual AMI interval consumption data from Installation INST-0048211-E. EASIM applies each rate schedule's full tariff structure — including energy charges, demand charges (where applicable), customer charges, riders, taxes, and surcharges — to the customer's actual load profile. Results represent what the customer would have paid on each rate over the simulation period. Actual future costs may vary based on usage changes, rate adjustments, and solar generation variance. Rate switch subject to 12-month minimum per MA DPU regulation.
+  <strong>Simulation Disclosure:</strong> All projected costs calculated by the S/4HANA EASIM rate simulation engine using 12 months of actual AMI interval consumption data from Installation USA0017153 EASIM applies each rate schedule's full tariff structure — including energy charges, demand charges (where applicable), customer charges, riders, taxes, and surcharges — to the customer's actual load profile. Results represent what the customer would have paid on each rate over the simulation period. Actual future costs may vary based on usage changes, rate adjustments, and solar generation variance. Rate switch subject to 12-month minimum per MA DPU regulation.
 </div>
 
 <!-- Footer -->
