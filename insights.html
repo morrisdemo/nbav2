@@ -151,6 +151,7 @@ body{font-family:var(--font-body);background:var(--bg-app);color:var(--text-prim
 .timeline-tag{font-size:10.5px;font-weight:500;display:inline-flex;align-items:center;padding:1px 6px;border-radius:4px}
 .timeline-tag.active{background:var(--status-critical-bg);color:var(--status-critical);font-weight:600}
 .timeline-tag.unpaid{background:var(--status-warning-bg);color:var(--status-warning);font-weight:600}
+  .timeline-tag.paid{background:var(--status-success-bg);color:var(--status-success);font-weight:600}
 .timeline-tag.date{color:var(--text-tertiary)}
 
 /* ═══ SERVICE LOCATION ═══ */
@@ -322,7 +323,7 @@ body{font-family:var(--font-body);background:var(--bg-app);color:var(--text-prim
      &bp=US00017601&first=Jeremy&last=Thompson&address=19+Monroe+Pl
    ═══════════════════════════════════════════════════════════════ */
 
-const DEFAULTS = { bp:'', first:'', last:'', address:'', utility:'electric' };
+const DEFAULTS = { bp:'US00017601', first:'Jeremy', last:'Thompson', address:'19+Monroe+Pl', utility:'electric' };
 
 const ODATA_CONFIG = {
   enabled: false,
@@ -331,7 +332,7 @@ const ODATA_CONFIG = {
   headers: { 'Accept':'application/json' }
 };
 
-const DEMO_AGING = { current:0, d30:142.50, d60:126.80, d90:117.70 };
+const DEMO_AGING = { current:420.53, d30:390.00, d60:390.80, d90:-50.00 };
 
 /* ═══ SVG helpers ═══ */
 const SVG = {
@@ -391,9 +392,9 @@ const PROFILES = {
       { type:'warning', icon:SVG.alertCircle, label:'Multiple relationships', text:'2 customer relationships exist on this account' }
     ],
     nba: [
-      { rank:1, title:'Take payment \u2014 resolve past-due balance', reason:'Active collections \u00b7 Pending disconnection', conf:94, level:'high', script:'Due to your past-due balance and active collection activity, we can take a payment over the phone or online to get your account current. Are you able to make a payment today?', actions:['Process payment','View balance'] },
-      { rank:2, title:'Offer installment plan', reason:'Eligible \u00b7 1 prior default on record', conf:72, level:'med', script:'A payment arrangement may be offered, but 1 default exists on record. If broken, no future arrangements will be allowed. We recommend making payment in full. Would you also like us to check if you qualify for low-income assistance?', actions:['Create arrangement','Check LIHEAP'] },
-      { rank:3, title:'Enroll in AutoPay', reason:'Prevents future delinquency \u00b7 Not enrolled', conf:58, level:'low', script:'We recommend enrolling in AutoPay to have your bill paid automatically each month \u2014 securely, on time, and hassle-free.', actions:['Enroll in AutoPay'] }
+      { rank:1, title:'Take payment \u2014 resolve past-due balance', reason:'Active collections \u00b7 Reminder letter including charges', conf:94, level:'high', script:'Due to your past-due balance and active collection activity, we can take a payment over the phone or online to get your account current. Are you able to make a payment today?'/*, actions:['Process payment','View balance'*/] },
+      { rank:2, title:'Offer installment plan', reason:'Eligible \u00b7 1 prior default on record', conf:72, level:'med', script:'A payment arrangement may be offered, but 1 default exists on record. If broken, no future arrangements will be allowed. We recommend making payment in full. Would you also like us to check if you qualify for low-income assistance?'/*, actions:['Create arrangement','Check LIHEAP'*/] },
+      { rank:3, title:'Enroll in AutoPay', reason:'Prevents future delinquency \u00b7 Not enrolled', conf:58, level:'low', script:'We recommend enrolling in AutoPay to have your bill paid automatically each month \u2014 securely, on time, and hassle-free.'/*, actions:['Enroll in AutoPay'*/] }
     ],
     programs: [
       { name:'Budget billing', desc:'Fixed monthly payments', tag:'popular', tagClass:'popular', link:'#' },
@@ -402,9 +403,9 @@ const PROFILES = {
       { name:'eBill', desc:'Paperless billing', tag:'enrolled', tagClass:'enrolled', enrolled:true }
     ],
     collections: [
-      { dot:'active', title:'Disconnect warning call', desc:'10-day turn-off notice issued', tag:'active', tagLabel:'Active', date:'Jun 18, 2025' },
-      { dot:'warning', title:'Early reminder \u2014 TF notice', desc:'Autodialer warning: TF notice to be issued', tag:'unpaid', tagLabel:'Unpaid', date:'Jun 10, 2025' },
-      { dot:'muted', title:'Digital late payment reminder', desc:'Email sent. LPC of $5.00 applied.', tag:'unpaid', tagLabel:'Unpaid', date:'May 28, 2025' }
+      { dot:'active', title:'Late Payment including charges', desc:'early stage late payment issued', tag:'active', tagLabel:'Active', date:'Jul 7, 2025' },
+      { dot:'warning', title:'Early reminder \u2014 TF notice', desc:'Autodialer warning: TF notice to be issued', tag:'paid', tagLabel:'Paid', date:'Mar 10, 2025' },
+      { dot:'muted', title:'Digital late payment reminder', desc:'Email sent. LPC of $5.00 applied.', tag:'paid', tagLabel:'Paid', date:'Feb 28, 2025' }
     ]
   },
 
