@@ -388,13 +388,13 @@ const PROFILES = {
       { title:'Battery storage installation', desc:'Tesla Powerwall 3 \u2014 permit, install, commission', iconClass:'icon-install', status:'complete', date:'Mar 8, 2024', id:'SO-792103' }
     ],
     alerts: [
-      { type:'critical', icon:SVG.alertTri, label:'Pending disconnection', text:'Shut-off scheduled at {address}', meta:'10-day notice issued Jun 18, 2025' },
+      { type:'critical', icon:SVG.alertTri, label:'Active Collections', text:'Late payment including charges issued', meta:'Late payment notice issued Jul 7, 2025' },
       { type:'warning', icon:SVG.alertCircle, label:'Multiple relationships', text:'2 customer relationships exist on this account' }
     ],
     nba: [
-      { rank:1, title:'Take payment \u2014 resolve past-due balance', reason:'Active collections \u00b7 Reminder letter including charges', conf:94, level:'high', script:'Due to your past-due balance and active collection activity, we can take a payment over the phone or online to get your account current. Are you able to make a payment today?'/*, actions:['Process payment','View balance'*/] },
-      { rank:2, title:'Offer installment plan', reason:'Eligible \u00b7 1 prior default on record', conf:72, level:'med', script:'A payment arrangement may be offered, but 1 default exists on record. If broken, no future arrangements will be allowed. We recommend making payment in full. Would you also like us to check if you qualify for low-income assistance?'/*, actions:['Create arrangement','Check LIHEAP'*/] },
-      { rank:3, title:'Enroll in AutoPay', reason:'Prevents future delinquency \u00b7 Not enrolled', conf:58, level:'low', script:'We recommend enrolling in AutoPay to have your bill paid automatically each month \u2014 securely, on time, and hassle-free.'/*, actions:['Enroll in AutoPay'*/] }
+      { rank:1, title:'Take payment \u2014 resolve past-due balance', reason:'Active collections \u00b7 Reminder letter including charges', conf:94, level:'high', script:'Due to your past-due balance and active collection activity, we can take a payment over the phone or online to get your account current. Are you able to make a payment today?', actions:['Process payment','View balance'] },
+      { rank:2, title:'Offer installment plan', reason:'Eligible \u00b7 1 prior default on record', conf:72, level:'med', script:'A payment arrangement may be offered, but 1 default exists on record. If broken, no future arrangements will be allowed. We recommend making payment in full. Would you also like us to check if you qualify for low-income assistance?', actions:['Create arrangement','Check LIHEAP'] },
+      { rank:3, title:'Enroll in AutoPay', reason:'Prevents future delinquency \u00b7 Not enrolled', conf:58, level:'low', script:'We recommend enrolling in AutoPay to have your bill paid automatically each month \u2014 securely, on time, and hassle-free.', actions:['Enroll in AutoPay'] }
     ],
     programs: [
       { name:'Budget billing', desc:'Fixed monthly payments', tag:'popular', tagClass:'popular', link:'#' },
