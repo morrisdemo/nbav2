@@ -265,12 +265,12 @@ body{font-family:var(--font-body);background:var(--bg-app);color:var(--text-prim
         <span class="risk-badge high">High risk</span>
       </div>
       <div class="aging-strip">
-        <div class="aging-bucket tier-current"><div class="aging-label">Current</div><div data-aging="current" class="aging-zero">&mdash;</div></div>
-        <div class="aging-bucket tier-30"><div class="aging-label">30 day</div><div data-aging="d30" class="aging-amount">$142.50</div></div>
-        <div class="aging-bucket tier-60"><div class="aging-label">60 day</div><div data-aging="d60" class="aging-amount">$126.80</div></div>
-        <div class="aging-bucket tier-90"><div class="aging-label">90+ day</div><div data-aging="d90" class="aging-amount">$117.70</div></div>
+        <div class="aging-bucket tier-current"><div class="aging-label">Current</div><div data-aging="current" class="aging-zero">$420.53</div></div>
+        <div class="aging-bucket tier-30"><div class="aging-label">30 day</div><div data-aging="d30" class="aging-amount">$390.00</div></div>
+        <div class="aging-bucket tier-60"><div class="aging-label">60 day</div><div data-aging="d60" class="aging-amount">$390.00</div></div>
+        <div class="aging-bucket tier-90"><div class="aging-label">90+ day</div><div data-aging="d90" class="aging-amount">-$50.00</div></div>
       </div>
-      <div class="aging-total"><span class="aging-total-label">Total outstanding</span><span class="aging-total-amount" id="agingTotal">$387.00</span></div>
+      <div class="aging-total"><span class="aging-total-label">Total outstanding</span><span class="aging-total-amount" id="agingTotal">$1,946.77</span></div>
     </div>
 
     <div id="alertsContainer" class="stagger" style="animation-delay:.15s"></div>
@@ -583,7 +583,7 @@ function renderLocationTab(p, ctx) {
 
   // Location header
   document.getElementById('locationHeader').innerHTML =
-    `<div class="location-header-card"><div class="location-top"><div class="location-icon-wrap ${p.locIconClass}">${SVG.pin}</div><div class="location-info"><div class="location-addr">${ctx.address}</div><div class="location-meta">East Lansing, MI 48823 \u00b7 <span class="mono">Premise 200041</span></div></div></div><div class="rate-strip"><div class="rate-cell"><div class="rate-cell-label">Rate schedule</div><div class="rate-cell-value">${p.rate.name}</div><div class="rate-cell-sub">${p.rate.detail}</div></div><div class="rate-cell"><div class="rate-cell-label">Contract active</div><div class="rate-cell-value">${p.contract.tenure}</div><div class="rate-cell-sub">Since ${p.contract.since}</div></div></div></div>`;
+    `<div class="location-header-card"><div class="location-top"><div class="location-icon-wrap ${p.locIconClass}">${SVG.pin}</div><div class="location-info"><div class="location-addr">${ctx.address}</div><div class="location-meta">Brooklyn, NY 11201 \u00b7 <span class="mono">Premise: US00017601</span></div></div></div><div class="rate-strip"><div class="rate-cell"><div class="rate-cell-label">Rate schedule</div><div class="rate-cell-value">${p.rate.name}</div><div class="rate-cell-sub">${p.rate.detail}</div></div><div class="rate-cell"><div class="rate-cell-label">Contract active</div><div class="rate-cell-value">${p.contract.tenure}</div><div class="rate-cell-sub">Since ${p.contract.since}</div></div></div></div>`;
 
   // Operands
   document.getElementById('operandLabel').innerHTML = `Special operands &amp; credits <span class="count">${p.operands.length}</span>`;
