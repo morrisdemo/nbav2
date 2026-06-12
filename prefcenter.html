@@ -1,704 +1,625 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Communication Preferences</title>
+<link rel="stylesheet" href="https://ui5.sap.com/resources/sap/ui/core/themes/base/SAP-icons.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root {
-  --font-body: 'DM Sans', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-  --bg-app: #f5f6f8;
-  --bg-surface: #ffffff;
-  --bg-surface-hover: #fafbfc;
-  --bg-inset: #f0f2f5;
-  --border-base: #e2e5ea;
-  --border-subtle: #eceef2;
-  --text-primary: #1a1f2b;
-  --text-secondary: #5c6370;
-  --text-tertiary: #8b919e;
-  --text-inverse: #fff;
-  --accent-blue: #2b6cb0;
-  --accent-blue-light: #ebf2fa;
-  --accent-blue-muted: #3b7ddd;
-  --status-critical: #c53030;
-  --status-critical-bg: #fef2f2;
-  --status-success: #276749;
-  --status-success-bg: #f0fdf4;
-  --status-success-border: #bbf7d0;
-  --status-warning: #b7791f;
-  --status-warning-bg: #fefce8;
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --shadow-card: 0 1px 3px rgba(26,31,43,.04), 0 0 0 1px var(--border-subtle);
-  --shadow-md: 0 2px 8px rgba(26,31,43,.06);
+:root{
+  --brand:#0070F2;--brand-bg:#EBF5FE;--brand-border:#B8D7F5;
+  --pos:#256F3A;--pos-bg:#F5FAE5;--pos-border:#B6D98C;
+  --crit:#AA0808;--crit-bg:#FFEBEB;--crit-border:#F4AAAA;
+  --warn:#E76500;--warn-bg:#FFF8D6;--warn-border:#F5D44E;
+  --info:#0070F2;--info-bg:#EBF5FE;
+  --neutral:#556B82;--neutral-bg:#EFF1F2;
+  --surf:#FFFFFF;--bg:#F5F6F7;--bg2:#FAFBFC;
+  --bdr:#E5E5E5;--bdr-lt:#F0F1F2;
+  --txt:#1D2D3E;--txt2:#556B82;--txt3:#8396A8;--link:#0064D9;
+  --shadow:0 1px 4px rgba(29,45,62,.05);
+  --shadow-hover:0 4px 16px rgba(29,45,62,.1);
+  --rs:8px;--rm:10px;--pill:100px;
+  --btp:#0A6ED1;--btp-bg:#F0F8FF;--btp-border:#C2DFFB;
+  --transition:all .2s cubic-bezier(.4,0,.2,1)
 }
 
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 
-body {
-  font-family: var(--font-body);
-  background: var(--bg-app);
-  color: var(--text-primary);
-  font-size: 13.5px;
-  line-height: 1.55;
-  -webkit-font-smoothing: antialiased;
+body{
+  font-family:'72','IBM Plex Sans',-apple-system,sans-serif;
+  font-size:13px;line-height:1.5;
+  background:var(--bg);color:var(--txt);
+  -webkit-font-smoothing:antialiased;
 }
 
-/* ── Layout Shell ── */
-.page-wrap {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 16px 20px 80px;
+[class^="si-"]::before,[class*=" si-"]::before{
+  font-family:'SAP-icons';font-style:normal;font-weight:normal;
+  display:inline-block;text-align:center;font-size:inherit;line-height:1
+}
+.si-person::before{content:'\e1c4'}
+.si-save::before{content:'\e05b'}
+.si-decline::before{content:'\e05e'}
+.si-notification::before{content:'\e08a'}
+.si-globe::before{content:'\e0d0'}
+.si-pdf::before{content:'\e08e'}
+
+/* ── Header ── */
+.hdr{
+  background:var(--surf);border-bottom:1px solid var(--bdr);
+  padding:10px 20px;display:flex;align-items:center;gap:10px;
+  position:relative;
+}
+.hdr img{height:20px;flex-shrink:0}
+.hdr-div{width:1px;height:18px;background:var(--bdr);flex-shrink:0}
+.hdr-title{font-size:13px;font-weight:600;color:var(--txt);white-space:nowrap}
+.hdr-title span{font-weight:400;color:var(--txt3)}
+.hdr-spacer{flex:1}
+.hdr-ctx{
+  display:flex;align-items:center;gap:6px;
+  font-size:11px;color:var(--txt2)
+}
+.hdr-bp{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;
+  background:var(--bg);border:1px solid var(--bdr);border-radius:4px;
+  padding:1px 6px;color:var(--txt2)
+}
+.src-tag{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:10px;font-weight:600;color:var(--pos);
+  background:var(--pos-bg);border:1px solid var(--pos-border);
+  border-radius:var(--pill);padding:2px 7px;cursor:default;
+  white-space:nowrap
+}
+.src-dot{
+  width:5px;height:5px;border-radius:50%;
+  background:var(--pos);display:inline-block;
+  animation:pulse 2s infinite
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+
+/* ── Page ── */
+.page{max-width:820px;margin:0 auto;padding:16px 20px 32px}
+
+/* ── Cards ── */
+.card{
+  background:var(--surf);border-radius:var(--rm);
+  border:1px solid var(--bdr);
+  box-shadow:var(--shadow);
+  margin-bottom:12px;overflow:hidden
+}
+.card-hdr{
+  display:flex;align-items:center;gap:8px;
+  padding:11px 16px;border-bottom:1px solid var(--bdr-lt);
+}
+.card-icon{
+  width:28px;height:28px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0
+}
+.card-title{font-size:12px;font-weight:600;color:var(--txt)}
+.card-subtitle{font-size:11px;color:var(--txt3);margin-left:auto}
+.card-body{padding:14px 16px}
+
+/* ── Form ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 16px}
+.form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}
+
+.fld{display:flex;flex-direction:column;gap:3px}
+
+.fl{
+  font-size:10px;font-weight:600;text-transform:uppercase;
+  letter-spacing:.05em;color:var(--txt3)
 }
 
-/* ── Section Cards ── */
-.card {
-  background: var(--bg-surface);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
-  margin-bottom: 12px;
-  overflow: hidden;
+.form-select,.form-input{
+  font-family:'72','IBM Plex Sans',sans-serif;
+  font-size:13px;color:var(--txt);
+  padding:7px 10px;
+  border:1px solid var(--bdr);border-radius:var(--rs);
+  background:var(--surf);outline:none;width:100%;
+  transition:border-color .15s,box-shadow .15s;
+  appearance:none;cursor:pointer
+}
+.form-select{
+  background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238396A8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;padding-right:28px
+}
+.form-select:focus,.form-input:focus{
+  border-color:var(--brand);box-shadow:0 0 0 2px rgba(0,112,242,.1)
 }
 
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 18px;
-  border-bottom: 1px solid var(--border-subtle);
+/* ── Divider ── */
+.divider{height:1px;background:var(--bdr-lt);margin:12px 0}
+
+/* ── Toggle rows ── */
+.toggle-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 0;gap:16px
 }
+.toggle-row+.toggle-row{border-top:1px solid var(--bdr-lt)}
+.tl-wrap{flex:1;min-width:0}
+.tl-name{font-size:13px;font-weight:500;color:var(--txt)}
+.tl-desc{font-size:11px;color:var(--txt3);margin-top:1px;line-height:1.4}
 
-.card-title {
-  font-size: 13.5px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.sw{
+  position:relative;width:38px;height:22px;flex-shrink:0;cursor:pointer
 }
-
-.card-title svg { flex-shrink: 0; color: var(--text-tertiary); }
-
-.card-body { padding: 16px 18px; }
-
-/* ── Form Fields ── */
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px 20px;
+.sw input{opacity:0;width:0;height:0;position:absolute}
+.sw-track{
+  position:absolute;inset:0;background:var(--bdr);
+  border-radius:11px;transition:background .2s
 }
-
-.form-group { display: flex; flex-direction: column; gap: 4px; }
-
-.form-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: .04em;
+.sw input:checked+.sw-track{background:var(--brand)}
+.sw-knob{
+  position:absolute;top:2px;left:2px;
+  width:18px;height:18px;background:#fff;
+  border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.15);
+  transition:transform .2s
 }
+.sw input:checked~.sw-knob{transform:translateX(16px)}
 
-.form-select, .form-input, .form-time {
-  font-family: var(--font-body);
-  font-size: 13px;
-  padding: 8px 10px;
-  border: 1px solid var(--border-base);
-  border-radius: var(--radius-sm);
-  background: var(--bg-surface);
-  color: var(--text-primary);
-  outline: none;
-  transition: border-color .15s ease, box-shadow .15s ease;
-  width: 100%;
+/* Quiet hours */
+.quiet-row{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 0 2px;
 }
+.quiet-row .form-input{width:100px;text-align:center;font-size:12px;cursor:default}
+.quiet-sep{font-size:11px;color:var(--txt3);font-weight:500}
 
-.form-select:focus, .form-input:focus, .form-time:focus {
-  border-color: var(--accent-blue-muted);
-  box-shadow: 0 0 0 2px rgba(59,125,221,.1);
+/* ── Matrix ── */
+.mtx{width:100%;border-collapse:separate;border-spacing:0}
+.mtx th{
+  font-size:10px;font-weight:600;text-transform:uppercase;
+  letter-spacing:.05em;color:var(--txt3);
+  padding:9px 12px;text-align:center;
+  border-bottom:1px solid var(--bdr);
+  background:var(--surf);white-space:nowrap
 }
-
-.form-select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238b919e' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
-
-/* ── Toggle Switch ── */
-.toggle-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 0;
+.mtx th:first-child{text-align:left;min-width:200px}
+.mtx tbody tr{transition:background .1s}
+.mtx tbody tr:hover{background:var(--bg2)}
+.mtx td{
+  padding:11px 12px;border-bottom:1px solid var(--bdr-lt);
+  vertical-align:middle
 }
+.mtx tbody tr:last-child td{border-bottom:none}
+.mtx td:not(:first-child){text-align:center}
+.proc-name{font-size:12.5px;font-weight:600;color:var(--txt)}
+.proc-desc{font-size:11px;color:var(--txt3);margin-top:2px;line-height:1.35}
 
-.toggle-row + .toggle-row { border-top: 1px solid var(--border-subtle); }
-
-.toggle-label-wrap { flex: 1; min-width: 0; }
-
-.toggle-label { font-size: 13px; font-weight: 500; }
-
-.toggle-desc { font-size: 11.5px; color: var(--text-secondary); line-height: 1.4; }
-
-.toggle-switch {
-  position: relative;
-  width: 40px;
-  height: 22px;
-  flex-shrink: 0;
-  cursor: pointer;
+/* compact channel toggle */
+.ch-sw{
+  position:relative;width:34px;height:18px;
+  display:inline-block;cursor:pointer;vertical-align:middle
 }
-
-.toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
-
-.toggle-track {
-  position: absolute;
-  inset: 0;
-  background: var(--border-base);
-  border-radius: 11px;
-  transition: background .2s ease;
+.ch-sw input{opacity:0;width:0;height:0;position:absolute}
+.ch-track{
+  position:absolute;inset:0;background:var(--bdr);
+  border-radius:9px;transition:background .2s
 }
-
-.toggle-switch input:checked + .toggle-track { background: var(--accent-blue); }
-
-.toggle-knob {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 18px;
-  height: 18px;
-  background: white;
-  border-radius: 50%;
-  box-shadow: 0 1px 3px rgba(0,0,0,.15);
-  transition: transform .2s ease;
+.ch-sw input:checked+.ch-track{background:var(--brand)}
+.ch-knob{
+  position:absolute;top:2px;left:2px;
+  width:14px;height:14px;background:#fff;
+  border-radius:50%;box-shadow:0 1px 2px rgba(0,0,0,.12);
+  transition:transform .2s
 }
+.ch-sw input:checked~.ch-knob{transform:translateX(16px)}
 
-.toggle-switch input:checked ~ .toggle-knob { transform: translateX(18px); }
-
-/* ── Quiet Hours Inline ── */
-.quiet-hours-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding-top: 8px;
+/* notes */
+.notes-inp{
+  font-family:'72','IBM Plex Sans',sans-serif;
+  font-size:11.5px;padding:5px 8px;
+  border:1px solid var(--bdr-lt);border-radius:6px;
+  width:100%;min-width:110px;outline:none;
+  color:var(--txt);background:var(--bg);
+  transition:border-color .15s,background .15s
 }
+.notes-inp:focus{border-color:var(--brand);background:var(--surf)}
+.notes-inp::placeholder{color:var(--txt3)}
 
-.quiet-hours-row .form-time { width: 100px; text-align: center; }
-
-.quiet-hours-sep { font-size: 12px; color: var(--text-tertiary); font-weight: 500; }
-
-/* ── Process / Channel Matrix ── */
-.matrix-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
+/* ── Buttons ── */
+.btn{
+  display:inline-flex;align-items:center;gap:5px;
+  font-family:'72','IBM Plex Sans',sans-serif;
+  font-size:13px;font-weight:500;
+  padding:7px 14px;border-radius:var(--rs);cursor:pointer;
+  border:1px solid transparent;
+  transition:var(--transition);white-space:nowrap
 }
+.btn:active{transform:translateY(1px) scale(.99)}
+.btn-primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+.btn-primary:hover{background:#0060D0;border-color:#0060D0}
+.btn-ghost{background:var(--surf);color:var(--txt);border-color:var(--bdr)}
+.btn-ghost:hover{background:var(--bg)}
+.btn-link{background:none;color:var(--link);border:none;padding:6px 8px;font-size:12px}
+.btn-link:hover{background:var(--brand-bg)}
+.btn-link-danger{background:none;color:var(--crit);border:none;padding:6px 8px;font-size:12px}
+.btn-link-danger:hover{background:var(--crit-bg)}
 
-.matrix-table th {
-  font-size: 10.5px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: .05em;
-  color: var(--text-tertiary);
-  padding: 10px 12px;
-  text-align: center;
-  border-bottom: 1px solid var(--border-base);
-  position: sticky;
-  top: 0;
-  background: var(--bg-surface);
-  z-index: 2;
+/* ── Save footer (inline in card) ── */
+.card-footer{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 16px;border-top:1px solid var(--bdr-lt);
+  background:var(--bg2)
 }
+.save-ts{font-size:11px;color:var(--txt3);margin-left:auto}
 
-.matrix-table th:first-child { text-align: left; }
-
-.matrix-table td {
-  padding: 12px;
-  border-bottom: 1px solid var(--border-subtle);
-  vertical-align: middle;
-}
-
-.matrix-table tr:last-child td { border-bottom: none; }
-
-.matrix-table td:not(:first-child) { text-align: center; }
-
-.process-cell { min-width: 200px; }
-
-.process-name { font-size: 13px; font-weight: 600; line-height: 1.3; }
-
-.process-desc { font-size: 11px; color: var(--text-secondary); line-height: 1.4; margin-top: 1px; }
-
-.notes-input {
-  font-family: var(--font-body);
-  font-size: 12px;
-  padding: 6px 8px;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  width: 100%;
-  min-width: 120px;
-  outline: none;
-  color: var(--text-primary);
-  transition: border-color .15s ease;
-  background: var(--bg-inset);
-}
-
-.notes-input:focus { border-color: var(--accent-blue-muted); background: var(--bg-surface); }
-
-.notes-input::placeholder { color: var(--text-tertiary); }
-
-/* Channel toggle (compact) */
-.ch-toggle {
-  position: relative;
-  width: 36px;
-  height: 20px;
-  display: inline-block;
-  cursor: pointer;
-  vertical-align: middle;
-}
-
-.ch-toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
-
-.ch-track {
-  position: absolute;
-  inset: 0;
-  background: var(--border-base);
-  border-radius: 10px;
-  transition: background .2s ease;
-}
-
-.ch-toggle input:checked + .ch-track { background: var(--accent-blue); }
-
-.ch-knob {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 16px;
-  height: 16px;
-  background: white;
-  border-radius: 50%;
-  box-shadow: 0 1px 2px rgba(0,0,0,.12);
-  transition: transform .2s ease;
-}
-
-.ch-toggle input:checked ~ .ch-knob { transform: translateX(16px); }
-
-/* ── Action Bar ── */
-.action-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: var(--bg-surface);
-  border-top: 1px solid var(--border-base);
-  padding: 10px 20px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  z-index: 20;
-  box-shadow: 0 -2px 8px rgba(26,31,43,.04);
-}
-
-.action-bar-inner {
-  max-width: 960px;
-  margin: 0 auto;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 500;
-  padding: 8px 16px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all .15s ease;
-  border: 1px solid transparent;
-  text-decoration: none;
-}
-
-.btn:active { transform: translateY(1px) scale(.98); }
-.btn-primary { background: var(--accent-blue); color: var(--text-inverse); border-color: var(--accent-blue); }
-.btn-primary:hover { background: #245a94; }
-.btn-secondary { background: var(--bg-surface); color: var(--text-primary); border-color: var(--border-base); }
-.btn-secondary:hover { background: var(--bg-inset); }
-.btn-text { background: none; color: var(--accent-blue); border: none; padding: 8px 10px; }
-.btn-text:hover { background: var(--accent-blue-light); }
-.btn-danger-text { background: none; color: var(--status-critical); border: none; padding: 8px 10px; }
-.btn-danger-text:hover { background: var(--status-critical-bg); }
-
-.spacer { flex: 1; }
-
-.last-saved { font-size: 11px; color: var(--text-tertiary); }
+/* ── Bulk actions ── */
+.bulk{display:flex;gap:0}
 
 /* ── Toast ── */
-.toast {
-  position: fixed;
-  bottom: 70px;
-  left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  background: var(--text-primary);
-  color: var(--text-inverse);
-  padding: 10px 20px;
-  border-radius: var(--radius-md);
-  font-size: 13px;
-  font-weight: 500;
-  opacity: 0;
-  transition: all .3s ease;
-  z-index: 30;
-  pointer-events: none;
+.toast{
+  position:fixed;bottom:24px;left:50%;
+  transform:translateX(-50%) translateY(10px);
+  background:var(--txt);color:#fff;
+  padding:8px 16px;border-radius:var(--rs);
+  font-size:12.5px;font-weight:500;
+  opacity:0;transition:opacity .2s,transform .2s;
+  z-index:500;pointer-events:none;white-space:nowrap
 }
-
-.toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-/* ── Bulk Actions ── */
-.bulk-actions {
-  display: flex;
-  gap: 4px;
-}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* ── Responsive ── */
-@media (max-width: 700px) {
-  .form-grid { grid-template-columns: 1fr; }
-  .page-wrap { padding: 12px 12px 80px; }
-  .matrix-table { display: block; overflow-x: auto; }
+@media(max-width:680px){
+  .form-grid{grid-template-columns:1fr}
+  .form-grid-2{grid-template-columns:1fr}
+  .page{padding:12px 12px 24px}
+  .mtx{display:block;overflow-x:auto}
+  .hdr-ctx{display:none}
 }
-
-/* ── Stagger ── */
-.stagger { opacity: 0; transform: translateY(6px); animation: staggerIn .3s ease forwards; }
-@keyframes staggerIn { to { opacity: 1; transform: translateY(0); } }
 </style>
 </head>
 <body>
 
-<div class="page-wrap">
+<!-- Header -->
+<div class="hdr">
+  <img src="https://raw.githubusercontent.com/morrisdemo/images/d4f2b84a25e2fd4139f896184e429ec0e875ae2a/sap_logo.svg" alt="SAP"
+       onerror="this.style.display='none'">
+  <div class="hdr-div"></div>
+  <div class="hdr-title">Communication Preferences <span>· IS-U / BP Master</span></div>
+  <div class="hdr-spacer"></div>
+  <div class="hdr-ctx" id="hdrCtx" style="display:none">
+    <span id="hdrName"></span>
+    <span class="hdr-bp" id="hdrBP"></span>
+  </div>
+  <div class="src-tag">
+    <span class="src-dot"></span>S/4HANA · Live
+  </div>
+</div>
 
-  <!-- Contact & Global Settings -->
-  <div class="card stagger" style="animation-delay:.05s">
-    <div class="card-header">
-      <div class="card-title">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="5" r="3"/><path d="M2.5 14c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/></svg>
-        Contact &amp; global settings
+<div class="page">
+
+  <!-- Contact & Preferences -->
+  <div class="card">
+    <div class="card-hdr">
+      <div class="card-icon" style="background:var(--brand-bg);color:var(--brand)">
+        <span class="si-person"></span>
       </div>
+      <div class="card-title">Contact &amp; global preferences</div>
+      <div class="card-subtitle" style="font-size:10px;font-family:'IBM Plex Mono',monospace" id="bpChip"></div>
     </div>
     <div class="card-body">
+
       <div class="form-grid">
-        <div class="form-group">
-          <label class="form-label" for="selEmail">Primary email</label>
+        <div class="fld">
+          <label class="fl" for="selEmail">Primary email</label>
           <select class="form-select" id="selEmail"></select>
         </div>
-        <div class="form-group">
-          <label class="form-label" for="selPhone">Primary phone</label>
+        <div class="fld">
+          <label class="fl" for="selPhone">Primary phone</label>
           <select class="form-select" id="selPhone"></select>
         </div>
-      </div>
-
-      <div style="margin-top:14px">
-        <div class="toggle-row">
-          <div class="toggle-label-wrap">
-            <div class="toggle-label">Allow program and offer recommendations</div>
-            <div class="toggle-desc">Receive suggestions for rebates, assistance programs, and rate optimization</div>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="togMarketing">
-            <span class="toggle-track"></span>
-            <span class="toggle-knob"></span>
-          </label>
-        </div>
-
-        <div class="toggle-row">
-          <div class="toggle-label-wrap">
-            <div class="toggle-label">Quiet hours</div>
-            <div class="toggle-desc">Suppress non-emergency notifications during specified hours</div>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="togQuiet">
-            <span class="toggle-track"></span>
-            <span class="toggle-knob"></span>
-          </label>
-        </div>
-
-        <div class="quiet-hours-row" id="quietRow" style="display:none">
-          <span class="form-label" style="text-transform:none;letter-spacing:0;font-weight:500">From</span>
-          <input type="time" class="form-time" id="quietStart" value="21:00">
-          <span class="quiet-hours-sep">to</span>
-          <input type="time" class="form-time" id="quietEnd" value="08:00">
+        <div class="fld">
+          <label class="fl" for="selLang">Preferred language</label>
+          <select class="form-select" id="selLang">
+            <option value="EN">English</option>
+            <option value="ES">Spanish — Español</option>
+            <option value="ZH">Chinese — 中文</option>
+            <option value="HT">Haitian Creole — Kreyòl</option>
+            <option value="KO">Korean — 한국어</option>
+            <option value="PL">Polish — Polski</option>
+            <option value="PT">Portuguese — Português</option>
+            <option value="RU">Russian — Русский</option>
+            <option value="FR">French — Français</option>
+          </select>
         </div>
       </div>
+
+      <div class="divider"></div>
+
+      <div class="toggle-row">
+        <div class="tl-wrap">
+          <div class="tl-name">Paperless billing</div>
+          <div class="tl-desc">Deliver statements electronically only — suppress print output in Print Workbench</div>
+        </div>
+        <label class="sw">
+          <input type="checkbox" id="togPaperless">
+          <span class="sw-track"></span><span class="sw-knob"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row">
+        <div class="tl-wrap">
+          <div class="tl-name">Program &amp; offer recommendations</div>
+          <div class="tl-desc">Rebates, assistance programs, and rate optimization suggestions</div>
+        </div>
+        <label class="sw">
+          <input type="checkbox" id="togMarketing">
+          <span class="sw-track"></span><span class="sw-knob"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row">
+        <div class="tl-wrap">
+          <div class="tl-name">Quiet hours</div>
+          <div class="tl-desc">Suppress non-emergency outbound notifications during specified hours</div>
+        </div>
+        <label class="sw">
+          <input type="checkbox" id="togQuiet">
+          <span class="sw-track"></span><span class="sw-knob"></span>
+        </label>
+      </div>
+
+      <div class="quiet-row" id="quietRow" style="display:none">
+        <span style="font-size:11px;font-weight:500;color:var(--txt3)">From</span>
+        <input type="time" class="form-input" id="quietStart" value="21:00">
+        <span class="quiet-sep">to</span>
+        <input type="time" class="form-input" id="quietEnd" value="08:00">
+      </div>
+
     </div>
   </div>
 
-  <!-- Preferences Matrix -->
-  <div class="card stagger" style="animation-delay:.12s">
-    <div class="card-header">
-      <div class="card-title">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="2" width="12" height="12" rx="2"/><path d="M2 6h12M6 2v12"/></svg>
-        Preferences by process &amp; channel
+  <!-- Channel Matrix -->
+  <div class="card">
+    <div class="card-hdr">
+      <div class="card-icon" style="background:var(--neutral-bg);color:var(--neutral)">
+        <span class="si-notification"></span>
       </div>
-      <div class="bulk-actions">
-        <button class="btn btn-text" onclick="bulkToggle(true)">Enable all</button>
-        <button class="btn btn-danger-text" onclick="bulkToggle(false)">Disable all</button>
+      <div class="card-title">Notification preferences by process</div>
+      <div class="bulk" style="margin-left:auto">
+        <button class="btn btn-link" onclick="bulkToggle(true)">Enable all</button>
+        <button class="btn btn-link-danger" onclick="bulkToggle(false)">Disable all</button>
       </div>
     </div>
     <div style="overflow-x:auto">
-      <table class="matrix-table" id="matrixTable">
-        <thead><tr id="matrixHead"></tr></thead>
-        <tbody id="matrixBody"></tbody>
+      <table class="mtx" id="mtx">
+        <thead><tr id="mtxHead"></tr></thead>
+        <tbody id="mtxBody"></tbody>
       </table>
+    </div>
+    <div class="card-footer">
+      <button class="btn btn-primary" onclick="savePrefs()">
+        <span class="si-save"></span> Save preferences
+      </button>
+      <button class="btn btn-ghost" onclick="cancelChanges()">Cancel</button>
+      <span class="save-ts" id="saveTs">Not saved yet</span>
     </div>
   </div>
 
 </div>
 
-<!-- Fixed Action Bar -->
-<div class="action-bar">
-  <div class="action-bar-inner">
-    <button class="btn btn-primary" onclick="savePrefs()">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M11.5 12.5H2.5a1 1 0 01-1-1v-9a1 1 0 011-1h7.59a1 1 0 01.7.29l2.12 2.12a1 1 0 01.29.7V11.5a1 1 0 01-1 1z"/><path d="M4.5 12.5v-4h5v4"/><path d="M4.5 1.5v3h4"/></svg>
-      Save preferences
-    </button>
-    <button class="btn btn-secondary" onclick="cancelChanges()">Cancel</button>
-    <div class="spacer"></div>
-    <span class="last-saved" id="lastSaved">Not saved yet</span>
-  </div>
-</div>
-
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <script>
-/* ═══════════════════════════════════════
-   CONFIG
-   ═══════════════════════════════════════ */
-const STORAGE_KEY = 'scv2_comm_prefs_v2';
+/* ─────────────────────────────────────────────────────
+   URL PARAMETER CONTRACT
+   ?bp=US00017001        Business Partner (resolution key)
+   ?email=x@domain.com  Pre-seeds primary email from account record
+   ?phone=%2B15165550100 Pre-seeds primary phone from account record
+   ?first=Jane           Display name — shell context only
+   ?last=Smith           Display name — shell context only
+   ?address=...          Service location — not used in prefs logic
+   ?utility=pseg         Utility key — future branding hook
 
+   TODO: swap buildState() email/phone fallbacks with
+         OData call to Z_C_BP_COMMUNICATION_PREFS (BUT000 + ADR6 + ADRP)
+   ───────────────────────────────────────────────────── */
+const P   = new URLSearchParams(window.location.search);
+const ctx = {
+  bp:    P.get('bp')      || null,
+  email: P.get('email')   ? decodeURIComponent(P.get('email'))   : null,
+  phone: P.get('phone')   ? decodeURIComponent(P.get('phone'))   : null,
+  first: P.get('first')   ? decodeURIComponent(P.get('first'))   : '',
+  last:  P.get('last')    ? decodeURIComponent(P.get('last'))    : '',
+};
+
+/* ── Config ── */
 const CHANNELS = [
-  { key:'EMAIL', label:'Email', icon:'envelope' },
-  { key:'SMS',   label:'SMS',   icon:'phone' },
-  { key:'PUSH',  label:'In-App Push', icon:'bell' }
+  { key:'EMAIL', label:'Email'  },
+  { key:'SMS',   label:'SMS'    },
+  { key:'PUSH',  label:'In-App' },
 ];
 
 const PROCESSES = [
-  { id:'BILLING_PAYMENTS', title:'Billing and payments',      desc:'Statements, bills, payment reminders, payment confirmations' },
-  { id:'USAGE_ALERTS',     title:'Usage alerts',              desc:'High usage, threshold alerts, leak detection (if applicable)' },
-  { id:'OUTAGES',          title:'Outages and emergencies',   desc:'Service interruptions, restoration updates, emergency notices' },
-  { id:'PROGRAM_RECS',     title:'Program recommendations',   desc:'Rebates, assistance programs, time-of-use rate suggestions' },
-  { id:'PROFILE_UPDATES',  title:'Profile and security',      desc:'Account changes, security notices, preference confirmations' }
+  { id:'BILLING',   title:'Billing &amp; payments',     desc:'Statements, payment reminders, confirmations'          },
+  { id:'USAGE',     title:'Usage alerts',               desc:'High usage, threshold alerts, estimated reads'          },
+  { id:'OUTAGE',    title:'Outages &amp; emergencies',  desc:'Interruptions, restoration updates, safety notices'     },
+  { id:'PROGRAMS',  title:'Program recommendations',    desc:'Rebates, assistance programs, rate optimization'        },
+  { id:'ACCOUNT',   title:'Account &amp; security',     desc:'Profile changes, security notices, preference updates'  },
 ];
 
-const DEFAULT_STATE = {
-  customer: {
-    email: 'saputilitiesdemo@gmail.com',
-    phone: '+1 (720) 402-5379',
-    emailsOnFile: ['saputilitiesdemo@gmail.com','sapdemo.family@gmail.com','sapdemo.work@gmail.com'],
-    phonesOnFile: ['+1 (720) 402-5379','+1 (248) 977-7948']
+const SK = ctx.bp ? `comm_prefs_v1_${ctx.bp}` : 'comm_prefs_v1';
+
+/* ── Defaults ── */
+const DEFAULTS = {
+  customer:{
+    email:'david.park@example.com',
+    phone:'+1 (631) 555-0178',
+    emailsOnFile:['david.park@example.com','dpark.home@gmail.com'],
+    phonesOnFile:['+1 (631) 555-0178','+1 (631) 555-0291'],
+    lang:'EN',
+    paperless:false,
   },
-  global: {
-    allowMarketing: false,
-    quietHours: { enabled: false, start: '21:00', end: '08:00' }
-  },
-  preferences: PROCESSES.map(p => ({
-    processId: p.id,
-    channels: CHANNELS.reduce((a,c) => (a[c.key]=false,a), {}),
-    notes: ''
-  })),
-  meta: { lastSavedAt: '' }
+  global:{ allowMarketing:false, quietHours:{enabled:false,start:'21:00',end:'08:00'} },
+  prefs: PROCESSES.map(p=>({ id:p.id, ch:CHANNELS.reduce((a,c)=>(a[c.key]=false,a),{}) ,notes:'' })),
+  meta:{ savedAt:'' }
 };
 
-
-/* ═══════════════════════════════════════
-   STATE
-   ═══════════════════════════════════════ */
-let state = loadState() || JSON.parse(JSON.stringify(DEFAULT_STATE));
-
-function loadState() {
-  try { const r = localStorage.getItem(STORAGE_KEY); return r ? JSON.parse(r) : null; }
-  catch { return null; }
+/* ── State resolution ── */
+function loadStored(){
+  try{ const r=localStorage.getItem(SK); return r?JSON.parse(r):null; } catch(e){ return null; }
 }
 
-function persistState() {
-  state.meta.lastSavedAt = new Date().toLocaleString();
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+function buildState(){
+  const base = loadStored() || JSON.parse(JSON.stringify(DEFAULTS));
+
+  // Ensure all current processes exist (forward compat)
+  PROCESSES.forEach(p=>{ if(!base.prefs.find(r=>r.id===p.id))
+    base.prefs.push({id:p.id,ch:CHANNELS.reduce((a,c)=>(a[c.key]=false,a),{}),notes:''}); });
+
+  // URL param overrides — contact fields
+  if(ctx.email){
+    if(!base.customer.emailsOnFile.includes(ctx.email)) base.customer.emailsOnFile.unshift(ctx.email);
+    base.customer.email = ctx.email;
+  }
+  if(ctx.phone){
+    if(!base.customer.phonesOnFile.includes(ctx.phone)) base.customer.phonesOnFile.unshift(ctx.phone);
+    base.customer.phone = ctx.phone;
+  }
+  return base;
 }
 
+let S = buildState();
 
-/* ═══════════════════════════════════════
-   INIT
-   ═══════════════════════════════════════ */
-document.addEventListener('DOMContentLoaded', () => {
-  renderContactForm();
+function persist(){
+  const now = new Date();
+  S.meta.savedAt = now.toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
+  try{ localStorage.setItem(SK,JSON.stringify(S)); } catch(e){}
+}
+
+/* ── Init ── */
+document.addEventListener('DOMContentLoaded',()=>{
+  renderShell();
+  renderContact();
   renderMatrix();
-  updateSaveStatus();
+  updateTs();
 });
 
-
-/* ═══════════════════════════════════════
-   CONTACT FORM
-   ═══════════════════════════════════════ */
-function renderContactForm() {
-  // Email dropdown
-  const selEmail = document.getElementById('selEmail');
-  state.customer.emailsOnFile.forEach(e => {
-    const opt = document.createElement('option');
-    opt.value = e; opt.textContent = e;
-    if (e === state.customer.email) opt.selected = true;
-    selEmail.appendChild(opt);
-  });
-  selEmail.addEventListener('change', () => { state.customer.email = selEmail.value; });
-
-  // Phone dropdown
-  const selPhone = document.getElementById('selPhone');
-  state.customer.phonesOnFile.forEach(ph => {
-    const opt = document.createElement('option');
-    opt.value = ph; opt.textContent = ph;
-    if (ph === state.customer.phone) opt.selected = true;
-    selPhone.appendChild(opt);
-  });
-  selPhone.addEventListener('change', () => { state.customer.phone = selPhone.value; });
-
-  // Marketing toggle
-  const togMkt = document.getElementById('togMarketing');
-  togMkt.checked = state.global.allowMarketing;
-  togMkt.addEventListener('change', () => { state.global.allowMarketing = togMkt.checked; });
-
-  // Quiet hours
-  const togQuiet = document.getElementById('togQuiet');
-  const quietRow = document.getElementById('quietRow');
-  const quietStart = document.getElementById('quietStart');
-  const quietEnd = document.getElementById('quietEnd');
-
-  togQuiet.checked = state.global.quietHours.enabled;
-  quietStart.value = state.global.quietHours.start;
-  quietEnd.value = state.global.quietHours.end;
-  quietRow.style.display = togQuiet.checked ? 'flex' : 'none';
-
-  togQuiet.addEventListener('change', () => {
-    state.global.quietHours.enabled = togQuiet.checked;
-    quietRow.style.display = togQuiet.checked ? 'flex' : 'none';
-  });
-  quietStart.addEventListener('change', () => { state.global.quietHours.start = quietStart.value; });
-  quietEnd.addEventListener('change', () => { state.global.quietHours.end = quietEnd.value; });
+function renderShell(){
+  const name = [ctx.first,ctx.last].filter(Boolean).join(' ');
+  if(!name && !ctx.bp) return;
+  const ctx2 = document.getElementById('hdrCtx');
+  if(name) document.getElementById('hdrName').textContent = name;
+  if(ctx.bp){
+    document.getElementById('hdrBP').textContent = ctx.bp;
+    document.getElementById('bpChip').textContent = ctx.bp;
+  }
+  ctx2.style.display = 'flex';
 }
 
+function renderContact(){
+  // Email
+  const se = document.getElementById('selEmail'); se.innerHTML='';
+  S.customer.emailsOnFile.forEach(e=>{
+    se.appendChild(new Option(e,e,e===S.customer.email,e===S.customer.email));
+  });
+  se.addEventListener('change',()=>{ S.customer.email=se.value; });
 
-/* ═══════════════════════════════════════
-   PREFERENCES MATRIX
-   ═══════════════════════════════════════ */
-function renderMatrix() {
-  // Header
-  const head = document.getElementById('matrixHead');
-  head.innerHTML = `<th>Process</th>${CHANNELS.map(c => `<th>${c.label}</th>`).join('')}<th>Notes</th>`;
+  // Phone
+  const sp = document.getElementById('selPhone'); sp.innerHTML='';
+  S.customer.phonesOnFile.forEach(ph=>{
+    sp.appendChild(new Option(ph,ph,ph===S.customer.phone,ph===S.customer.phone));
+  });
+  sp.addEventListener('change',()=>{ S.customer.phone=sp.value; });
 
-  // Body
-  const body = document.getElementById('matrixBody');
-  body.innerHTML = '';
+  // Language
+  const sl = document.getElementById('selLang');
+  sl.value = S.customer.lang || 'EN';
+  sl.addEventListener('change',()=>{ S.customer.lang=sl.value; });
 
-  state.preferences.forEach((pref, idx) => {
-    const proc = PROCESSES.find(p => p.id === pref.processId);
-    if (!proc) return;
+  // Paperless
+  const tp = document.getElementById('togPaperless');
+  tp.checked = !!S.customer.paperless;
+  tp.addEventListener('change',()=>{ S.customer.paperless=tp.checked; });
 
+  // Marketing
+  const tm = document.getElementById('togMarketing');
+  tm.checked = !!S.global.allowMarketing;
+  tm.addEventListener('change',()=>{ S.global.allowMarketing=tm.checked; });
+
+  // Quiet hours
+  const tq = document.getElementById('togQuiet');
+  const qr = document.getElementById('quietRow');
+  const qs = document.getElementById('quietStart');
+  const qe = document.getElementById('quietEnd');
+
+  tq.checked = !!S.global.quietHours.enabled;
+  qs.value   = S.global.quietHours.start || '21:00';
+  qe.value   = S.global.quietHours.end   || '08:00';
+  qr.style.display = tq.checked ? 'flex' : 'none';
+
+  tq.addEventListener('change',()=>{ S.global.quietHours.enabled=tq.checked; qr.style.display=tq.checked?'flex':'none'; });
+  qs.addEventListener('change',()=>{ S.global.quietHours.start=qs.value; });
+  qe.addEventListener('change',()=>{ S.global.quietHours.end=qe.value; });
+}
+
+function renderMatrix(){
+  const head = document.getElementById('mtxHead');
+  head.innerHTML = `<th>Process</th>${CHANNELS.map(c=>`<th>${c.label}</th>`).join('')}<th style="text-align:left;min-width:120px">Notes</th>`;
+
+  const body = document.getElementById('mtxBody'); body.innerHTML='';
+  S.prefs.forEach((pref,idx)=>{
+    const proc = PROCESSES.find(p=>p.id===pref.id); if(!proc) return;
     const tr = document.createElement('tr');
 
-    // Process cell
-    tr.innerHTML = `<td class="process-cell"><div class="process-name">${proc.title}</div><div class="process-desc">${proc.desc}</div></td>`;
+    const ptd = document.createElement('td');
+    ptd.innerHTML=`<div class="proc-name">${proc.title}</div><div class="proc-desc">${proc.desc}</div>`;
+    tr.appendChild(ptd);
 
-    // Channel toggles
-    CHANNELS.forEach(ch => {
-      const td = document.createElement('td');
-      const isOn = pref.channels[ch.key];
-      td.innerHTML = `
-        <label class="ch-toggle">
-          <input type="checkbox" data-idx="${idx}" data-ch="${ch.key}" ${isOn ? 'checked' : ''}>
-          <span class="ch-track"></span>
-          <span class="ch-knob"></span>
-        </label>
-      `;
-      td.querySelector('input').addEventListener('change', function() {
-        state.preferences[this.dataset.idx].channels[this.dataset.ch] = this.checked;
-      });
+    CHANNELS.forEach(ch=>{
+      const td=document.createElement('td');
+      const uid=`ch_${idx}_${ch.key}`;
+      td.innerHTML=`<label class="ch-sw" for="${uid}"><input type="checkbox" id="${uid}" data-i="${idx}" data-c="${ch.key}" ${pref.ch[ch.key]?'checked':''}><span class="ch-track"></span><span class="ch-knob"></span></label>`;
+      td.querySelector('input').addEventListener('change',function(){ S.prefs[+this.dataset.i].ch[this.dataset.c]=this.checked; });
       tr.appendChild(td);
     });
 
-    // Notes
-    const notesTd = document.createElement('td');
-    notesTd.innerHTML = `<input type="text" class="notes-input" placeholder="Optional note..." value="${pref.notes || ''}" data-idx="${idx}">`;
-    notesTd.querySelector('input').addEventListener('input', function() {
-      state.preferences[this.dataset.idx].notes = this.value;
-    });
-    tr.appendChild(notesTd);
+    const ntd=document.createElement('td'); ntd.style.textAlign='left';
+    ntd.innerHTML=`<input type="text" class="notes-inp" placeholder="Optional note…" value="${(pref.notes||'').replace(/"/g,'&quot;')}" data-i="${idx}">`;
+    ntd.querySelector('input').addEventListener('input',function(){ S.prefs[+this.dataset.i].notes=this.value; });
+    tr.appendChild(ntd);
 
     body.appendChild(tr);
   });
 }
 
-
-/* ═══════════════════════════════════════
-   ACTIONS
-   ═══════════════════════════════════════ */
-function bulkToggle(on) {
-  state.preferences.forEach(p => {
-    CHANNELS.forEach(c => { p.channels[c.key] = on; });
-  });
+/* ── Actions ── */
+function bulkToggle(on){
+  S.prefs.forEach(p=>CHANNELS.forEach(c=>{ p.ch[c.key]=on; }));
   renderMatrix();
-  showToast(on ? 'All channels enabled' : 'All channels disabled');
+  toast(on?'All channels enabled':'All channels disabled');
 }
 
-function savePrefs() {
-  // Validate at least one contact if any channel is enabled
-  const anyOn = state.preferences.some(p => Object.values(p.channels).some(Boolean));
-  const hasEmail = (state.customer.email || '').trim().length > 0;
-  const hasPhone = (state.customer.phone || '').trim().length > 0;
-
-  if (anyOn && !hasEmail && !hasPhone) {
-    showToast('Select an email or phone number before saving');
-    return;
+function savePrefs(){
+  const anyOn=S.prefs.some(p=>Object.values(p.ch).some(Boolean));
+  if(anyOn && !S.customer.email.trim() && !S.customer.phone.trim()){
+    toast('Add a contact method before saving'); return;
   }
-
-  persistState();
-  updateSaveStatus();
-  showToast('Preferences saved');
+  persist(); updateTs(); toast('Preferences saved');
 }
 
-function cancelChanges() {
-  if (!confirm('Discard unsaved changes?')) return;
-  const loaded = loadState();
-  state = loaded || JSON.parse(JSON.stringify(DEFAULT_STATE));
-  renderContactForm_reset();
-  renderMatrix();
-  updateSaveStatus();
-  showToast('Changes discarded');
+function cancelChanges(){
+  if(!confirm('Discard unsaved changes?')) return;
+  S = buildState();
+  renderContact(); renderMatrix(); updateTs(); toast('Changes discarded');
 }
 
-function renderContactForm_reset() {
-  document.getElementById('selEmail').value = state.customer.email;
-  document.getElementById('selPhone').value = state.customer.phone;
-  document.getElementById('togMarketing').checked = state.global.allowMarketing;
-  document.getElementById('togQuiet').checked = state.global.quietHours.enabled;
-  document.getElementById('quietRow').style.display = state.global.quietHours.enabled ? 'flex' : 'none';
-  document.getElementById('quietStart').value = state.global.quietHours.start;
-  document.getElementById('quietEnd').value = state.global.quietHours.end;
+function updateTs(){
+  document.getElementById('saveTs').textContent = S.meta.savedAt ? `Saved ${S.meta.savedAt}` : 'Not saved yet';
 }
 
-function updateSaveStatus() {
-  const el = document.getElementById('lastSaved');
-  if (state.meta.lastSavedAt) {
-    el.textContent = `Last saved: ${state.meta.lastSavedAt}`;
-  } else {
-    el.textContent = 'Not saved yet';
-  }
-}
-
-
-/* ═══════════════════════════════════════
-   TOAST
-   ═══════════════════════════════════════ */
-let toastTimer;
-function showToast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('visible');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('visible'), 2500);
+/* ── Toast ── */
+let _tt;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('on');
+  clearTimeout(_tt); _tt=setTimeout(()=>el.classList.remove('on'),2500);
 }
 </script>
 </body>
